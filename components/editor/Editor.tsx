@@ -5,7 +5,15 @@ import "@/components/site/site.css";
 import "./editor.css";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { blocksPlugin, outlinePlugin, Puck, useGetPuck, type Data, type Viewports } from "@puckeditor/core";
+import {
+  blocksPlugin,
+  Button as PuckButton,
+  outlinePlugin,
+  Puck,
+  useGetPuck,
+  type Data,
+  type Viewports,
+} from "@puckeditor/core";
 import { registerAssetUrl } from "@/components/site/assets";
 import { getAllAssets, loadPage, savePage } from "@/lib/storage";
 import { aiPlugin } from "./ai-panel";
@@ -128,6 +136,10 @@ export function Editor() {
             <>
               {TEST_HOOKS ? <DevTestHook /> : null}
               <SaveIndicator />
+              {/* Back to the chat to generate a new page from a description. */}
+              <PuckButton href="/start" variant="secondary">
+                ✦ New page
+              </PuckButton>
               <ExportButton />
               {children}
             </>

@@ -2,46 +2,59 @@
 # Runs every browser scenario against a builder build that has test hooks.
 #
 #   NEXT_PUBLIC_TEST_HOOKS=1 npm run build && npx next start -p 3211   # in another terminal
-#   tests/browser/run-all.sh [url] [log-file]
+#   tests/browser/run-all.sh [base-url] [log-file]
 #
-# Defaults: url http://localhost:3211/, log evidence/browser-tests.log
+# Defaults: base http://localhost:3211 (landing "/", chat "/start", editor "/editor"),
+# log evidence/browser-tests.log.
 # Note: demo-sequence (1) and real-ai-edits (2) make small real Claude calls; everything else is free.
 set -uo pipefail
 
-URL="${1:-http://localhost:3211/}"
+BASE="${1:-http://localhost:3211}"
+BASE="${BASE%/}"
+EDITOR="$BASE/editor"
 LOG="${2:-evidence/browser-tests.log}"
 OUT="tests/browser/output"
-RUN=(node tests/browser/cdp.mjs --url "$URL" --out "$OUT")
+RUN=(node tests/browser/cdp.mjs --out "$OUT")
+FIXTURE=(--fixture tests/browser/fixtures/generated-page.json)
 PROFILE="$(mktemp -d -t vs-profile)"
 mkdir -p "$(dirname "$LOG")"
 
 {
   echo "Vyohm Studio browser test run — $(date '+%Y-%m-%d %H:%M %Z')"
-  echo "Builder: $URL (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs"
+  echo "Builder: $BASE (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs"
+  echo
+  echo "=== landing (desktop 1440px) ==="
+  "${RUN[@]}" --url "$BASE/" --script tests/browser/scenarios/landing.js --width 1440 --wait 3000
+  echo
+  echo "=== landing (phone 390px) ==="
+  "${RUN[@]}" --url "$BASE/" --script tests/browser/scenarios/landing.js --width 390 --height 844 --wait 3000
+  echo
+  echo "=== start-flow (chat -> build animation -> preview -> editor; fake AI response) ==="
+  "${RUN[@]}" --url "$BASE/start" --script tests/browser/scenarios/start-flow.js "${FIXTURE[@]}" --wait 3000
   echo
   echo "=== layout-and-inline ==="
-  "${RUN[@]}" --script tests/browser/scenarios/layout-and-inline.js
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/layout-and-inline.js
   echo
   echo "=== design-options ==="
-  "${RUN[@]}" --script tests/browser/scenarios/design-options.js
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/design-options.js
   echo
   echo "=== mobile-override ==="
-  "${RUN[@]}" --script tests/browser/scenarios/mobile-override.js
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/mobile-override.js
   echo
   echo "=== ai-failures (fake AI responses) ==="
-  "${RUN[@]}" --script tests/browser/scenarios/ai-failures.js --fixture tests/browser/fixtures/generated-page.json
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/ai-failures.js "${FIXTURE[@]}"
   echo
   echo "=== upload-persist (part 1) ==="
-  "${RUN[@]}" --script tests/browser/scenarios/upload-persist.js --profile "$PROFILE"
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/upload-persist.js --profile "$PROFILE"
   echo
   echo "=== after-reload (part 2: same browser profile = browser reopened) ==="
-  "${RUN[@]}" --script tests/browser/scenarios/after-reload.js --profile "$PROFILE"
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/after-reload.js --profile "$PROFILE"
   echo
   echo "=== demo-sequence (one real Claude edit) ==="
-  "${RUN[@]}" --script tests/browser/scenarios/demo-sequence.js
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/demo-sequence.js
   echo
   echo "=== real-ai-edits (two real Claude edits) ==="
-  "${RUN[@]}" --script tests/browser/scenarios/real-ai-edits.js
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/real-ai-edits.js
 } > "$LOG" 2>&1
 
 passed=$(grep -c '"pass": true' "$LOG")

@@ -1,0 +1,153 @@
+/*
+ * Vyohm Studio brand theme ("vyom" = sky): a dark night sky with soft aurora glows.
+ * Used by the landing page and the /start chat. A CSS Module, so nothing here can
+ * leak into the editor or its preview iframe.
+ */
+
+.theme {
+  --ink: #07070d;
+  --ink-2: #0e0e17;
+  --panel: rgb(255 255 255 / 0.04);
+  --panel-2: rgb(255 255 255 / 0.07);
+  --line: rgb(255 255 255 / 0.09);
+  --line-2: rgb(255 255 255 / 0.16);
+  --text: #ececf4;
+  --muted: #a3a3b8;
+  --dim: #6f6f85;
+  --violet: #8b7bff;
+  --cyan: #5ee6d6;
+  --pink: #ff8fd1;
+  --brand: linear-gradient(120deg, #a997ff 0%, #7c6cff 35%, #45d6e8 100%);
+  --radius: 18px;
+  --sans: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --display: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, ui-serif, Georgia, serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  background:
+    radial-gradient(60% 50% at 15% 0%, rgb(124 92 255 / 0.28), transparent 70%),
+    radial-gradient(45% 40% at 90% 10%, rgb(45 212 191 / 0.16), transparent 70%),
+    radial-gradient(50% 40% at 50% 100%, rgb(255 143 209 / 0.08), transparent 70%),
+    var(--ink);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Faint stars. */
+.theme::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgb(255 255 255 / 0.5), transparent),
+    radial-gradient(1px 1px at 72% 12%, rgb(255 255 255 / 0.35), transparent),
+    radial-gradient(1px 1px at 38% 42%, rgb(255 255 255 / 0.25), transparent),
+    radial-gradient(1px 1px at 86% 54%, rgb(255 255 255 / 0.3), transparent),
+    radial-gradient(1px 1px at 22% 76%, rgb(255 255 255 / 0.25), transparent),
+    radial-gradient(1px 1px at 60% 88%, rgb(255 255 255 / 0.2), transparent);
+  background-size: 640px 640px;
+  opacity: 0.7;
+}
+
+.theme *,
+.theme *::before,
+.theme *::after {
+  box-sizing: border-box;
+}
+
+/* :where() keeps this at low priority so button colours still win. */
+.theme :where(a) {
+  color: inherit;
+}
+
+.theme :focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.gradientText {
+  background: var(--brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.serif {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Buttons shared by landing + start */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--text);
+  font: 600 15px/1 var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:hover {
+  background: var(--panel-2);
+  border-color: rgb(255 255 255 / 0.28);
+  transform: translateY(-1px);
+}
+
+.btnPrimary {
+  border-color: transparent;
+  background: var(--brand);
+  color: #0b0b14;
+  box-shadow: 0 10px 30px -12px rgb(124 108 255 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.4);
+}
+
+.btnPrimary:hover {
+  background: var(--brand);
+  box-shadow: 0 16px 40px -14px rgb(124 108 255 / 0.95), inset 0 1px 0 rgb(255 255 255 / 0.5);
+}
+
+.btnLarge {
+  height: 52px;
+  padding: 0 26px;
+  font-size: 16px;
+}
+
+.arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn:hover .arrow {
+  transform: translateX(3px);
+}
+
+/*
+ * Reduced motion: no animations at all. (Not "finish instantly": several looping
+ * animations end on a faded-out frame, which would leave those elements invisible.)
+ */
+@media (prefers-reduced-motion: reduce) {
+  .theme *,
+  .theme *::before,
+  .theme *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

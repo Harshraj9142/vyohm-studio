@@ -1,266 +1,130 @@
-Vyohm Studio browser test run — 2026-11-15 12:10 IST
-Builder: http://localhost:3211/ (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs
+Vyohm Studio browser test run — 2026-11-15 12:34 IST
+Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs
 
-=== layout-and-inline ===
+=== landing (desktop 1440px) ===
 {
+  "width": 1440,
   "allPassed": true,
   "checks": {
-    "Inline canvas text editing": {
-      "expected": "Typed on the canvas",
-      "actual": "Typed on the canvas",
+    "Hero headline": {
+      "expected": "Describe your business…",
+      "actual": "Describe your business.Get a website you can edit and own.",
       "pass": true
     },
-    "Selected element": {
-      "expected": "Paragraph",
-      "actual": "Paragraph",
+    "Get started goes to the chat": {
+      "expected": "/start",
+      "actual": "/start",
       "pass": true
     },
-    "Duplicate (action bar)": {
-      "expected": 9,
-      "actual": 9,
+    "Open the editor goes to the editor": {
+      "expected": "/editor",
+      "actual": "/editor",
       "pass": true
     },
-    "Delete (action bar)": {
-      "expected": 8,
-      "actual": 8,
+    "Feature cards": {
+      "expected": 6,
+      "actual": 6,
       "pass": true
     },
-    "Add element (insert)": {
-      "expected": "7 headings, new one has an id + defaults",
-      "actual": "7 headings, id ok, text \"Heading\"",
-      "pass": true
-    }
-  }
-}
-[screenshot] tests/browser/output/layout-and-inline-1440.png
-
-=== design-options ===
-{
-  "allPassed": true,
-  "checks": {
-    "Container surface -> card": {
-      "expected": "class vs-container--card in preview",
-      "actual": "card / class present",
+    "How-it-works steps": {
+      "expected": 3,
+      "actual": 3,
       "pass": true
     },
-    "Paragraph style -> badge": {
-      "expected": "badge",
-      "actual": "badge",
-      "pass": true
-    },
-    "Section background -> gradient": {
-      "expected": "gradient",
-      "actual": "gradient",
-      "pass": true
-    },
-    "Arrow icon rendered": {
-      "expected": "≥ 2 buttons with an arrow",
-      "actual": 2,
-      "pass": true
-    },
-    "No live-only effects in the editor": {
-      "expected": "0 live sections / containers",
-      "actual": "0 / 0",
-      "pass": true
-    },
-    "Undo design change": {
-      "expected": "solid",
-      "actual": "solid",
-      "pass": true
-    }
-  }
-}
-[screenshot] tests/browser/output/design-options-1440.png
-
-=== mobile-override ===
-{
-  "allPassed": true,
-  "checks": {
-    "Mobile preview width": {
-      "expected": 390,
-      "actual": 390,
-      "pass": true
-    },
-    "Columns stack on phones": {
-      "expected": "1 column",
-      "actual": "1 column",
+    "Hero demo is decorative (hidden from screen readers)": {
+      "expected": "aria-hidden=true",
+      "actual": "true",
       "pass": true
     },
     "No horizontal overflow": {
       "expected": false,
       "actual": false,
       "pass": true
-    },
-    "Default phone heading (75% of 64px)": {
-      "expected": "48px",
-      "actual": "48px",
+    }
+  }
+}
+[screenshot] tests/browser/output/landing-1440.png
+
+=== landing (phone 390px) ===
+{
+  "width": 390,
+  "allPassed": true,
+  "checks": {
+    "Hero headline": {
+      "expected": "Describe your business…",
+      "actual": "Describe your business.Get a website you can edit and own.",
       "pass": true
     },
-    "Mobile override applied": {
-      "expected": "30px on phone, desktop 64",
-      "actual": "30px on phone, desktop 64",
+    "Get started goes to the chat": {
+      "expected": "/start",
+      "actual": "/start",
       "pass": true
     },
-    "Undo / redo of mobile override": {
-      "expected": "null / 30",
-      "actual": "null / 30",
+    "Open the editor goes to the editor": {
+      "expected": "/editor",
+      "actual": "/editor",
       "pass": true
     },
-    "Desktop unchanged": {
-      "expected": "64px",
-      "actual": "64px",
+    "Feature cards": {
+      "expected": 6,
+      "actual": 6,
+      "pass": true
+    },
+    "How-it-works steps": {
+      "expected": 3,
+      "actual": 3,
+      "pass": true
+    },
+    "Hero demo is decorative (hidden from screen readers)": {
+      "expected": "aria-hidden=true",
+      "actual": "true",
+      "pass": true
+    },
+    "No horizontal overflow": {
+      "expected": false,
+      "actual": false,
       "pass": true
     }
   }
 }
-[screenshot] tests/browser/output/mobile-override-1440.png
+[screenshot] tests/browser/output/landing-390.png
 
-=== ai-failures (fake AI responses) ===
+=== start-flow (chat -> build animation -> preview -> editor; fake AI response) ===
 {
   "allPassed": true,
   "checks": {
-    "Malformed AI page rejected": {
-      "expected": "error, page unchanged",
-      "actual": "ed-ai-status--error: Generation failed. The AI result was rejected: Invalid input: expected string, received undefined (at root.props.description)Your current page was not changed.",
+    "Intro + example chips": {
+      "expected": "intro text and 4 chips",
+      "actual": "true / 4 chips",
       "pass": true
     },
-    "Edit during generation -> conflict prompt": {
-      "expected": "warning, manual edit kept",
-      "actual": "ed-ai-status--warn: You edited the page while Claude was working. Replace your page with the generat",
-      "pass": true
-    },
-    "Generate -> undo -> redo": {
-      "expected": "old / new / new",
-      "actual": "Crafted to be kept. / Crafted to be kept. / Crafted to be worn, made to be remembered",
-      "pass": true
-    },
-    "Edit same element during AI edit": {
-      "expected": "warning; nothing applied until confirmed; then label + blue",
-      "actual": "ed-ai-status--warn; before confirm bg=#c9a44c; after: \"Shop the collections\" bg=#2563eb",
-      "pass": true
-    },
-    "Out-of-scope AI edit rejected": {
-      "expected": "error, page unchanged",
-      "actual": "ed-ai-status--error: Edit failed. The AI tried to change Heading \"Crafted to be kept.\", which is outside your selection. Choose \"Wh",
-      "pass": true
-    },
-    "Unsafe AI value rejected": {
-      "expected": "error, page unchanged",
-      "actual": "ed-ai-status--error: Edit failed. \"javascript:alert(1)\" is not a valid colour (use #rrggbb).Your page was not c",
-      "pass": true
-    },
-    "API error shown, page unchanged": {
-      "expected": "error message",
-      "actual": "ed-ai-status--error: Edit failed. Claude is busy (rate limit). Please wait a moment and try again.Your page was",
-      "pass": true
-    },
-    "Invalid nesting from AI rejected": {
-      "expected": "error, page unchanged",
-      "actual": "ed-ai-status--error: Edit failed. A Section cannot go inside a Container.Your page was not changed.",
-      "pass": true
-    }
-  }
-}
-[screenshot] tests/browser/output/ai-failures-1440.png
-
-=== upload-persist (part 1) ===
-{
-  "headline": "Saved headline",
-  "imageSrc": "asset:74d5cd9659ff4139",
-  "saveStatus": "Saved 12:11"
-}
-[screenshot] tests/browser/output/upload-persist-1440.png
-
-=== after-reload (part 2: same browser profile = browser reopened) ===
-{
-  "allPassed": true,
-  "checks": {
-    "Headline restored": {
-      "expected": "Saved headline",
-      "actual": "Saved headline",
-      "pass": true
-    },
-    "Image reference saved (not a blob: URL)": {
-      "expected": "asset:…",
-      "actual": "asset:74d5cd9659ff4139",
-      "pass": true
-    },
-    "Uploaded image visible after reload": {
-      "expected": true,
-      "actual": true,
-      "pass": true
-    }
-  }
-}
-[screenshot] tests/browser/output/after-reload-1440.png
-
-=== demo-sequence (one real Claude edit) ===
-{
-  "allPassed": true,
-  "checks": {
-    "AI status": {
-      "expected": "ok",
-      "actual": "ed-ai-status--ok (3s): Changed the background of the \"Explore the collections\" button to blue.Use Undo (top right) to revert.",
-      "pass": true
-    },
-    "Only change on the page": {
-      "expected": "exactly 1 change: the button's bgColor",
-      "actual": [
-        "page.root.props.content[0].props.content[0].props.left[3].props.bgColor: \"#c9a44c\" -> \"#2563eb\""
-      ],
-      "pass": true
-    },
-    "Headline kept": {
-      "expected": "Wear the story, not the trend",
-      "actual": "Wear the story, not the trend",
-      "pass": true
-    },
-    "Uploaded image kept": {
-      "expected": "asset:…",
-      "actual": "asset:c249ba759c3d4a3d",
-      "pass": true
-    },
-    "Moved button still in hero": {
+    "Send disabled for a too-short brief": {
       "expected": true,
       "actual": true,
       "pass": true
     },
-    "Section order kept": {
-      "expected": [
-        "",
-        "contact",
-        "collections"
-      ],
-      "actual": [
-        "",
-        "contact",
-        "collections"
-      ],
+    "Build animation progresses": {
+      "expected": "status visible, ≥1 step done, user brief shown with style",
+      "actual": "true, 1 done, brief ends: \"ton. Style: Warm & friendly.\"",
       "pass": true
     },
-    "Undo / redo": {
-      "expected": "#c9a44c / blue",
-      "actual": "#c9a44c / #2563eb",
+    "Preview shows the generated page": {
+      "expected": "Crafted to be worn, made to be remembered",
+      "actual": "Crafted to be worn, made to be remembered",
+      "pass": true
+    },
+    "Ready message": {
+      "expected": "Your page is ready + Open in editor",
+      "actual": "true / true",
+      "pass": true
+    },
+    "Editor opens with the generated page": {
+      "expected": "Crafted to be worn, made to be remembered at /editor",
+      "actual": "Crafted to be worn, made to be remembered at /editor",
       "pass": true
     }
   }
 }
-[screenshot] tests/browser/output/demo-sequence-1440.png
+[screenshot] tests/browser/output/start-flow-1440.png
 
-=== real-ai-edits (two real Claude edits) ===
-{
-  "allPassed": true,
-  "checks": {
-    "Mobile-aware edit": {
-      "expected": "only the heading's mobile.fontSize changes; desktop 64px unchanged",
-      "actual": "ed-ai-status--ok (3s): [\"page.root.props.content[0].props.content[0].props.left[1].props.mobile.fontSize: undefined -> 40\"]; desktop 64px",
-      "pass": true
-    },
-    "Whole-page edit": {
-      "expected": "only button radius values change",
-      "actual": "ed-ai-status--ok (3s): 5 change(s): [\"page.root.props.content[0].props.content[0].props.left[3].props.radius: 2 -> 64\",\"page.root.props.content[1].props.content[1].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[2].props.left[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[3].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[2].props.content[3].props.radius: 2 -> 64\"]",
-      "pass": true
-    }
-  }
-}
-[screenshot] tests/browser/output/real-ai-edits-1440.png
+=== layout-and-inline ===
