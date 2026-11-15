@@ -95,7 +95,7 @@ npm run dev                     # open http://localhost:3000 and click "Get star
 | `npm run dev` | Development server with hot reload on port 3000 |
 | `npm run build` then `npm run start` | Production build and server |
 | `npm run lint` | ESLint |
-| `npm run verify-export -- <path/to/website.zip>` | Checks an exported zip the way the evaluator would: unzip in a clean folder, `npm ci`, `npm run build`, `npm run start`, load the page |
+| `npm run verify-export -- <path/to/website.zip>` | Checks an exported zip: unzips it in a clean folder, checks the contents (no `.env`, no API key, no editor-only image links), then runs `npm ci` and `npm run build`. It prints the command to start the site. |
 | `npm run test:browser` | All browser test scenarios (see [Testing](#11-testing)) |
 
 ### If something goes wrong
@@ -301,7 +301,7 @@ npm run build
 npm run start        # http://localhost:3000
 ```
 
-Or check it in one command, exactly like the evaluator: `npm run verify-export -- ~/Downloads/website.zip`.
+Or check the contents, install and build in one command: `npm run verify-export -- ~/Downloads/website.zip`. If the builder is still running on port 3000, start the exported site on another port: `npm run start -- -p 3001`.
 
 | Exported site on desktop | On a phone |
 |---|---|
