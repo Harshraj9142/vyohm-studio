@@ -38,7 +38,14 @@ export function ExportButton() {
           {status.kind === "error" ? "Export failed" : status.text}
         </span>
       ) : null}
-      <Button variant="secondary" onClick={exportSite} loading={status.kind === "busy"} disabled={status.kind === "busy"}>
+      {/* type="button" makes Puck render a real, keyboard-accessible <button> (otherwise a <span>). */}
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={exportSite}
+        loading={status.kind === "busy"}
+        disabled={status.kind === "busy"}
+      >
         Export website.zip
       </Button>
     </>
