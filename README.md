@@ -119,7 +119,7 @@ The product page explains Vyohm Studio and leads to **Get started**.
 
 | Desktop (top of page) | Phone |
 |---|---|
-| ![Landing page on desktop](docs/screenshots/landing-hero.png) | <img src="docs/screenshots/landing-mobile.jpg" alt="Landing page on a phone" width="260"> |
+| ![Landing page on desktop](docs/screenshots/landing-hero.png) | <img src="docs/screenshots/landing-mobile-top.jpg" alt="Landing page on a phone" width="220"> |
 
 What is on it, top to bottom:
 
@@ -129,7 +129,7 @@ What is on it, top to bottom:
 4. **Why trust it:** the careful parts you don't see (validation, safe edits, real export).
 5. **Closing call to action** with another **Get started** button.
 
-A full-length screenshot is in [docs/screenshots/landing-full.jpg](docs/screenshots/landing-full.jpg). Animations are switched off for visitors who ask their system for reduced motion.
+Full-length screenshots of the whole page: [desktop](docs/screenshots/landing-full.jpg) and [phone](docs/screenshots/landing-mobile.jpg). Animations are switched off for visitors who ask their system for reduced motion.
 
 ### 3.2 *Create your landing page* chat (`/start`)
 
@@ -305,7 +305,7 @@ Or check it in one command, exactly like the evaluator: `npm run verify-export -
 
 | Exported site on desktop | On a phone |
 |---|---|
-| ![Exported site, desktop](docs/screenshots/exported-desktop.png) | <img src="docs/screenshots/exported-mobile.png" alt="Exported site on a phone" width="260"> |
+| ![Exported site, desktop](docs/screenshots/exported-desktop.png) | <img src="docs/screenshots/exported-mobile.png" alt="Exported site on a phone" width="220"> |
 
 What the export guarantees:
 
@@ -542,7 +542,9 @@ Generated pages share a small design system. The ideas came from the **21st.dev*
 
 All tints use `color-mix()` with `currentColor`, so they work with any brand colour and on dark or light pages. On the exported site, items fade up as they scroll into view (CSS scroll-driven animation) and cards lift on hover. Both are off inside the editor and for visitors who prefer reduced motion. The generation prompt explains each option so Claude uses them where they fit the chosen direction, not everywhere.
 
-![Exported page using the design system](docs/screenshots/exported-full-page.png)
+<p align="center"><img src="docs/screenshots/exported-design-system.png" alt="Exported page using the design system: eyebrow label, lead text, arrow button, brand-colour band with a badge, and three card surfaces" width="640"></p>
+
+*An exported page (Ember & Oak, a coffee roastery): eyebrow label and lead text in the hero, arrow buttons, a brand-colour band with a badge, and three `card` surfaces. [See the full page](docs/screenshots/exported-full-page.png).*
 
 ---
 
