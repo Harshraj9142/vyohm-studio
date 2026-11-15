@@ -13,7 +13,8 @@ NEXT_PUBLIC_TEST_HOOKS=1 npm run build
 npx next start -p 3211            # keep running in another terminal
 
 # 2. All browser scenarios -> evidence/browser-tests.log
-#    (landing "/", chat "/start", editor "/editor"; pass another base URL as the first argument)
+#    (landing "/", chat "/start", editor "/editor"; editor tests use /editor?sample=1, which opens the
+#     sample page when nothing is saved; pass another base URL as the first argument)
 npm run test:browser              # = bash tests/browser/run-all.sh [http://localhost:3211]
 
 # 3. Check any exported ZIP the way the evaluator does
@@ -90,6 +91,9 @@ The first version said *"Not moved"* after the Section drop, but the page had ac
 | Input | Expected | Actual (observed) |
 |---|---|---|
 | Open `/` at 1440 px and 390 px | Headline, 6 features, 3 steps, CTAs to `/start` and `/editor`, no sideways scroll | All present at both widths; no overflow |
+| Open `/editor` in a fresh browser (nothing saved) | A choice, not a page the user didn't ask for | Welcome screen with *Generate with AI* (→ `/start`), *Start from a blank page*, *Explore the sample page*; no editor yet ([screenshot](screenshots/editor-welcome.png)) |
+| Choose *Start from a blank page* / *Explore the sample page* | Empty page with the Blocks tab / the sample | 0 sections, Blocks tab, saved / "Crafted to be kept." |
+| Browser still holds a sample page that an **older version saved automatically** (no "chosen" flag) | Not opened by itself; offered as an option | Welcome screen with *"This browser still has Loom & Line — Sample page… Continue with this page"*; Continue opens it; after that, reload opens it directly |
 | `/start`: brief "short" | Send disabled | Disabled |
 | Pick *Bakery* + *Warm & friendly*, send | Brief shown with the style; build animation progresses | Brief ends "Style: Warm & friendly."; status visible, steps ticking |
 | Answer arrives | Remaining steps finish; real page previewed | Preview h1 = the generated page's h1; "Your page is ready" + *Open in editor* |

@@ -103,3 +103,22 @@ export async function saveAsset(file: File): Promise<StoredAsset> {
 export async function getAllAssets(): Promise<StoredAsset[]> {
   return run<StoredAsset[]>(ASSETS, "readonly", (s) => s.getAll());
 }
+
+// ---------------------------------------------------------------- Page info
+
+/**
+ * Small facts about the saved page, stored next to it.
+ * `sampleChosen`: the user picked the sample page on purpose. Older versions saved the
+ * sample automatically on the first visit; without this flag we treat such a page as
+ * "no page chosen yet" and ask the user how to start (keeping it as an option).
+ */
+export type PageInfo = { sampleChosen?: boolean };
+
+export async function loadPageInfo(): Promise<PageInfo> {
+  const info = await run<PageInfo | undefined>(PAGES, "readonly", (s) => s.get("info"));
+  return info && typeof info === "object" ? info : {};
+}
+
+export async function savePageInfo(info: PageInfo): Promise<void> {
+  await run(PAGES, "readwrite", (s) => s.put(info, "info"));
+}

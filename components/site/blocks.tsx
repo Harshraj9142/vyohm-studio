@@ -158,7 +158,9 @@ export function Container({
       })}
     >
       <Left className={columnClass} minEmptyHeight={80} />
-      <Right className={columnClass} minEmptyHeight={80} />
+      {/* In a one-column container the second column is usually empty: give it no
+          height in the editor so it doesn't show up as a grey drop area. */}
+      <Right className={columnClass} minEmptyHeight={columns === "2" ? 80 : 0} />
     </div>
   );
 }

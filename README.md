@@ -6,7 +6,7 @@ An AI website builder: describe a business, Claude generates a landing page, you
 |---|---|
 | `/` | Vyohm Studio landing page: features, how it works, **Get started** |
 | `/start` | *Create your landing page* chat: describe the business → build animation → live preview of the real page → **Open in editor** |
-| `/editor` | The visual editor: click-to-edit, AI edits, mobile overrides, undo, autosave, export |
+| `/editor` | The visual editor: click-to-edit, AI edits, mobile overrides, undo, autosave, export. With no saved page it first asks how to start ([Generate with AI / blank page / sample](docs/screenshots/editor-welcome.png)); it never loads a page you didn't ask for. |
 
 Built for the Vyohm AI FDE intern challenge (6-hour build).
 

@@ -1,5 +1,6 @@
 // End-to-end flow used to produce evidence/website.zip (uses Claude: 1 generation + 1 edit).
 // Generate from a brief -> manual edits -> mobile override -> AI edit on a selected button -> export.
+// Run with --url http://localhost:3211/editor?sample=1 (a fresh browser has no saved page).
 (async () => {
   const { sleep, puck, data, doc, type, button, viewport, find, uploadPng, aiStatus } = window.T;
   const log = {};

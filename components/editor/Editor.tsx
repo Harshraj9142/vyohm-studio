@@ -15,12 +15,14 @@ import {
   type Viewports,
 } from "@puckeditor/core";
 import { registerAssetUrl } from "@/components/site/assets";
-import { getAllAssets, loadPage, savePage } from "@/lib/storage";
+import { getAllAssets, loadPage, loadPageInfo, savePage, savePageInfo } from "@/lib/storage";
 import { aiPlugin } from "./ai-panel";
 import { DragFeedback } from "./drag-feedback";
 import { ExportButton } from "./export-button";
 import { puckConfig } from "./puck-config";
-import { createStarterPage } from "./starter-page";
+import { makePage } from "@/lib/page-tree";
+import { EditorWelcome } from "./EditorWelcome";
+import { createStarterPage, SAMPLE_TITLE } from "./starter-page";
 import { setSaveStatus, useSaveStatus } from "./save-status";
 
 /** Preview widths. Mobile (390px) is below the 768px breakpoint, so mobile styles apply. */
@@ -44,7 +46,11 @@ const plugins = [aiPlugin, blocksPlugin(), outlinePlugin()];
 
 type LoadState =
   | { kind: "loading" }
-  | { kind: "ready"; data: Data; storageOk: boolean; notice?: string };
+  // No page chosen yet: let the user choose. `existing` = a sample saved automatically by an older version.
+  | { kind: "welcome"; storageOk: boolean; notice?: string; existing?: { data: Data; savedAt: number } }
+  | { kind: "ready"; data: Data; storageOk: boolean; notice?: string; firstTab?: string };
+
+const STORAGE_NOTICE = "Browser storage is unavailable (private window?). Changes will not be saved.";
 
 export function Editor() {
   const [load, setLoad] = useState<LoadState>({ kind: "loading" });
@@ -57,28 +63,59 @@ export function Editor() {
         const assets = await getAllAssets();
         for (const asset of assets) registerAssetUrl(asset.id, URL.createObjectURL(asset.blob));
         const saved = await loadPage();
-        // First visit: save the starter page right away so a reload shows the same page.
-        const data = saved?.data ?? createStarterPage();
-        const savedAt = saved?.savedAt ?? (await savePage(data));
+        const info = await loadPageInfo();
+        const wantsSample = new URLSearchParams(window.location.search).has("sample"); // used by tests
         if (cancelled) return;
-        setSaveStatus({ kind: "saved", at: savedAt });
-        setLoad({ kind: "ready", data, storageOk: true });
+
+        // A sample page the user never chose (saved automatically by an older version)
+        // counts as "no page yet": ask, but keep it available as "Continue with this page".
+        const title = (saved?.data.root.props as { title?: unknown } | undefined)?.title;
+        const autoSavedSample = !!saved && title === SAMPLE_TITLE && !info.sampleChosen && !wantsSample;
+
+        if (saved && !autoSavedSample) {
+          setSaveStatus({ kind: "saved", at: saved.savedAt });
+          setLoad({ kind: "ready", data: saved.data, storageOk: true });
+          return;
+        }
+        // No page yet. Never show a page the user didn't ask for: offer a choice instead.
+        // (/editor?sample=1 opens the sample directly, used by the automated tests.)
+        if (wantsSample) {
+          const data = createStarterPage();
+          const savedAt = await savePage(data);
+          await savePageInfo({ sampleChosen: true });
+          if (cancelled) return;
+          setSaveStatus({ kind: "saved", at: savedAt });
+          setLoad({ kind: "ready", data, storageOk: true });
+          return;
+        }
+        setLoad({ kind: "welcome", storageOk: true, existing: saved ?? undefined });
       } catch (error) {
         console.error("Could not open browser storage", error);
         if (cancelled) return;
         setSaveStatus({ kind: "unavailable" });
-        setLoad({
-          kind: "ready",
-          data: createStarterPage(),
-          storageOk: false,
-          notice: "Browser storage is unavailable (private window?). Changes will not be saved.",
-        });
+        setLoad({ kind: "welcome", storageOk: false, notice: STORAGE_NOTICE });
       }
     })();
     return () => {
       cancelled = true;
     };
   }, []);
+
+  // Welcome screen choices: a blank page, the sample page, or continue with an older sample.
+  async function begin(data: Data, firstTab: string, sampleChosen: boolean, alreadySavedAt?: number) {
+    if (load.kind !== "welcome") return;
+    const ok = load.storageOk;
+    if (ok) {
+      try {
+        const at = alreadySavedAt ?? (await savePage(data));
+        await savePageInfo({ sampleChosen });
+        setSaveStatus({ kind: "saved", at });
+      } catch {
+        setSaveStatus({ kind: "error", message: "Save failed — storage may be full." });
+      }
+    }
+    setLoad({ kind: "ready", data, storageOk: ok, notice: load.notice, firstTab });
+  }
 
   // 2. Save: called by the Save button, and automatically shortly after each change.
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -118,6 +155,24 @@ export function Editor() {
     );
   }
 
+  if (load.kind === "welcome") {
+    return (
+      <EditorWelcome
+        notice={load.notice}
+        onBlank={() => void begin(makePage({ title: "My landing page" }, []), "blocks", false)}
+        onSample={() => void begin(createStarterPage(), "ai", true)}
+        existing={
+          load.existing
+            ? {
+                title: String((load.existing.data.root.props as { title?: unknown }).title ?? "your page"),
+                onContinue: () => void begin(load.existing!.data, "ai", true, load.existing!.savedAt),
+              }
+            : undefined
+        }
+      />
+    );
+  }
+
   return (
     <>
       {load.notice ? <div className="ed-banner ed-banner--warn">{load.notice}</div> : null}
@@ -127,7 +182,7 @@ export function Editor() {
         onChange={scheduleSave}
         onPublish={save}
         plugins={plugins}
-        ui={{ plugin: { current: "ai" } }}
+        ui={{ plugin: { current: load.firstTab ?? "ai" } }}
         viewports={viewports}
         iframe={{ enabled: true }}
         headerTitle="Vyohm Studio"

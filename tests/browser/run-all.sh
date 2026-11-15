@@ -11,7 +11,8 @@ set -uo pipefail
 
 BASE="${1:-http://localhost:3211}"
 BASE="${BASE%/}"
-EDITOR="$BASE/editor"
+# ?sample=1 opens the sample page when nothing is saved (a fresh test browser); see editor-welcome for /editor itself.
+EDITOR="$BASE/editor?sample=1"
 LOG="${2:-evidence/browser-tests.log}"
 OUT="tests/browser/output"
 RUN=(node tests/browser/cdp.mjs --out "$OUT")
@@ -31,6 +32,18 @@ mkdir -p "$(dirname "$LOG")"
   echo
   echo "=== start-flow (chat -> build animation -> preview -> editor; fake AI response) ==="
   "${RUN[@]}" --url "$BASE/start" --script tests/browser/scenarios/start-flow.js "${FIXTURE[@]}" --wait 3000
+  echo
+  echo "=== editor-welcome (no saved page -> choice, then blank page) ==="
+  "${RUN[@]}" --url "$BASE/editor" --script tests/browser/scenarios/editor-welcome.js
+  echo
+  echo "=== editor-sample-choice ==="
+  "${RUN[@]}" --url "$BASE/editor" --script tests/browser/scenarios/editor-sample-choice.js
+  echo
+  LEGACY="$(mktemp -d -t vs-legacy)"
+  echo "=== legacy-sample (an old auto-saved sample must not open by itself; 3 steps, same browser) ==="
+  "${RUN[@]}" --url "$BASE/start" --script tests/browser/scenarios/legacy-sample-setup.js "${FIXTURE[@]}" --profile "$LEGACY" --wait 2500
+  "${RUN[@]}" --url "$BASE/editor" --script tests/browser/scenarios/legacy-sample-check.js "${FIXTURE[@]}" --profile "$LEGACY" --wait 4000
+  "${RUN[@]}" --url "$BASE/editor" --script tests/browser/scenarios/legacy-sample-reload.js --profile "$LEGACY" --wait 5000
   echo
   echo "=== layout-and-inline ==="
   "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/layout-and-inline.js

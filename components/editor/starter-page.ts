@@ -1,6 +1,9 @@
 import type { Data } from "@puckeditor/core";
 import { makeElement as el, makePage } from "@/lib/page-tree";
 
+/** Title of the sample page (also used to recognise a sample saved by older versions). */
+export const SAMPLE_TITLE = "Loom & Line — Sample page";
+
 /**
  * The page shown the first time the editor opens (before any AI generation).
  * All content is clearly labelled sample content.
@@ -30,7 +33,7 @@ export function createStarterPage(): Data {
 
   return makePage(
     {
-      title: "Loom & Line — Sample page",
+      title: SAMPLE_TITLE,
       description: "Sample landing page for a premium clothing brand.",
       headingFont: "serif",
       bodyFont: "sans",
