@@ -187,3 +187,16 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
   }
 }
 [screenshot] tests/browser/output/legacy-sample-check-1440.png
+{
+  "allPassed": true,
+  "checks": {
+    "After choosing it, reload opens the page directly": {
+      "expected": "editor",
+      "actual": "editor",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/legacy-sample-reload-1440.png
+
+=== layout-and-inline ===
