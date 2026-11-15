@@ -19,7 +19,10 @@ export async function POST(request: Request) {
     }
 
     const result = await generatePage(prompt);
-    console.log(`[ai] generated page with ${result.model} in ${result.ms} ms`);
+    const { design } = result;
+    console.log(
+      `[ai] generated page with ${result.model} in ${result.ms} ms — direction ${design.number}: ${design.summary || design.name}`,
+    );
     return Response.json(result);
   } catch (error) {
     const aiError = toAiError(error);

@@ -21,7 +21,7 @@ export const HeadingGen = z.object({
   type: z.literal("Heading"),
   text: z.string(),
   level: z.enum(["h1", "h2", "h3"]).describe("Exactly one h1 per page (in the hero)."),
-  fontSize: z.number().describe("px. h1: 48-76, h2: 32-46, h3: 20-30."),
+  fontSize: z.number().describe("px. h1: 48-80 (keep the h1 to 2-8 words), h2: 30-56, h3: 20-30."),
   fontWeight: z.enum(["400", "500", "600", "700", "800"]),
   color,
   align,
@@ -44,7 +44,7 @@ export const ImageGen = z.object({
     .string()
     .describe("Short description of the photo that should go here, e.g. 'Close-up of gold silk scarf'."),
   alt: z.string().describe("Accessible alt text describing the intended image."),
-  height: z.number().describe("px, 0 = automatic 4:3 box. Hero images 420-560, cards 240-360."),
+  height: z.number().describe("px, 0 = automatic 4:3 box. Hero images 380-560, wide bands 320-520, cards 220-360."),
   radius: z.number().describe("Corner radius px, 0-32."),
 });
 
@@ -95,14 +95,38 @@ export const SectionGen = z.object({
   children: z.array(z.union([ContainerGen, HeadingGen, ParagraphGen, ImageGen, ButtonGen])),
 });
 
+const font = z.enum(["sans", "serif", "rounded", "mono"]);
+
+/** How many design directions Claude proposes before building one of them. */
+export const DIRECTION_COUNT = 4;
+
+/**
+ * Claude writes DIRECTION_COUNT design directions BEFORE the sections (JSON is generated
+ * in order, so this works as a "think first" step), then builds the one the server picked
+ * at random. This is what makes pages differ.
+ *
+ * Both planning fields are single plain strings on purpose. This schema sits right at the
+ * API's size limit for structured outputs: an object per direction, or two arrays plus a
+ * string, fails with 400 "The compiled grammar is too large". Test any new field with a
+ * real request before relying on it.
+ */
 export const GeneratedPageSchema = z.object({
+  designDirections: z
+    .string()
+    .describe(
+      `Exactly ${DIRECTION_COUNT} clearly different visual directions for THIS brief, written before the page, ` +
+        `one per line: "1. Name | feeling and signature idea | background #hex, accent #hex | heading font | hero layout".`,
+    ),
+  sectionPlan: z
+    .string()
+    .describe('The chosen direction\'s sections, top to bottom, one per line as "purpose: pattern", e.g. "collections: alternating rows".'),
   title: z.string().describe("Browser tab title, e.g. 'Loom & Line — Premium Clothing'."),
   description: z.string().describe("One-sentence meta description."),
-  headingFont: z.enum(["sans", "serif", "rounded", "mono"]),
-  bodyFont: z.enum(["sans", "serif", "rounded", "mono"]),
+  headingFont: font,
+  bodyFont: font,
   background: z.string().describe("Page background hex colour."),
   textColor: z.string().describe("Main text hex colour with strong contrast against the background."),
-  sections: z.array(SectionGen).describe("4 to 6 sections, top to bottom."),
+  sections: z.array(SectionGen).describe("4 to 7 sections, top to bottom, following sectionPlan."),
 });
 
 export type GeneratedPage = z.infer<typeof GeneratedPageSchema>;

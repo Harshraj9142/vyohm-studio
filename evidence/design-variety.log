@@ -1,0 +1,63 @@
+Vyohm Studio design-variety check — 2026-11-15
+Builder: next dev on :3000 (real Claude calls, model claude-opus-5-5, effort medium). Pages rendered with the export renderer (components/site) at 1440 px and 390 px in headless Chrome.
+
+=== Round 1: five briefs in parallel (loom-a and loom-b use the same brief) ===
+loom-a   33.4s direction 4: Atelier Ledger | editorial and sharp: oversized left-aligned serif type, hairline outline details, zero radius, one solid gold manifesto band | background #0b0b0a, accent #c9a84c | serif | asymmetric-big-type
+loom-b   35.7s direction 4: Tailor's Ledger | sharp editorial broadsheet; oversized light-weight serif type, zero radius, hairline outline cards and one solid gold band to close | background #0b0b0a, accent #c9a54c | serif | asymmetric-big-type
+bakery   44.6s direction 4: Kitchen Table | relaxed family kitchen, fresh sage and forest green with honey highlights, playful 24px corners | background #eef3ea, accent #2f5d3a with honey #f2b84b | rounded | centered-image-below
+fintech  32.2s direction 3: Swiss Grid | precise, no-nonsense trust through strict left alignment, heavy sans type, sharp corners and one cobalt accent | background #ffffff, accent #1d4ed8 | sans | asymmetric-big-type
+gym      40.4s direction 4: Raw Iron | stripped-back industrial grit, giant monospaced type, sharp edges, outline cards and one red band | background #0b0b0b, accent #d40000 | mono | asymmetric-big-type
+
+Briefs:
+  loom-a, loom-b: Loom & Line, premium clothing, black-and-gold, three collections, contact button (the challenge example)
+  bakery:  Crumb & Co, family-run sourdough bakery, warm and friendly, breads/pastries/workshops, order button
+  fintech: Ledgerly, bookkeeping app for freelancers, clean and trustworthy (no colours given)
+  gym:     IronPeak, strength gym for beginners, bold, red and black, three plans, free-trial button
+
+┌─────────┬───────────┬────────────────┬───────────┬──────┬──────────────────────┬────┬──────────┬────────────────┬────────┬────────┬─────────┬────────┐
+│ (index) │ page      │ fonts          │ bg        │ secs │ hero                 │ h1 │ bgStyle  │ surfaces       │ labels │ arrows │ centred │ radius │
+├─────────┼───────────┼────────────────┼───────────┼──────┼──────────────────────┼────┼──────────┼────────────────┼────────┼────────┼─────────┼────────┤
+│ 0       │ 'loom-a'  │ 'serif/sans'   │ '#0b0b0a' │ 5    │ '2col 2:1 img:below' │ 80 │ 'sssss'  │ 'none'         │ 7      │ '1/2'  │ '0/11'  │ '0'    │
+│ 1       │ 'loom-b'  │ 'serif/sans'   │ '#0b0b0a' │ 6    │ '2col 2:1 img:below' │ 80 │ 'ssssss' │ 'none,outline' │ 5      │ '1/2'  │ '1/11'  │ '0'    │
+│ 2       │ 'bakery'  │ 'rounded/sans' │ '#eef3ea' │ 6    │ '2col 1:1 img:below' │ 68 │ 'ssssss' │ 'none,card'    │ 1      │ '2/4'  │ '4/15'  │ '24'   │
+│ 3       │ 'fintech' │ 'sans/sans'    │ '#ffffff' │ 5    │ '2col 2:1 img:below' │ 80 │ 'sssss'  │ 'none'         │ 1      │ '1/2'  │ '0/14'  │ '2'    │
+│ 4       │ 'gym'     │ 'mono/sans'    │ '#0b0b0b' │ 6    │ '2col 2:1 img:below' │ 80 │ 'ssssss' │ 'none,outline' │ 6      │ '3/5'  │ '1/15'  │ '0'    │
+└─────────┴───────────┴────────────────┴───────────┴──────┴──────────────────────┴────┴──────────┴────────────────┴────────┴────────┴─────────┴────────┘
+Columns: hero = hero container and where its image is; bgStyle = s solid / g gradient / p spotlight per section;
+labels = badge/eyebrow paragraphs; arrows = arrow buttons / all buttons; centred = centred headings / all headings.
+
+Finding: fonts, colours, radius and section patterns now follow each brief, but the random number was 4 in four of
+five runs and direction 4 was 'big asymmetric type' each time, so loom-a and loom-b looked alike.
+Changes after round 1: the server never picks the same number twice in a row; the prompt requires the four
+directions to use four different hero layouts.
+
+=== Round 2: the same Loom & Line brief three times ===
+loom-1   40.5s direction 3: Bullion | bold and confident; gold is the dominant surface, with solid gold bands carrying heavy black sans type and black bands between them for the product cards | background #0a0a0a, accent #d4af37 | sans | centered-no-image
+loom-2   30.3s direction 1: Atelier Noir | hushed luxury boutique at night, gold used sparingly like stitching | background #0b0b0c, accent #c9a961 | serif | split-image-left
+loom-3   35.0s direction 3: Editorial Monolith | fashion-magazine layout with huge left-aligned serif headline, sharp 0 radius, hairline outline details and one full gold band as a pause | background #0c0b09, accent #c9a54a | serif | asymmetric-big-type
+
+┌─────────┬──────────┬──────────────┬───────────┬──────┬──────────────────────┬────┬─────────┬─────────────┬────────┬────────┬─────────┬────────┐
+│ (index) │ page     │ fonts        │ bg        │ secs │ hero                 │ h1 │ bgStyle │ surfaces    │ labels │ arrows │ centred │ radius │
+├─────────┼──────────┼──────────────┼───────────┼──────┼──────────────────────┼────┼─────────┼─────────────┼────────┼────────┼─────────┼────────┤
+│ 0       │ 'loom-1' │ 'sans/sans'  │ '#0a0a0a' │ 5    │ '2col 1:1 img:none'  │ 76 │ 'gssss' │ 'none,glow' │ 5      │ '2/6'  │ '3/11'  │ '4'    │
+│ 1       │ 'loom-2' │ 'serif/sans' │ '#0b0b0c' │ 5    │ '2col 1:1 img:left'  │ 64 │ 'sssss' │ 'none'      │ 5      │ '2/6'  │ '1/11'  │ '0'    │
+│ 2       │ 'loom-3' │ 'serif/sans' │ '#0c0b09' │ 5    │ '2col 2:1 img:below' │ 80 │ 'sssss' │ 'none'      │ 5      │ '2/5'  │ '0/11'  │ '0'    │
+└─────────┴──────────┴──────────────┴───────────┴──────┴──────────────────────┴────┴─────────┴─────────────┴────────┴────────┴─────────┴────────┘
+Result: three clearly different pages for one brief (gold hero band + centred sans / image-left serif hero /
+oversized serif headline with a wide image below), all black-and-gold. Screenshots:
+  docs/screenshots/design-variety-same-brief.png, docs/screenshots/design-variety-briefs.png
+
+=== Phone width (390 px): horizontal overflow ===
+All 8 pages: document scrollWidth 390 = viewport 390, no element past the right edge; h1 shrinks to 51-60 px.
+
+=== Structured-output grammar limit (direct API calls, max_tokens 16) ===
+Previous schema (HEAD)                                         OK
++ designDirections as objects with a hero-layout enum         400 compiled grammar is too large
++ two string arrays + one string                              400 compiled grammar is too large
++ one string array + one string                               OK (no margin: one more string fails)
++ three plain strings                                         OK
+Final: designDirections + sectionPlan as two plain strings    OK
+
+=== Checks ===
+tsc --noEmit: clean. eslint: clean. next build (isolated copy): compiled, /api/generate built.
+Browser tests are not affected: every generation scenario uses a mocked /api/generate response.
