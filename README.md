@@ -157,6 +157,8 @@ All tints use `color-mix()` with `currentColor`, so they work on any brand colou
 
 ### What Puck provides and what I built
 
+**Pre-existing code (disclosure):** the repository started from the official `create-next-app` starter (first commit `676d4bd`). Puck (MIT) is used as a library, and design ideas came from 21st.dev (see [Design system](#design-system)). Everything in the right-hand column below was written for this project, with AI assistance recorded in [docs/AI_USE.md](docs/AI_USE.md).
+
 | Puck (library) | Built for this project |
 |---|---|
 | Editor shell, selection, drag and drop, slots, inline text fields, viewport switcher, undo/redo history, outline | The six blocks and their responsive CSS; field configuration; colour, image-upload and optional-number fields; nesting rules and notes |
