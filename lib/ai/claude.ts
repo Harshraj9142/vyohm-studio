@@ -28,11 +28,14 @@ export function fallbackOptions() {
 }
 
 /**
- * Time limits per AI request (the SDK default is 10 minutes, far too long for a person
- * waiting in the editor). One automatic retry on network errors, rate limits or overload.
+ * Time limits per AI request. The SDK default is 10 minutes (plus retries), far too long
+ * for a person waiting in the editor; once we saw a single edit take 6 minutes.
+ * The SDK also retries after a timeout, so worst-case waits are limit × (retries + 1):
+ *  - generation: 150 s, no automatic retry (typical 25–45 s; the UI offers "Try again")
+ *  - edits:       60 s, one retry           (typical ~3 s)
  */
-export const GENERATE_TIMEOUT_MS = 180_000;
-export const REVISE_TIMEOUT_MS = 90_000;
+export const GENERATE_REQUEST = { timeout: 150_000, maxRetries: 0 } as const;
+export const REVISE_REQUEST = { timeout: 60_000, maxRetries: 1 } as const;
 
 /** An error with a message that is safe and useful to show the user. */
 export class AiError extends Error {

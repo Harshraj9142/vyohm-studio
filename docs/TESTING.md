@@ -68,6 +68,21 @@ Server-side error handling, observed by starting the builder with a broken confi
 | API unreachable (`ANTHROPIC_BASE_URL=http://127.0.0.1:9`) | Clear message | HTTP 503: *"Could not reach the Claude API…"* |
 | Prompt `"hi"` or a non-JSON body | Validation message | HTTP 400: *"Please describe your business in at least one sentence."* |
 
+During one full test run, a single AI edit took **356 s** to come back from the Claude API (normally ~3 s), and the `real-ai-edits` scenario timed out waiting for it. Since then every AI request has a time limit: generation 150 s with no automatic retry, edits 60 s with one retry. A timeout shows *"Claude took too long to answer. Please try again in a moment."*
+
+## Real drag-and-drop and nesting feedback
+
+[drag-and-drop.js](../tests/browser/scenarios/drag-and-drop.js): **real mouse drags**. `cdp.mjs` sends Chrome mouse input (press, move in small steps, release), and checks run while the button is held and after release.
+
+| Input | Expected | Actual (observed) |
+|---|---|---|
+| Drag a "View collection" button into the hero's left column | Moves; no warning | Parent became the hero container; no message |
+| Drag a new **Section** from the Blocks panel over the hero's right column (hold) | Red dashed outline on that column + explanation | Outline on `Container-…:right`; *"Can't drop a Section here: Sections go directly on the page. Drop it between other sections."* ([screenshot](screenshots/drag-refused.png)) |
+| …and let go | Message matches what really happened; nothing invalid nested | Puck placed the section on the page instead; message *"Placed on the page instead…"*; 0 invalid children in containers; outline removed; **Undo** removes the section |
+| Drag an existing **Container** card over the hero's right column (hold), then let go | Explanation; not nested | *"Can't drop a Container here: A container can't go inside another container…"*; card still inside its section |
+
+The first version said *"Not moved"* after the Section drop, but the page had actually gained a section. The test caught it, and the message now compares the page before and after the drop (see README, debugging example 5).
+
 ## Landing page and *Get started* chat
 
 [landing.js](../tests/browser/scenarios/landing.js) (run at 1440 px and 390 px) and [start-flow.js](../tests/browser/scenarios/start-flow.js) (fake AI answer after 6 s):
@@ -136,7 +151,7 @@ Generation got slower (20–27 s → 31–42 s) after the design system was adde
 
 Recorded honestly, with what was done instead:
 
-- **Real mouse drag-and-drop.** Tests dispatch Puck's `move` / `reorder` / `insert` actions; the drag gesture and Puck's drag-time `allow` restriction were not automated. Check by hand before a demo.
+- **Touch dragging** (phones and tablets). Real mouse drags are tested; section reorder by dragging is tested with Puck's `reorder` action.
 - **Container padding/gap/alignment/columns fields** have no dedicated test. They render through the same CSS that the mobile tests exercise.
 - **Browsers other than Chrome.**
 - **IndexedDB unavailable** (some private modes) and **storage quota exceeded**: there is code for a warning or an error message, but it was never triggered.

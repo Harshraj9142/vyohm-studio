@@ -1,7 +1,7 @@
 import type { Data } from "@puckeditor/core";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { findPageProblem } from "@/lib/page-schema";
-import { AiError, effort, fallbackOptions, GENERATE_TIMEOUT_MS, getClient, MODEL } from "./claude";
+import { AiError, effort, fallbackOptions, GENERATE_REQUEST, getClient, MODEL } from "./claude";
 import { generatedToPage } from "./convert";
 import { GeneratedPageSchema } from "./generate-schema";
 import { GENERATE_SYSTEM_PROMPT, generateUserPrompt } from "./prompts";
@@ -24,7 +24,7 @@ export async function generatePage(brief: string): Promise<{ data: Data; model: 
       format: betaZodOutputFormat(GeneratedPageSchema),
     },
     ...fallbackOptions(),
-  }, { timeout: GENERATE_TIMEOUT_MS, maxRetries: 1 });
+  }, GENERATE_REQUEST);
 
   if (response.stop_reason === "refusal") {
     throw new AiError("Claude declined to generate this page. Try rewording the brief.", 422);

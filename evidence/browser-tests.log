@@ -1,4 +1,4 @@
-Vyohm Studio browser test run — 2026-11-15 13:40 IST
+Vyohm Studio browser test run — 2026-11-15 15:02 IST
 Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs
 
 === landing (desktop 1440px) ===
@@ -164,8 +164,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 [drag 1 after] {
   "checks": {
     "Real mouse drag moves a button into another container": {
-      "expected": "Container-7346858a85f9",
-      "actual": "Container-7346858a85f9",
+      "expected": "Container-89ac3469d687",
+      "actual": "Container-89ac3469d687",
       "pass": true
     },
     "No warning for an allowed drop": {
@@ -183,8 +183,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
       "pass": true
     },
     "Refused drop area outlined in red": {
-      "expected": "Container-7346858a85f9:right",
-      "actual": "Container-7346858a85f9:right",
+      "expected": "Container-89ac3469d687:right",
+      "actual": "Container-89ac3469d687:right",
       "pass": true
     }
   }
@@ -226,7 +226,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
   "checks": {
     "Container not nested inside the other container": {
       "expected": "still inside a section",
-      "actual": "Section-edd0218a4e57",
+      "actual": "Section-3e678eaa9146",
       "pass": true
     },
     "Still nothing invalid inside containers": {
@@ -238,10 +238,10 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 }
 {
   "setup": {
-    "heroId": "Container-7346858a85f9",
-    "buttonId": "Button-896956646aa4",
-    "cardId": "Container-465ae569220f",
-    "cardParent": "Section-e6669c83b347",
+    "heroId": "Container-89ac3469d687",
+    "buttonId": "Button-a5b09c3e3a35",
+    "cardId": "Container-20f78ab88cf9",
+    "cardParent": "Section-01a8e5eed6bb",
     "sections": 3
   }
 }
@@ -329,140 +329,3 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 [screenshot] tests/browser/output/mobile-override-1440.png
 
 === ai-failures (fake AI responses) ===
-{
-  "allPassed": true,
-  "checks": {
-    "Malformed AI page rejected": {
-      "expected": "error, page unchanged",
-      "actual": "ed-ai-status--error: Generation failed. The AI result was rejected: Invalid input: expected string, received undefined (at root.props.description)Your current page was not changed.",
-      "pass": true
-    },
-    "Edit during generation -> conflict prompt": {
-      "expected": "warning, manual edit kept",
-      "actual": "ed-ai-status--warn: You edited the page while Claude was working. Replace your page with the generat",
-      "pass": true
-    },
-    "Generate -> undo -> redo": {
-      "expected": "old / new / new",
-      "actual": "Crafted to be kept. / Crafted to be kept. / Crafted to be worn, made to be remembered",
-      "pass": true
-    },
-    "Edit same element during AI edit": {
-      "expected": "warning; nothing applied until confirmed; then label + blue",
-      "actual": "ed-ai-status--warn; before confirm bg=#c9a44c; after: \"Shop the collections\" bg=#2563eb",
-      "pass": true
-    },
-    "Out-of-scope AI edit rejected": {
-      "expected": "error, page unchanged",
-      "actual": "ed-ai-status--error: Edit failed. The AI tried to change Heading \"Crafted to be kept.\", which is outside your selection. Choose \"Wh",
-      "pass": true
-    },
-    "Unsafe AI value rejected": {
-      "expected": "error, page unchanged",
-      "actual": "ed-ai-status--error: Edit failed. \"javascript:alert(1)\" is not a valid colour (use #rrggbb).Your page was not c",
-      "pass": true
-    },
-    "API error shown, page unchanged": {
-      "expected": "error message",
-      "actual": "ed-ai-status--error: Edit failed. Claude is busy (rate limit). Please wait a moment and try again.Your page was",
-      "pass": true
-    },
-    "Invalid nesting from AI rejected": {
-      "expected": "error, page unchanged",
-      "actual": "ed-ai-status--error: Edit failed. A Section cannot go inside a Container.Your page was not changed.",
-      "pass": true
-    }
-  }
-}
-[screenshot] tests/browser/output/ai-failures-1440.png
-
-=== upload-persist (part 1) ===
-{
-  "headline": "Saved headline",
-  "imageSrc": "asset:dbe2723b7a7645b1",
-  "saveStatus": "Saved 14:14"
-}
-[screenshot] tests/browser/output/upload-persist-1440.png
-
-=== after-reload (part 2: same browser profile = browser reopened) ===
-{
-  "allPassed": true,
-  "checks": {
-    "Headline restored": {
-      "expected": "Saved headline",
-      "actual": "Saved headline",
-      "pass": true
-    },
-    "Image reference saved (not a blob: URL)": {
-      "expected": "asset:…",
-      "actual": "asset:dbe2723b7a7645b1",
-      "pass": true
-    },
-    "Uploaded image visible after reload": {
-      "expected": true,
-      "actual": true,
-      "pass": true
-    }
-  }
-}
-[screenshot] tests/browser/output/after-reload-1440.png
-
-=== demo-sequence (one real Claude edit) ===
-{
-  "allPassed": true,
-  "checks": {
-    "AI status": {
-      "expected": "ok",
-      "actual": "ed-ai-status--ok (3s): Changed the background of the \"Explore the collections\" button to blue.Use Undo (top right) to revert.",
-      "pass": true
-    },
-    "Only change on the page": {
-      "expected": "exactly 1 change: the button's bgColor",
-      "actual": [
-        "page.root.props.content[0].props.content[0].props.left[3].props.bgColor: \"#c9a44c\" -> \"#2563eb\""
-      ],
-      "pass": true
-    },
-    "Headline kept": {
-      "expected": "Wear the story, not the trend",
-      "actual": "Wear the story, not the trend",
-      "pass": true
-    },
-    "Uploaded image kept": {
-      "expected": "asset:…",
-      "actual": "asset:0bdce8af08fc4313",
-      "pass": true
-    },
-    "Moved button still in hero": {
-      "expected": true,
-      "actual": true,
-      "pass": true
-    },
-    "Section order kept": {
-      "expected": [
-        "",
-        "contact",
-        "collections"
-      ],
-      "actual": [
-        "",
-        "contact",
-        "collections"
-      ],
-      "pass": true
-    },
-    "Undo / redo": {
-      "expected": "#c9a44c / blue",
-      "actual": "#c9a44c / #2563eb",
-      "pass": true
-    }
-  }
-}
-[screenshot] tests/browser/output/demo-sequence-1440.png
-
-=== real-ai-edits (two real Claude edits) ===
-[scenario error] Error: Timed out waiting for button "Apply with AI"
-    at Object.waitFor (<anonymous>:24:11)
-    at async click (<anonymous>:28:16)
-    at async <anonymous>:30:3
-[screenshot] tests/browser/output/real-ai-edits-1440.png

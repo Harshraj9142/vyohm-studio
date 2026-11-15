@@ -69,9 +69,9 @@ Status means: **Working** = verified by an automated test run (see [docs/TESTING
 | Select and edit properties; direct canvas text editing | Working | `layout-and-inline` (typing on the canvas), `demo-sequence` (settings panel) |
 | Button label, link and style; image upload/replace, size, fit, alt | Working | Fields in [puck-config.tsx](components/editor/puck-config.tsx); upload tested in `upload-persist` and `demo-sequence` |
 | Add, duplicate, delete | Working | `layout-and-inline` (action bar duplicate/delete; insert) |
-| Move between containers, reorder sections | Working, with a gap | Tested by dispatching Puck's own `move`/`reorder` actions (what a drop dispatches). Real mouse drags were not automated; check by hand. |
+| Move between containers, reorder sections | Working | `drag-and-drop`: a **real mouse drag** (Chrome input events) moves a button into another container. Section reorder is tested with Puck's own `reorder` action. |
 | Container padding, gap, alignment, columns | Working (not separately automated) | Fields plus the responsive grid in [site.css](components/site/site.css) |
-| Restrict invalid nesting with feedback | Partial | Drag-time: Puck slot `allow` lists plus a rules note in the Section/Container panels (not automated). AI-time: enforced in code and tested (`ai-failures` #8). Puck blocks invalid drops silently; there is no error toast. |
+| Restrict invalid nesting with clear feedback | Working | While dragging over a place an element can't go, that area gets a **red dashed outline** and a message explains why (e.g. *"Can't drop a Section here: Sections go directly on the page"*). After letting go, a message says what really happened (*Not moved*, or *Placed on the page instead*, which Puck does for sections). Rules come from `NESTING` ([drag-feedback.tsx](components/editor/drag-feedback.tsx)); AI edits are checked in code. Evidence: `drag-and-drop` (11 checks, real mouse), `ai-failures` #8, [screenshot](docs/screenshots/drag-refused.png). |
 | **AI revisions** of a selected element or the whole page, preserving unrelated content | Working | `demo-sequence`: after manual edits, exactly one value changed on the whole page (the button's `bgColor`). `real-ai-edits`: whole-page change touched only `radius` values. |
 | Failed or invalid AI response leaves the page intact | Working | `ai-failures` #1, #5–#8 |
 | Concurrency: manual edit while AI is pending | Working | `ai-failures` #2 and #4: conflict prompt, nothing overwritten silently |
@@ -198,13 +198,17 @@ Other choices:
 
 **4. Animations that disappeared for accessibility users.** A full-page screenshot with *reduced motion* showed the landing page's hero demo and terminal as empty boxes. My reduced-motion rule made animations finish instantly, and these looping animations end on a faded-out frame. The fix was to switch animations off (`animation: none`) for those users, so every element shows in its natural, visible state. I checked it by re-taking the reduced-motion screenshot ([landing-full.jpg](docs/screenshots/landing-full.jpg)).
 
+**5. Puck doesn't always refuse an invalid drop.** My first nesting message said *"Not moved"* after a refused drop. A real-mouse test showed the page actually gained a section: when a Section is dropped on a container column, Puck places it at the nearest allowed spot (the page) instead of refusing. The message now compares the page before and after the drop and reports what really happened (*Not moved* or *Placed on the page instead*). Verified in `drag-and-drop`, which also checks that Undo takes the section back.
+
 ## Limitations
 
 - **Browser storage:** the page and images live in this browser profile's IndexedDB only. Another browser or device won't see them; private windows and "clear site data" lose them; storage quotas vary by browser. If IndexedDB is unavailable the editor still works but shows a "not saving" warning (that path is untested). There is one page per browser, and two open tabs overwrite each other (last save wins).
 - **Images:** AI cannot create real images, only labelled placeholders. Images pasted as `https://` links stay remote in the export; only uploads are bundled. The upload limit is 8 MB, with no resizing.
 - **"Only" means only:** an AI edit like "only the background" won't fix contrast it breaks. In the coffee example the blue button keeps its dark text. There is no automatic contrast check.
 - **Fonts** are system font stacks (no web fonts), so they vary slightly by OS.
-- **Generation latency** is about 30–45 s, with no streaming. It was 20–27 s before the design system made Claude's output richer.
+- **Generation latency** is about 25–45 s, with no streaming. It was 20–27 s before the design system made Claude's output richer.
+- **AI time limits:** generation stops after 150 s (no automatic retry) and edits after 60 s (one retry), with a clear *"Claude took too long"* message. During testing one edit once took 6 minutes to come back from the API; without limits the user would just wait.
+- **Drag-and-drop** works with a mouse; touch dragging on tablets was not tested.
 - **No contact form backend:** buttons are links to sections or `mailto:`.
 - A test hook (`window.__vsPuck`) is active only in development or builds with `NEXT_PUBLIC_TEST_HOOKS=1`.
 
@@ -214,7 +218,7 @@ Other choices:
 2. Server-side persistence (database plus object storage) with page versions and sharing.
 3. Stream generation and render sections as they arrive, to cut the perceived 30–45 s wait.
 4. Unit tests for `apply.ts` and the converters, alongside the browser scenarios.
-5. Show a toast when a drop is blocked by nesting rules, instead of a silent refusal.
+5. A keyboard alternative to drag-and-drop ("move up / move down / move to…" buttons) for people who can't use a mouse.
 
 ## Project structure
 
