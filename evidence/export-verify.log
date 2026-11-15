@@ -1,23 +1,23 @@
-scripts/verify-export.sh evidence/website.zip — 2026-11-15 12:13 IST, Node v22.23.2, npm 10.9.8
+scripts/verify-export.sh evidence/website.zip — 2026-11-15 16:56 IST, Node v22.23.2, npm 10.9.8
 
-Extracted to /var/folders/v2/sfpyqcjn1vj10_nj90vyz00m0000gn/T/website-export.EmaJecufW0
+Extracted to /var/folders/v2/sfpyqcjn1vj10_nj90vyz00m0000gn/T/website-export.y1INcsN2ga
 Contents OK (1 uploaded image(s))
 
-added 30 packages in 5s
+added 30 packages in 3s
 
 > my-landing-page@1.0.0 build
 > next build
 
 ▲ Next.js 16.4.6 (Turbopack)
-✓ Running next.config.ts took 1087ms
+✓ Running next.config.ts took 1203ms
 
   Creating an optimized production build ...
-✓ Compiled successfully in 1272ms
+✓ Compiled successfully in 1417ms
   Running TypeScript ...
-  Finished TypeScript in 1408ms ...
+  Finished TypeScript in 1225ms ...
   Collecting page data using 4 workers ...
   Generating static pages using 4 workers (0/3) ...
-✓ Generating static pages using 4 workers (3/3) in 587ms
+✓ Generating static pages using 4 workers (3/3) in 360ms
   Finalizing page optimization ...
 
 Route (app)
@@ -29,4 +29,4 @@ Route (app)
 
 
 PASS: the export installs and builds.
-To view it: cd "/var/folders/v2/sfpyqcjn1vj10_nj90vyz00m0000gn/T/website-export.EmaJecufW0" && npm run start
+To view it: cd "/var/folders/v2/sfpyqcjn1vj10_nj90vyz00m0000gn/T/website-export.y1INcsN2ga" && npm run start

@@ -1,37 +1,39 @@
-Exported site checks (npm run start of evidence/website.zip, extracted fresh) — 2026-11-15 12:14 IST
+Exported site checks (npm run start of evidence/website.zip, extracted fresh) — 2026-11-15 16:56 IST
 
 === desktop 1280px ===
 {
   "width": 1280,
   "title": "Ember & Oak — Specialty Coffee Roastery, Bengaluru",
   "h1": "Roasted slowly. Poured with care.",
-  "h1FontSize": "62px",
+  "h1FontSize": "78px",
   "firstButton": {
     "label": "Visit the café",
     "href": "#contact",
     "background": "rgb(37, 99, 235)"
   },
   "uploadedImage": {
-    "src": "/assets/0305303b48234b14.jpg",
+    "src": "/assets/fcf7825b1a504f7b.jpg",
     "loaded": true
   },
   "sections": [
     "home",
     "contact",
     "coffees",
-    "process"
+    "process",
+    "philosophy",
+    "cafe"
   ],
   "columnsInFirstContainer": 2,
   "horizontalOverflow": false,
   "designOptions": {
-    "liveSections": 4,
+    "liveSections": 6,
     "surfaces": [
-      "vs-container--card",
-      "vs-container--card",
-      "vs-container--card"
+      "vs-container--outline",
+      "vs-container--outline",
+      "vs-container--outline"
     ],
-    "paragraphStyles": 11,
-    "arrowButtons": 2
+    "paragraphStyles": 7,
+    "arrowButtons": 1
   }
 }
 [screenshot] docs/screenshots/exported-desktop.png
@@ -48,26 +50,31 @@ Exported site checks (npm run start of evidence/website.zip, extracted fresh) �
     "background": "rgb(37, 99, 235)"
   },
   "uploadedImage": {
-    "src": "/assets/0305303b48234b14.jpg",
+    "src": "/assets/fcf7825b1a504f7b.jpg",
     "loaded": true
   },
   "sections": [
     "home",
     "contact",
     "coffees",
-    "process"
+    "process",
+    "philosophy",
+    "cafe"
   ],
   "columnsInFirstContainer": 1,
   "horizontalOverflow": false,
   "designOptions": {
-    "liveSections": 4,
+    "liveSections": 6,
     "surfaces": [
-      "vs-container--card",
-      "vs-container--card",
-      "vs-container--card"
+      "vs-container--outline",
+      "vs-container--outline",
+      "vs-container--outline"
     ],
-    "paragraphStyles": 11,
-    "arrowButtons": 2
+    "paragraphStyles": 7,
+    "arrowButtons": 1
   }
 }
 [screenshot] docs/screenshots/exported-mobile.png
+
+=== full page 1280px ===
+[screenshot] docs/screenshots/exported-full-page.png

@@ -1,19 +1,28 @@
+Full flow for the final export — 2026-11-15 16:56 IST
+Builder: production build of the final code (NEXT_PUBLIC_TEST_HOOKS=1) on :3211; scenario tests/browser/scenarios/full-flow-export.js; real Claude calls
+
 [saved] evidence/website.zip
 {
-  "generate": "ed-ai-status--ok in 42s",
+  "generate": "ed-ai-status--ok in 44s",
   "headline": "Roasted slowly. Poured with care.",
-  "heroImage": "asset:0305303b48234b14",
+  "heroImage": "asset:fcf7825b1a504f7b",
   "sectionOrder": [
     "home",
     "contact",
     "coffees",
-    "process"
+    "process",
+    "philosophy",
+    "cafe"
   ],
   "h1Mobile": {
     "fontSize": 34
   },
-  "aiEdit": "ed-ai-status--ok in 3s: Changed the 'Visit the café' button background to blue.Use Undo (top right) to revert.",
-  "export": "Saved 12:13 | Exported with 1 image",
-  "zipBytes": 41034
+  "aiEdit": "ed-ai-status--ok in 2s: Changed the selected button's background colour to blue.Use Undo (top right) to revert.",
+  "export": "Saved 16:56 | Exported with 1 image",
+  "zipBytes": 42407
 }
 [screenshot] docs/screenshots/editor.png
+
+Server log (proof of the real model calls):
+[ai] generated page with claude-opus-5-5 in 44199 ms — direction 3: Kiln Ledger | raw roastery-floor honesty, mono type set like batch logs, sharp corners and one dark espresso band for the roast process | background #F3E9D8, accent #3B2316 | mono | asymmetric-big-type
+[ai] revision with claude-opus-5-5 in 2224 ms, 1 operation(s), attempt 1

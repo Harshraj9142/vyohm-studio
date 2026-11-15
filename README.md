@@ -258,7 +258,7 @@ The settings panel of a section or container repeats its rule in a short note.
 2. Keep **Selected** to change only that element (and what is inside it), or choose **Whole page**.
 3. **Type an instruction,** for example *"Change only this button's background to blue"*. **Use suggestion** fills in an example that fits the selected element.
 4. Click **Apply with AI** (or press ⌘Enter). Edits take about 3 seconds.
-5. A green box says what changed: *"Changed the hero button's background colour to blue. Use Undo (top right) to revert."* The element stays selected, and its settings panel shows the new value (`#2563eb`).
+5. A green box says what changed: *"Changed the hero button's background to blue. Use Undo (top right) to revert."* (Claude writes this summary itself, so the wording varies a little.) The element stays selected, and its settings panel shows the new value (`#2563eb`).
 
 What the AI can do: change any setting or text, add, delete or move elements, and change page settings (fonts, colours, title).
 
@@ -351,7 +351,7 @@ Proof: [export-verify.log](evidence/export-verify.log), [exported-site.log](evid
 
 | Requirement | Status | Evidence / notes |
 |---|---|---|
-| **AI generation** from a fresh prompt via a real model call: relevant copy, requested theme, multi-section page | Working | Seven briefs generated with the real model (clothing, bakery, yoga, architecture, coffee ×2, bicycle shop), 20–42 s each. Each run follows the requested colours and item counts. [full-flow.log](evidence/full-flow.log), [TESTING.md](docs/TESTING.md#ai-generation-runs-real-model-claude-opus-5-5-effort-medium) |
+| **AI generation** from a fresh prompt via a real model call: relevant copy, requested theme, multi-section page | Working | Real-model runs for many briefs (clothing, bakery, yoga, architecture, coffee, bicycle shop, fintech app, gym), 20–45 s each, including the final export run. Each run follows the requested colours and item counts. [full-flow.log](evidence/full-flow.log), [TESTING.md](docs/TESTING.md#ai-generation-runs-real-model-claude-opus-5-5-effort-medium) |
 | Varied designs for the same kind of brief | Working | Claude proposes four design directions and builds the one the server picks at random ([7.2](#72-generating-a-page)). 8 real runs in [design-variety.log](evidence/design-variety.log): [same brief three times](docs/screenshots/design-variety-same-brief.png), [four different briefs](docs/screenshots/design-variety-briefs.png). |
 | Generation loading and failure states | Working | Build steps, timer and Cancel. Malformed answers and API errors are rejected and the page is unchanged (`ai-failures`, server error cases in TESTING.md). |
 | Six element types; container with 1 or 2 columns and nested elements | Working | [blocks.tsx](components/site/blocks.tsx), [puck-config.tsx](components/editor/puck-config.tsx) |
@@ -556,9 +556,9 @@ Generated pages share a small design system. The ideas came from the **21st.dev*
 
 All tints use `color-mix()` with `currentColor`, so they work with any brand colour and on dark or light pages. On the exported site, items fade up as they scroll into view (CSS scroll-driven animation) and cards lift on hover. Both are off inside the editor and for visitors who prefer reduced motion. The generation prompt explains each option so Claude uses them where they fit the chosen direction, not everywhere.
 
-<p align="center"><img src="docs/screenshots/exported-design-system.png" alt="Exported page using the design system: eyebrow label, lead text, arrow button, brand-colour band with a badge, and three card surfaces" width="640"></p>
+<p align="center"><img src="docs/screenshots/exported-design-system.png" alt="Exported page using the design system: eyebrow labels, an arrow button, and three outline cards with corner marks" width="640"></p>
 
-*An exported page (Ember & Oak, a coffee roastery): eyebrow label and lead text in the hero, arrow buttons, a brand-colour band with a badge, and three `card` surfaces. [See the full page](docs/screenshots/exported-full-page.png).*
+*The final exported page ([evidence/website.zip](evidence/website.zip)): Ember & Oak, a coffee roastery, built in the "Kiln Ledger" direction (mono headings, sharp corners, big-type hero). It shows eyebrow labels, an arrow button (turned blue by the AI edit), and three `outline` cards with "+" corner marks. [See the full page](docs/screenshots/exported-full-page.png).*
 
 ---
 

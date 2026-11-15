@@ -33,7 +33,7 @@ npm run verify-export -- evidence/website.zip
 |---|---|---|
 | Browser scenarios (18 runs, 93 checks, including real mouse drags and image cropping) | **93 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
 | Full flow: generate → manual edits → mobile override → AI edit → export | Completed | [full-flow.log](../evidence/full-flow.log) |
-| Export verification: fresh folder, `npm ci` + `npm run build` | **PASS** (`npm ci` 5 s, build 5 s) | [export-verify.log](../evidence/export-verify.log) |
+| Export verification: fresh folder, `npm ci` + `npm run build` | **PASS** (`npm ci`: 30 packages in 3 s; build compiled in 1.4 s) | [export-verify.log](../evidence/export-verify.log) |
 | Exported site served with `npm run start`, checked at 1280 px and 390 px | Matches the editor; no overflow | [exported-site.log](../evidence/exported-site.log) |
 | `tsc --noEmit`, `eslint`, `next build` of the builder | Clean | — |
 
@@ -111,7 +111,7 @@ The first version said *"Not moved"* after the Section drop, but the page had ac
 | Settings panel: Paragraph *Style* → Badge | Pill label | `variant: "badge"` |
 | Settings panel: Section *Background style* → Soft gradient, then Undo | Gradient, then back to solid | `vs-section--gradient` applied; Undo → `solid` |
 | Editor preview | No scroll fade-in or hover lift inside the editor | 0 live sections / 0 live containers |
-| Exported coffee page | Live effects on; generated options rendered | 4 live sections, 3 `card` surfaces, 11 styled paragraphs, 2 arrow buttons ([exported-site.log](../evidence/exported-site.log)) |
+| Exported coffee page | Live effects on; generated options rendered | 6 live sections, 3 `outline` surfaces, 7 styled paragraphs, 1 arrow button ([exported-site.log](../evidence/exported-site.log)) |
 | Old pages without the new settings (test fixture) | Still load and validate | `ai-failures` uses the older fixture and passes |
 
 ## AI generation runs (real model, `claude-opus-5-5`, effort `medium`)
@@ -123,9 +123,9 @@ The first version said *"Not moved"* after the Section drop, but the page had ac
 | Still Point, yoga studio, sage green and cream, three class types, booking button | 22 s | Sections `home, classes, about, contact`; 3 class types, each with a booking button |
 | Ember & Oak, coffee roastery in Bengaluru, espresso brown and cream, three coffees, roasting process, café button | 20 s | Brown/cream theme, serif headings (before the design system) |
 | Northline, minimal architecture studio in Pune, white/charcoal + terracotta, three services, consultation button | 31 s | *With the design system:* gradient hero, 7 eyebrow labels, 4 lead paragraphs, 3 `outline` service cards, charcoal CTA band, 2 arrow buttons |
-| Ember & Oak again, for the final export | 42 s | *With the design system:* badge labels, 3 `card` coffee cards, espresso-brown CTA band ([full-flow.log](../evidence/full-flow.log), [screenshot](screenshots/exported-full-page.png)) |
-
+| Ember & Oak again, for an earlier export (12:13) | 42 s | *With the design system:* badge labels, 3 `card` coffee cards, espresso-brown CTA band |
 | Spoke & Chain, bicycle repair shop and café corner in Pune, green and cream | 35 s | *With design directions:* Claude wrote 4 directions and the server picked number 1, "Garden Workshop" (cream `#F6F1E3`, green `#2F6B3A`, rounded headings, hero layout `split-image-left`). The page followed it: hero image on the left, then 6 sections using different patterns (card grid, two-up, steps, café row with gradient, green contact band). Server log: `[ai] generated page with claude-opus-5-5 in 35367 ms — direction 1: Garden Workshop …` |
+| Ember & Oak, **final export** on the final code (16:56) | 44 s | *With design directions:* direction 3, "Kiln Ledger" (cream `#F3E9D8`, espresso `#3B2316`, mono headings, hero layout `asymmetric-big-type`). 6 sections: big-type hero with a wide image, 3 `outline` coffee cards with eyebrow labels, a dark espresso band for the 4 roast steps, a statement, a café section. Then the AI edit took 2 s (1 operation). [full-flow.log](../evidence/full-flow.log), [screenshot](screenshots/exported-full-page.png) |
 
 Generation got slower (20–27 s → 31–42 s) after the design system was added, because Claude's JSON now includes more style fields. Design directions add a few lines of planning to each answer (35 s in the run above).
 
@@ -149,7 +149,7 @@ The browser tests are not affected by design directions: every generation scenar
 | Input | Expected | Actual (observed) |
 |---|---|---|
 | Edit the headline and upload a JPEG; then close and reopen the browser (same Chrome profile) | Headline and image restored | Headline "Saved headline" restored; image saved as `asset:74d5cd9659ff4139` (not a `blob:` URL) and visible after reload |
-| Export after uploading | Image file in `public/assets/`, portable path in `page.json` | `public/assets/0305303b48234b14.jpg`, `"src": "/assets/0305303b48234b14.jpg"`; no `asset:` or `blob:` left; loads when served |
+| Export after uploading | Image file in `public/assets/`, portable path in `page.json` | `public/assets/fcf7825b1a504f7b.jpg`, `"src": "/assets/fcf7825b1a504f7b.jpg"`; no `asset:` or `blob:` left; loads when served |
 
 ## Image cropping and image links
 
@@ -179,15 +179,15 @@ The first run of the rotation step failed: the result was 506 × 900, only part 
 | Switch to the Mobile preview | 390 px wide, columns stack, no horizontal overflow | 390 px, 1 column, no overflow |
 | No override set | Headings scale down on phones | 64 px heading shows at 48 px (75 %) |
 | Set the heading's mobile font size to 30 | Phone 30 px, desktop unchanged | Phone 30 px, desktop 64 px; Undo → override removed; Redo → 30 |
-| Exported site (coffee page) at 390 px | Override and stacking preserved | h1 34 px on phone / 62 px desktop, 1 column / 2 columns, no overflow |
+| Exported site (coffee page) at 390 px | Override and stacking preserved | h1 34 px on phone / 78 px desktop, 1 column / 2 columns, no overflow |
 
 ## Export
 
 | Input | Expected | Actual (observed) |
 |---|---|---|
-| [evidence/website.zip](../evidence/website.zip), produced after a generation, manual edits, a mobile override and an AI edit | Fresh-folder `npm ci`, `npm run build`, `npm run start` work without the builder or an API key | `npm ci`: 30 packages in 5 s. `npm run build`: compiled, `/` prerendered as static. `npm run start` serves the page. |
+| [evidence/website.zip](../evidence/website.zip), produced after a generation, manual edits, a mobile override and an AI edit | Fresh-folder `npm ci`, `npm run build`, `npm run start` work without the builder or an API key | `npm ci`: 30 packages in 3 s. `npm run build`: compiled, `/` prerendered as static. `npm run start` serves the page and the uploaded image (HTTP 200, `image/jpeg`). |
 | ZIP contents | No secrets, no editor-only references | No `.env`, no `sk-ant` strings, no `asset:` or `blob:` in `data/page.json` (checked by [verify-export.sh](../scripts/verify-export.sh)) |
-| Served export vs editor | Same text, links, order, styles | Title, headline, blue `#2563eb` button with `#contact` link, uploaded image, section order `home, contact, coffees, process` all as edited ([screenshots](screenshots/)) |
+| Served export vs editor | Same text, links, order, styles | Title, headline, blue `#2563eb` button with `#contact` link, uploaded image, section order `home, contact, coffees, process, philosophy, cafe` all as edited ([screenshots](screenshots/)) |
 
 ## Not tested
 
