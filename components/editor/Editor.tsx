@@ -5,9 +5,10 @@ import "@/components/site/site.css";
 import "./editor.css";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { Puck, type Data, type Viewports } from "@puckeditor/core";
+import { blocksPlugin, outlinePlugin, Puck, type Data, type Viewports } from "@puckeditor/core";
 import { registerAssetUrl } from "@/components/site/assets";
 import { getAllAssets, loadPage, savePage } from "@/lib/storage";
+import { aiPlugin } from "./ai-panel";
 import { puckConfig } from "./puck-config";
 import { createStarterPage } from "./starter-page";
 import { setSaveStatus, useSaveStatus } from "./save-status";
@@ -20,6 +21,12 @@ const viewports: Viewports = [
 ];
 
 const AUTOSAVE_DELAY_MS = 800;
+
+/**
+ * Left rail tabs. Puck always adds Blocks and Outline first; listing them again
+ * after our AI tab moves AI to the top.
+ */
+const plugins = [aiPlugin, blocksPlugin(), outlinePlugin()];
 
 type LoadState =
   | { kind: "loading" }
@@ -105,6 +112,8 @@ export function Editor() {
         data={load.data}
         onChange={scheduleSave}
         onPublish={save}
+        plugins={plugins}
+        ui={{ plugin: { current: "ai" } }}
         viewports={viewports}
         iframe={{ enabled: true }}
         headerTitle="Vyohm Studio"

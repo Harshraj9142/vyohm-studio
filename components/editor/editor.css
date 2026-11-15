@@ -153,3 +153,115 @@
   background: #eff6ff;
   color: #1e3a8a;
 }
+
+/* ---------- AI panel ---------- */
+
+.ed-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.ed-ai-panel {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  font: 13px/1.5 system-ui, sans-serif;
+  color: #1d2939;
+}
+
+.ed-ai-card {
+  display: grid;
+  gap: 10px;
+}
+
+.ed-ai-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.ed-ai-help {
+  margin: 0;
+  color: #475467;
+}
+
+.ed-ai-help--muted {
+  color: #667085;
+  font-size: 12px;
+}
+
+.ed-ai-textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.ed-ai-actions {
+  flex-wrap: wrap;
+}
+
+.ed-ai-go {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+.ed-ai-status {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.ed-ai-status p {
+  margin: 0;
+}
+
+.ed-ai-status--error {
+  border-color: #fda29b;
+  background: #fef3f2;
+  color: #912018;
+}
+
+.ed-ai-status--warn {
+  border-color: #fec84b;
+  background: #fffaeb;
+  color: #7a2e0e;
+}
+
+.ed-ai-status--ok {
+  border-color: #a6f4c5;
+  background: #ecfdf3;
+  color: #05603a;
+}
+
+.ed-ai-progress {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #e4e7ec;
+  position: relative;
+}
+
+.ed-ai-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  border-radius: 2px;
+  background: #1d4ed8;
+  animation: ed-ai-slide 1.2s ease-in-out infinite;
+}
+
+@keyframes ed-ai-slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-ai-progress::after { animation: none; width: 100%; opacity: 0.5; }
+}

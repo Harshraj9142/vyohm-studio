@@ -110,6 +110,19 @@ export type ButtonData = {
   mobile: { fullWidth?: "" | "yes"; align?: Align | "" };
 };
 
+/**
+ * Allowed number ranges, [min, max]. One source of truth for:
+ * the editor's number fields, cleaning up AI output, and page validation.
+ */
+export const LIMITS = {
+  Section: { paddingY: [0, 320], gap: [0, 160], maxWidth: [320, 1600] },
+  Container: { gap: [0, 160], padding: [0, 160], radius: [0, 64] },
+  Heading: { fontSize: [10, 160] },
+  Paragraph: { fontSize: [10, 48] },
+  Image: { width: [10, 100], height: [0, 1200], radius: [0, 400] },
+  Button: { radius: [0, 64] },
+} as const satisfies Record<string, Record<string, readonly [number, number]>>;
+
 /** Starting values for each element type (used by the editor and when building AI pages). */
 export const DEFAULT_ROOT: PageRootData = {
   title: "My landing page",

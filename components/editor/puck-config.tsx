@@ -13,6 +13,7 @@ import {
 import {
   DEFAULT_PROPS,
   DEFAULT_ROOT,
+  LIMITS,
   NESTING,
   type ButtonData,
   type ContainerData,
@@ -46,6 +47,9 @@ type Props = {
 };
 type RootProps = PageRootData & { content: Slot };
 
+/** Turn a [min, max] pair from LIMITS into Puck field options. */
+const range = ([min, max]: readonly [number, number]) => ({ min, max });
+
 const alignOptions = [
   { label: "Left", value: "left" },
   { label: "Center", value: "center" },
@@ -69,15 +73,15 @@ const SectionConfig: ComponentConfig<Props["Section"]> = {
     anchor: { type: "text", label: "Anchor name (for links like #contact)" },
     bgColor: colorField("Background"),
     textColor: colorField("Text colour"),
-    paddingY: { type: "number", label: "Vertical padding (px)", min: 0, max: 320 },
-    gap: { type: "number", label: "Space between items (px)", min: 0, max: 160 },
-    maxWidth: { type: "number", label: "Content width (px)", min: 320, max: 1600 },
+    paddingY: { type: "number", label: "Vertical padding (px)", ...range(LIMITS.Section.paddingY) },
+    gap: { type: "number", label: "Space between items (px)", ...range(LIMITS.Section.gap) },
+    maxWidth: { type: "number", label: "Content width (px)", ...range(LIMITS.Section.maxWidth) },
     mobile: {
       type: "object",
       label: "Mobile overrides",
       objectFields: {
-        paddingY: optionalNumberField("Vertical padding", { min: 0, max: 320 }),
-        gap: optionalNumberField("Space between items", { min: 0, max: 160 }),
+        paddingY: optionalNumberField("Vertical padding", { ...range(LIMITS.Section.paddingY) }),
+        gap: optionalNumberField("Space between items", { ...range(LIMITS.Section.gap) }),
       },
     },
   },
@@ -121,10 +125,10 @@ const ContainerConfig: ComponentConfig<Props["Container"]> = {
         { label: "Bottom", value: "end" },
       ],
     },
-    gap: { type: "number", label: "Gap between columns (px)", min: 0, max: 160 },
-    padding: { type: "number", label: "Padding (px)", min: 0, max: 160 },
+    gap: { type: "number", label: "Gap between columns (px)", ...range(LIMITS.Container.gap) },
+    padding: { type: "number", label: "Padding (px)", ...range(LIMITS.Container.padding) },
     bgColor: colorField("Background", "None"),
-    radius: { type: "number", label: "Corner radius (px)", min: 0, max: 64 },
+    radius: { type: "number", label: "Corner radius (px)", ...range(LIMITS.Container.radius) },
     mobile: {
       type: "object",
       label: "Mobile overrides",
@@ -137,8 +141,8 @@ const ContainerConfig: ComponentConfig<Props["Container"]> = {
             { label: "Keep side by side", value: "2" },
           ],
         },
-        gap: optionalNumberField("Gap", { min: 0, max: 160 }),
-        padding: optionalNumberField("Padding", { min: 0, max: 160 }),
+        gap: optionalNumberField("Gap", { ...range(LIMITS.Container.gap) }),
+        padding: optionalNumberField("Padding", { ...range(LIMITS.Container.padding) }),
       },
     },
   },
@@ -165,7 +169,7 @@ const HeadingConfig: ComponentConfig<Props["Heading"]> = {
         { label: "H3 – small title", value: "h3" },
       ],
     },
-    fontSize: { type: "number", label: "Font size (px)", min: 10, max: 160 },
+    fontSize: { type: "number", label: "Font size (px)", ...range(LIMITS.Heading.fontSize) },
     fontWeight: {
       type: "select",
       label: "Weight",
@@ -183,7 +187,7 @@ const HeadingConfig: ComponentConfig<Props["Heading"]> = {
       type: "object",
       label: "Mobile overrides",
       objectFields: {
-        fontSize: optionalNumberField("Font size", { min: 10, max: 160 }),
+        fontSize: optionalNumberField("Font size", { ...range(LIMITS.Heading.fontSize) }),
         align: { type: "select", label: "Alignment", options: mobileAlignOptions },
       },
     },
@@ -198,14 +202,14 @@ const ParagraphConfig: ComponentConfig<Props["Paragraph"]> = {
   label: "Paragraph",
   fields: {
     text: { type: "textarea", label: "Text", contentEditable: true },
-    fontSize: { type: "number", label: "Font size (px)", min: 10, max: 48 },
+    fontSize: { type: "number", label: "Font size (px)", ...range(LIMITS.Paragraph.fontSize) },
     color: colorField("Colour"),
     align: { type: "radio", label: "Alignment", options: alignOptions },
     mobile: {
       type: "object",
       label: "Mobile overrides",
       objectFields: {
-        fontSize: optionalNumberField("Font size", { min: 10, max: 48 }),
+        fontSize: optionalNumberField("Font size", { ...range(LIMITS.Paragraph.fontSize) }),
         align: { type: "select", label: "Alignment", options: mobileAlignOptions },
       },
     },
@@ -221,8 +225,8 @@ const ImageConfig: ComponentConfig<Props["Image"]> = {
   fields: {
     src: imageField,
     alt: { type: "text", label: "Alt text (describe the image)" },
-    width: { type: "number", label: "Width (% of column)", min: 10, max: 100 },
-    height: { type: "number", label: "Height (px, 0 = automatic)", min: 0, max: 1200 },
+    width: { type: "number", label: "Width (% of column)", ...range(LIMITS.Image.width) },
+    height: { type: "number", label: "Height (px, 0 = automatic)", ...range(LIMITS.Image.height) },
     fit: {
       type: "radio",
       label: "Fit",
@@ -231,14 +235,14 @@ const ImageConfig: ComponentConfig<Props["Image"]> = {
         { label: "Fit (no crop)", value: "contain" },
       ],
     },
-    radius: { type: "number", label: "Corner radius (px)", min: 0, max: 400 },
+    radius: { type: "number", label: "Corner radius (px)", ...range(LIMITS.Image.radius) },
     align: { type: "radio", label: "Alignment", options: alignOptions },
     mobile: {
       type: "object",
       label: "Mobile overrides",
       objectFields: {
-        width: optionalNumberField("Width", { min: 10, max: 100, unit: "%" }),
-        height: optionalNumberField("Height", { min: 0, max: 1200 }),
+        width: optionalNumberField("Width", { ...range(LIMITS.Image.width), unit: "%" }),
+        height: optionalNumberField("Height", { ...range(LIMITS.Image.height) }),
       },
     },
   },
@@ -280,7 +284,7 @@ const ButtonConfig: ComponentConfig<Props["Button"]> = {
         { label: "L", value: "lg" },
       ],
     },
-    radius: { type: "number", label: "Corner radius (px)", min: 0, max: 64 },
+    radius: { type: "number", label: "Corner radius (px)", ...range(LIMITS.Button.radius) },
     align: { type: "radio", label: "Alignment", options: alignOptions },
     mobile: {
       type: "object",
