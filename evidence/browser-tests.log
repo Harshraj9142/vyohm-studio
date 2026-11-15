@@ -1,4 +1,4 @@
-Vyohm Studio browser test run — 2026-11-15 12:34 IST
+Vyohm Studio browser test run — 2026-11-15 13:40 IST
 Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs
 
 === landing (desktop 1440px) ===
@@ -160,6 +160,93 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 }
 [screenshot] tests/browser/output/layout-and-inline-1440.png
 
+=== drag-and-drop (REAL mouse drags: allowed move + refused drops with feedback) ===
+[drag 1 after] {
+  "checks": {
+    "Real mouse drag moves a button into another container": {
+      "expected": "Container-7346858a85f9",
+      "actual": "Container-7346858a85f9",
+      "pass": true
+    },
+    "No warning for an allowed drop": {
+      "expected": null,
+      "actual": null,
+      "pass": true
+    }
+  }
+}
+[drag 2 during] {
+  "checks": {
+    "Message while dragging a Section over a column": {
+      "expected": "Can't drop a Section here…",
+      "actual": "Can't drop a Section hereSections go directly on the page. Drop it between other sections.",
+      "pass": true
+    },
+    "Refused drop area outlined in red": {
+      "expected": "Container-7346858a85f9:right",
+      "actual": "Container-7346858a85f9:right",
+      "pass": true
+    }
+  }
+}
+[drag 2 after] {
+  "checks": {
+    "Message after letting go matches what happened": {
+      "expected": "added elsewhere -> 'Placed on the page instead…' / unchanged -> 'Not moved…'",
+      "actual": "added on the page: Placed on the page insteadA section can't go there, so it was put in the nearest allowed spot. Use Undo to take it back.",
+      "pass": true
+    },
+    "Nothing invalid inside any container": {
+      "expected": 0,
+      "actual": 0,
+      "pass": true
+    },
+    "Red outline removed": {
+      "expected": null,
+      "actual": null,
+      "pass": true
+    },
+    "Undo takes the dropped Section back": {
+      "expected": "3 sections",
+      "actual": "3 sections",
+      "pass": true
+    }
+  }
+}
+[drag 3 during] {
+  "checks": {
+    "Message while dragging a Container into a container": {
+      "expected": "Can't drop a Container here…",
+      "actual": "Can't drop a Container hereA container can't go inside another container. Drop it into a section.",
+      "pass": true
+    }
+  }
+}
+[drag 3 after] {
+  "checks": {
+    "Container not nested inside the other container": {
+      "expected": "still inside a section",
+      "actual": "Section-edd0218a4e57",
+      "pass": true
+    },
+    "Still nothing invalid inside containers": {
+      "expected": 0,
+      "actual": 0,
+      "pass": true
+    }
+  }
+}
+{
+  "setup": {
+    "heroId": "Container-7346858a85f9",
+    "buttonId": "Button-896956646aa4",
+    "cardId": "Container-465ae569220f",
+    "cardParent": "Section-e6669c83b347",
+    "sections": 3
+  }
+}
+[screenshot] tests/browser/output/drag-and-drop-1440.png
+
 === design-options ===
 {
   "allPassed": true,
@@ -292,8 +379,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 === upload-persist (part 1) ===
 {
   "headline": "Saved headline",
-  "imageSrc": "asset:3ad29340b8934e57",
-  "saveStatus": "Saved 12:36"
+  "imageSrc": "asset:dbe2723b7a7645b1",
+  "saveStatus": "Saved 14:14"
 }
 [screenshot] tests/browser/output/upload-persist-1440.png
 
@@ -308,7 +395,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Image reference saved (not a blob: URL)": {
       "expected": "asset:…",
-      "actual": "asset:3ad29340b8934e57",
+      "actual": "asset:dbe2723b7a7645b1",
       "pass": true
     },
     "Uploaded image visible after reload": {
@@ -343,7 +430,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Uploaded image kept": {
       "expected": "asset:…",
-      "actual": "asset:1ccb006f142840e8",
+      "actual": "asset:0bdce8af08fc4313",
       "pass": true
     },
     "Moved button still in hero": {
@@ -374,19 +461,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 [screenshot] tests/browser/output/demo-sequence-1440.png
 
 === real-ai-edits (two real Claude edits) ===
-{
-  "allPassed": true,
-  "checks": {
-    "Mobile-aware edit": {
-      "expected": "only the heading's mobile.fontSize changes; desktop 64px unchanged",
-      "actual": "ed-ai-status--ok (3s): [\"page.root.props.content[0].props.content[0].props.left[1].props.mobile.fontSize: undefined -> 40\"]; desktop 64px",
-      "pass": true
-    },
-    "Whole-page edit": {
-      "expected": "only button radius values change",
-      "actual": "ed-ai-status--ok (4s): 5 change(s): [\"page.root.props.content[0].props.content[0].props.left[3].props.radius: 2 -> 64\",\"page.root.props.content[1].props.content[1].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[2].props.left[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[3].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[2].props.content[3].props.radius: 2 -> 64\"]",
-      "pass": true
-    }
-  }
-}
+[scenario error] Error: Timed out waiting for button "Apply with AI"
+    at Object.waitFor (<anonymous>:24:11)
+    at async click (<anonymous>:28:16)
+    at async <anonymous>:30:3
 [screenshot] tests/browser/output/real-ai-edits-1440.png

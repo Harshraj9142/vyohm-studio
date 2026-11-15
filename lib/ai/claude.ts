@@ -27,6 +27,13 @@ export function fallbackOptions() {
     : {};
 }
 
+/**
+ * Time limits per AI request (the SDK default is 10 minutes, far too long for a person
+ * waiting in the editor). One automatic retry on network errors, rate limits or overload.
+ */
+export const GENERATE_TIMEOUT_MS = 180_000;
+export const REVISE_TIMEOUT_MS = 90_000;
+
 /** An error with a message that is safe and useful to show the user. */
 export class AiError extends Error {
   constructor(
@@ -62,6 +69,9 @@ export function toAiError(error: unknown): AiError {
   }
   if (error instanceof Anthropic.BadRequestError) {
     return new AiError(`Claude rejected the request: ${error.message}`, 502);
+  }
+  if (error instanceof Anthropic.APIConnectionTimeoutError) {
+    return new AiError("Claude took too long to answer. Please try again in a moment.", 504);
   }
   if (error instanceof Anthropic.APIConnectionError) {
     return new AiError("Could not reach the Claude API. Check your internet connection.", 503);

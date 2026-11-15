@@ -3,7 +3,7 @@ import type { Data } from "@puckeditor/core";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { applyOperations, describe, type Scope } from "@/lib/revise/apply";
 import { walkElements } from "@/lib/page-tree";
-import { AiError, effort, fallbackOptions, getClient, MODEL } from "./claude";
+import { AiError, effort, fallbackOptions, getClient, MODEL, REVISE_TIMEOUT_MS } from "./claude";
 import { REVISE_SYSTEM_PROMPT, reviseUserPrompt } from "./prompts";
 import { RevisionSchema, type Operation } from "./revise-schema";
 
@@ -55,7 +55,7 @@ export async function revisePage(input: {
         format: betaZodOutputFormat(RevisionSchema),
       },
       ...fallbackOptions(),
-    });
+    }, { timeout: REVISE_TIMEOUT_MS, maxRetries: 1 });
 
     if (response.stop_reason === "refusal") {
       throw new AiError("Claude declined this edit. Try rewording the instruction.", 422);

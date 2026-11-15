@@ -17,6 +17,7 @@ import {
 import { registerAssetUrl } from "@/components/site/assets";
 import { getAllAssets, loadPage, savePage } from "@/lib/storage";
 import { aiPlugin } from "./ai-panel";
+import { DragFeedback } from "./drag-feedback";
 import { ExportButton } from "./export-button";
 import { puckConfig } from "./puck-config";
 import { createStarterPage } from "./starter-page";
@@ -135,6 +136,7 @@ export function Editor() {
           headerActions: ({ children }: { children: ReactNode }) => (
             <>
               {TEST_HOOKS ? <DevTestHook /> : null}
+              <DragFeedback />
               <SaveIndicator />
               {/* Back to the chat to generate a new page from a description. */}
               <PuckButton href="/start" variant="secondary">

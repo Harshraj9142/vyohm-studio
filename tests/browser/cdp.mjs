@@ -128,6 +128,42 @@ if (args.script) {
     exitCode = 1;
   } else {
     const value = result?.result?.value;
+    // Real mouse drags: { __drags: [{ from, to, during?: "js", after?: "js" }] } where from/to are
+    // main-page {x,y} or JS expressions returning them. `during` runs while the button is still held.
+    if (value?.__drags) {
+      const mouse = (type, x, y, buttons) =>
+        send("Input.dispatchMouseEvent", { type, x, y, button: type === "mouseMoved" && !buttons ? "none" : "left", buttons, clickCount: type === "mouseMoved" ? 0 : 1 });
+      const evaluate = async (expression) => {
+        const r = await send("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true });
+        return r.result?.exceptionDetails ? { error: r.result.exceptionDetails.exception?.description } : r.result?.result?.value;
+      };
+      for (const [n, spec] of value.__drags.entries()) {
+        // `from` / `to` may be JS expressions, evaluated right before this drag (layout may have changed).
+        const drag = { ...spec };
+        if (typeof drag.from === "string") drag.from = await evaluate(drag.from);
+        if (typeof drag.to === "string") drag.to = await evaluate(drag.to);
+        await mouse("mouseMoved", drag.from.x, drag.from.y, 0);
+        await mouse("mousePressed", drag.from.x, drag.from.y, 1);
+        await sleep(150);
+        const steps = drag.steps ?? 24;
+        for (let s = 1; s <= steps; s++) {
+          await mouse("mouseMoved", drag.from.x + ((drag.to.x - drag.from.x) * s) / steps, drag.from.y + ((drag.to.y - drag.from.y) * s) / steps, 1);
+          await sleep(25);
+        }
+        await sleep(drag.hold ?? 700);
+        if (drag.during) console.log(`[drag ${n + 1} during]`, JSON.stringify(await evaluate(drag.during), null, 2));
+        if (drag.shot) {
+          // Optional screenshot while the mouse button is still held.
+          const mid = await send("Page.captureScreenshot", { format: "png" });
+          writeFileSync(join(out, drag.shot), Buffer.from(mid.result.data, "base64"));
+          console.log("[screenshot]", join(out, drag.shot));
+        }
+        await mouse("mouseReleased", drag.to.x, drag.to.y, 0);
+        await sleep(drag.settle ?? 1200);
+        if (drag.after) console.log(`[drag ${n + 1} after]`, JSON.stringify(await evaluate(drag.after), null, 2));
+      }
+      delete value.__drags;
+    }
     if (value?.__files) {
       for (const [file, b64] of Object.entries(value.__files)) {
         writeFileSync(join(out, file), Buffer.from(b64, "base64"));

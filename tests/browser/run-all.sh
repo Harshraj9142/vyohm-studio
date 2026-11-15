@@ -35,6 +35,9 @@ mkdir -p "$(dirname "$LOG")"
   echo "=== layout-and-inline ==="
   "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/layout-and-inline.js
   echo
+  echo "=== drag-and-drop (REAL mouse drags: allowed move + refused drops with feedback) ==="
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/drag-and-drop.js
+  echo
   echo "=== design-options ==="
   "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/design-options.js
   echo

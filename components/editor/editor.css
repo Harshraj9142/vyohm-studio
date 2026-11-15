@@ -299,3 +299,54 @@
 .ed-ai-choice strong {
   word-break: break-word;
 }
+
+/* ---------- invalid-nesting feedback while dragging (drag-feedback.tsx) ---------- */
+
+/* Puck copies the editor's styles into the preview iframe, so this reaches drop areas there. */
+[data-vs-blocked] {
+  outline: 2px dashed #f04438 !important;
+  outline-offset: -2px;
+  background-color: rgb(240 68 56 / 0.07) !important;
+  cursor: not-allowed !important;
+}
+
+.ed-drop-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  z-index: 100000;
+  display: grid;
+  gap: 2px;
+  max-width: min(440px, calc(100vw - 32px));
+  padding: 12px 16px 12px 14px;
+  border-left: 4px solid #f04438;
+  border-radius: 10px;
+  background: #1d1d23;
+  box-shadow: 0 16px 40px -12px rgb(0 0 0 / 0.5);
+  color: #fff;
+  font: 13px/1.45 system-ui, sans-serif;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: ed-toast-in 0.18s ease-out both;
+}
+
+.ed-drop-toast strong {
+  font-size: 13.5px;
+}
+
+.ed-drop-toast span {
+  color: #d0d5dd;
+}
+
+@keyframes ed-toast-in {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-drop-toast { animation: none; }
+}
+
+.ed-drop-toast--info {
+  border-left-color: #2e90fa;
+}
