@@ -4,7 +4,7 @@
 import "@/components/site/site.css";
 import "./editor.css";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   blocksPlugin,
   Button as PuckButton,
@@ -188,17 +188,18 @@ export function Editor() {
         headerTitle="Vyohm Studio"
         dictionary={{ "header-publish": "Save" }}
         overrides={{
-          headerActions: ({ children }: { children: ReactNode }) => (
+          // Puck's own "Publish" button (with a globe icon) is replaced by our Save button.
+          headerActions: () => (
             <>
               {TEST_HOOKS ? <DevTestHook /> : null}
               <DragFeedback />
               <SaveIndicator />
               {/* Back to the chat to generate a new page from a description. */}
-              <PuckButton href="/start" variant="secondary">
-                ✦ New page
+              <PuckButton href="/start" variant="secondary" icon={<SparkleIcon />}>
+                New page
               </PuckButton>
               <ExportButton />
-              {children}
+              <SaveButton onSave={save} />
             </>
           ),
         }}
@@ -221,8 +222,36 @@ function SaveIndicator() {
             : status.message;
   return (
     <span className={`ed-save ed-save--${status.kind}`} role="status" aria-live="polite">
+      <i className="ed-save__dot" aria-hidden="true" />
       {text}
     </span>
+  );
+}
+
+/** Saves right away (the page also saves itself shortly after every change). */
+function SaveButton({ onSave }: { onSave: (data: Data) => void }) {
+  const getPuck = useGetPuck();
+  return (
+    <PuckButton type="button" icon={<SaveIcon />} onClick={() => onSave(getPuck().appState.data)}>
+      Save
+    </PuckButton>
+  );
+}
+
+function SparkleIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z" />
+    </svg>
+  );
+}
+
+function SaveIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M5 4h11l3 3v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4z" />
+      <path d="M8 4v5h7V4M8 20v-6h8v6" />
+    </svg>
   );
 }
 

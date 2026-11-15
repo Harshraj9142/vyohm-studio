@@ -73,7 +73,11 @@ window.T = {
     dt.items.add(new File([blob], "photo.jpg", { type: "image/jpeg" }));
     input.files = dt.files;
     input.dispatchEvent(new Event("change", { bubbles: true }));
-    await window.T.sleep(1500);
+    // Uploading opens the crop dialog; accept the default crop (the shape of the image's box).
+    const dialog = await window.T.waitFor(() => document.querySelector(".ed-crop[role=dialog]"), "crop dialog");
+    await window.T.click("Apply crop", dialog);
+    await window.T.waitFor(() => !document.querySelector(".ed-crop[role=dialog]"), "crop dialog to close");
+    await window.T.sleep(600);
   },
   /** Wait for a final status box in the AI tab ("generate" or "edit" card). */
   async aiStatus(card, timeoutMs = 120000) {

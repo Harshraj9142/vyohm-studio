@@ -42,6 +42,7 @@ export function ExportButton() {
       <Button
         type="button"
         variant="secondary"
+        icon={<DownloadIcon />}
         onClick={exportSite}
         loading={status.kind === "busy"}
         disabled={status.kind === "busy"}
@@ -49,5 +50,14 @@ export function ExportButton() {
         Export website.zip
       </Button>
     </>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 4v11M7 10l5 5 5-5" />
+      <path d="M5 20h14" />
+    </svg>
   );
 }

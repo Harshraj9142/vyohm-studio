@@ -106,7 +106,7 @@ npm run dev                     # open http://localhost:3000 and click "Get star
 | *"The Claude API key was rejected"* | The key is wrong or revoked. Create a new one in the Claude Console. |
 | Port 3000 is already in use | `npm run dev -- -p 3001` |
 | You changed code or pulled new code, and the page looks old | Stop the dev server and start it again. |
-| You want to start completely fresh | In the editor, click **✦ New page**. To delete everything this app saved (page and uploaded images), open DevTools → **Application** → **Storage** → **Clear site data**. |
+| You want to start completely fresh | In the editor, click **New page**. To delete everything this app saved (page and uploaded images), open DevTools → **Application** → **Storage** → **Clear site data**. |
 | Generation seems slow | 25–45 s is normal. The chat shows progress and has a **Cancel** button. After 150 s it stops with a clear message. |
 
 ---
@@ -161,7 +161,7 @@ If the browser still holds a page from before that you never chose (for example 
 
 ```text
 +-----------------------------------------------------------------------------------------------+
-| [1] Header:  Vyohm Studio   Undo  Redo   Saved 15:23   + New page   Export website.zip   Save  |
+| [1] Header:  (logo) Vyohm Studio   Undo  Redo   ● Saved 15:23   New page   Export website.zip   Save |
 +--------+--------------------+-------------------------------------------+---------------------+
 | [2]    | [3] Panel for the  | [4] Canvas: your page                     | [5] Settings of the |
 |  AI    |     chosen tab     |     Phone / Tablet / Desktop, zoom        |     selected element |
@@ -172,7 +172,7 @@ If the browser still holds a page from before that you never chose (for example 
 
 | Area | What it is for |
 |---|---|
-| **1. Header** | Undo and Redo, the save status (*Saving…* / *Saved 15:23*), **✦ New page** (back to the chat), **Export website.zip** and **Save**. The two icons on the left hide or show the side panels. |
+| **1. Header** | The Vyohm Studio logo, Undo and Redo, the save status as a small pill with a coloured dot (green *Saved 15:23*, amber *Unsaved changes*, pulsing *Saving…*, red if saving fails), **New page** (back to the chat), **Export website.zip** and **Save**. The two icons on the left hide or show the side panels. |
 | **2. Left rail** | Three tabs. **AI**: generate a page or edit with AI. **Blocks**: drag new elements onto the page. **Outline**: the page as a tree, to find, select and reorder things. |
 | **3. Tab panel** | The content of the chosen tab. |
 | **4. Canvas** | Your page, exactly as visitors will see it. Buttons above it switch between **Mobile (390 px)**, **Tablet (820 px)** and **Desktop (1280 px)** and change the zoom. |
@@ -192,7 +192,7 @@ If the browser still holds a page from before that you never chose (for example 
 
 ![Editing a heading](docs/screenshots/editor-heading.png)
 
-1. **Click** any element on the canvas. A blue frame and a small action bar appear. The bar shows the element type and has **select parent** (↑), **duplicate** and **delete**.
+1. **Click** any element on the canvas. A violet frame and a small action bar appear. The bar shows the element type and has **select parent** (↑), **duplicate** and **delete**.
 2. **Type directly on the page** to change text in headings, paragraphs and button labels.
 3. **Use the settings panel** on the right for everything else. The breadcrumb at the top (*Container › Heading*) shows where the element sits, and clicking a part of it selects that parent.
 
@@ -206,11 +206,23 @@ Colour fields have a colour picker, a hex box and **Clear**. An empty colour mea
 | **Container** (one or two columns inside a section) | Columns (one or two), column widths (1:1, 2:1, 1:2), vertical alignment, gap, padding, background, surface (*None*, *Card*, *Glow*, *Outline*), corner radius | Stack or keep side by side, gap, padding |
 | **Heading** | Text, level (H1 page title, H2 section title, H3 small title), font size, weight, colour, alignment | Font size, alignment |
 | **Paragraph** | Text, style (*Body*, *Lead*, *Eyebrow*, *Badge*), font size, colour, alignment | Font size, alignment |
-| **Image** | Upload or replace image, alt text, width (% of column), height (0 = automatic), fit (*Fill* or *Fit*), corner radius, alignment | Width, height |
+| **Image** | Upload (button or drag and drop) with cropping, crop again, replace, remove, or use an image link; alt text, width (% of column), height (0 = automatic), fit (*Fill* or *Fit*), corner radius, alignment | Width, height |
 | **Button** | Label, link (`https://…`, `mailto:…` or `#section`), open in same or new tab, style (*Solid* or *Outline*), icon (*None* or *Arrow →*), background colour, text colour, size (S, M, L), corner radius, alignment | Full width on phones, alignment |
 | **Page** (nothing selected) | Page title (browser tab), page description (search engines), heading font, body font, page background, page text colour | – |
 
-**Images.** Select an image and click **Upload image** (or **Replace image**). PNG, JPEG, WebP and GIF up to 8 MB are accepted. The file is stored in your browser, so it survives a reload, and it is copied into the export. Images that Claude generates are labelled placeholders (for example *"Hero photo – model in signature coat"*), because Claude writes text, not photos.
+**Images: upload, crop, links.** Images that Claude generates are labelled placeholders (for example *"Hero photo – model in signature coat"*), because Claude writes text, not photos. To add your own picture, select the image:
+
+| Image settings | Crop dialog |
+|---|---|
+| ![Image settings with an uploaded photo](docs/screenshots/editor-image.png) | ![Crop dialog](docs/screenshots/image-crop.png) |
+
+1. **Add a photo:** drag a file from your computer onto the image box in the settings panel, or click **Upload image** (**Replace image** if there is one already). PNG, JPEG, WebP and GIF are accepted, photos up to 25 MB.
+2. **Crop it.** A crop dialog opens before anything changes on the page. Drag the picture to move it, scroll or use the slider to zoom, and rotate it in 90° steps. **Shape** starts at *Image box*: the exact shape of the image's box on your page, so the photo fills it without being cut again. Other shapes: *Original*, 1:1, 4:3, 3:2, 16:9, 3:4 and 4:5. The dialog shows the original size and the size of the result.
+3. **Apply crop** saves the result (at most 2400 px on the longest side; JPEG for photos, PNG if the picture has transparent parts). **Use without cropping** keeps the file as it is (up to 8 MB). **Cancel** or Escape changes nothing.
+4. **Crop again** any time with **Crop**: it starts from the full original photo, not from the last crop. The trash button turns the image back into a placeholder.
+5. **Use an image link:** open *Use an image link*, paste an `https://` address and click **Preview**. You see the picture and its size, or a clear message if no image loads. **Use link** points the image at that address (it stays on the other website and is not copied into the export). **Save a copy & crop** downloads it, opens the crop dialog and stores it with your page like an upload, so it is included in the export. Some websites don't allow their images to be copied; the editor then says so and the link can still be used as a link.
+
+Every image change is one Undo step. Uploaded files and crops are stored in your browser, so they survive a reload, and the image used on the page is copied into the export.
 
 ### 3.6 Changing the layout
 
@@ -324,7 +336,7 @@ Proof: [export-verify.log](evidence/export-verify.log), [exported-site.log](evid
 |---|---|---|
 | 0:00 | **Generate** | On `/`, click **Get started**. Pick the *Clothing brand* example (or type a brief) and press **Enter**. Point out the build steps and the timer. After ~35 s the real page previews. Click **Open in editor**. |
 | 1:30 | **Edit text** | Click the h1 and type on the canvas. Change its size and weight in the settings panel. |
-| 2:15 | **Replace an image** | Select the hero image → **Upload image**. Change the height and the radius. |
+| 2:15 | **Replace an image** | Select the hero image → drop a photo on the image box (or **Upload image**) → the crop dialog opens at the box's shape → **Apply crop**. Change the height and the radius. |
 | 3:00 | **Change the layout** | Drag a button into the other column. Reorder two sections in **Outline**. Duplicate a card. Drag a Section over a container column to show the red refusal. |
 | 4:15 | **AI edit** | Select a button → *"Change only this button's background to blue"* → **Apply with AI** (~3 s). Point out that nothing else changed. Try a **Whole page** edit, e.g. *"Make all corners more rounded"*. |
 | 5:30 | **Mobile** | Phone view → set a heading's phone font size. Switch back to desktop: unchanged. |
@@ -345,6 +357,7 @@ Proof: [export-verify.log](evidence/export-verify.log), [exported-site.log](evid
 | Six element types; container with 1 or 2 columns and nested elements | Working | [blocks.tsx](components/site/blocks.tsx), [puck-config.tsx](components/editor/puck-config.tsx) |
 | Select and edit properties; direct canvas text editing | Working | `layout-and-inline` (typing on the canvas), `demo-sequence` (settings panel) |
 | Button label, link and style; image upload/replace, size, fit, alt | Working | Fields in [puck-config.tsx](components/editor/puck-config.tsx); upload tested in `upload-persist` and `demo-sequence` |
+| Image cropping, drag and drop, crop again, image links with preview | Working | [image-crop.tsx](components/editor/image-crop.tsx), [fields.tsx](components/editor/fields.tsx). `image-crop` (16 checks): drop opens the dialog at the box's shape, 1:1 gives 900 × 900, crop again starts from the 1600 × 900 original, Undo/Redo, Cancel, broken and working links, saving a copy of a linked image |
 | Add, duplicate, delete | Working | `layout-and-inline` (action bar duplicate/delete; insert) |
 | Move between containers, reorder sections | Working | `drag-and-drop`: a **real mouse drag** (Chrome input events) moves a button into another container. Section reorder is tested with Puck's `reorder` action. |
 | Container padding, gap, alignment, columns | Working (not separately automated) | Fields plus the responsive grid in [site.css](components/site/site.css) |
@@ -434,7 +447,8 @@ root.props.content    [Section, Section, ...]                     <- slot: Secti
 
 | Puck (library) | Built for this project |
 |---|---|
-| Editor shell, selection, drag and drop, slots, inline text fields, viewport switcher, undo/redo history, outline | The six blocks and their responsive CSS; field configuration; colour, image-upload and optional-number fields; nesting rules, notes and drag feedback |
+| Editor shell, selection, drag and drop, slots, inline text fields, viewport switcher, undo/redo history, outline | The six blocks and their responsive CSS; field configuration; colour, image and optional-number fields; nesting rules, notes and drag feedback; the editor's brand theme (Puck's colour tokens, header, AI panel) |
+| react-easy-crop (MIT): the interactive crop area (drag, zoom, pinch) | The crop dialog around it (shapes incl. *Image box*, rotation, sizes), turning the chosen area into a smaller file, keeping originals for *Crop again*, drag-and-drop upload, image links with preview and *Save a copy* |
 | | Landing page, *Get started* chat, build animation and live preview; editor welcome screen |
 | | AI generation and edit endpoints, prompts, design directions, structured-output schemas, clean-up, validation, operation applier, scope and conflict checks, AI tab UI |
 | | IndexedDB storage for the page and images; autosave |
@@ -570,6 +584,8 @@ Other choices:
 - **Model `claude-opus-5-5`,** with `medium` effort for generation (quality) and `low` for edits (~3 s). Both can be changed with env vars.
 - **Landing page and chat as CSS Modules with system fonts.** Puck copies the host page's styles into its preview iframe, so global CSS would change how sites look in the editor. CSS Modules keep the marketing styles scoped. System fonts (instead of Google Fonts) let the builder build without internet.
 - **Design references from 21st.dev, rewritten as my own CSS.** 21st.dev components use Tailwind and shadcn and sometimes need JavaScript (for example a spotlight that follows the pointer). Copying them would add Tailwind to every export and break the "3 dependencies" property, so I took the visual ideas and rebuilt them as four optional settings in plain CSS. I dropped the pointer-following spotlight because it needs client-side JavaScript.
+- **Editor theme through Puck's own colour tokens.** Puck draws every colour from two palettes (`--puck-color-azure-*` and `--puck-color-grey-*`). Redefining them (with a `:root:root` selector, so load order doesn't matter) turns the whole editor violet, including the selection frame inside the preview, without touching Puck's components. The rest is a little CSS on Puck's class names and our own `ed-*` classes, none of which the website's components use (Puck copies the editor's CSS into the preview).
+- **Cropping is destructive, but originals are kept.** The crop becomes a new, smaller image file, so the page data and the export stay simple (no crop settings to render). The full original is stored next to it, so *Crop again* never loses pixels. The editor-only library `react-easy-crop` (pinned 6.2.4) draws the crop area; it is not part of the export. The cost: each upload is stored twice in the browser.
 
 ---
 
@@ -585,6 +601,8 @@ Other choices:
 
 **5. Puck doesn't always refuse an invalid drop.** My first nesting message said *"Not moved"* after a refused drop. A real-mouse test showed the page actually gained a section: when a Section is dropped on a container column, Puck places it at the nearest allowed spot (the page) instead of refusing. The message now compares the page before and after the drop and reports what really happened. Checked in `drag-and-drop`, which also confirms that Undo takes the section back.
 
+**6. A rotated crop that lost half the photo.** The `image-crop` test turns a 1600 × 900 photo 90° with the *Original* shape and expects 900 × 1600. The first run gave 506 × 900. After a 90° turn the picture is taller than the crop stage, and the crop box (which must fit the stage) could only reach part of it because the zoom could not go below 1. Fix: allow zooming out to the level where the turned picture still covers the crop box, and jump there on every turn. The next run gave 882 × 1568, still 2 % short. Measuring the cropper's boxes in the browser showed the picture had been measured at 731.7 px instead of 746.7 px: the dialog's opening animation used `scale(0.98)`, and the size was taken while it played. Fix: no scaling in the animation, and the zoom is calculated from the stage's layout size, which animations don't change. Now 900 × 1600 exactly ([image-crop.tsx](components/editor/image-crop.tsx), `coverZoom`).
+
 ---
 
 ## 11. Testing
@@ -596,7 +614,7 @@ NEXT_PUBLIC_TEST_HOOKS=1 npm run build && npx next start -p 3211   # terminal 1
 npm run test:browser                                                # terminal 2
 ```
 
-Latest full run: **77 passed, 0 failed** ([evidence/browser-tests.log](evidence/browser-tests.log)).
+Latest full run: **93 passed, 0 failed** ([evidence/browser-tests.log](evidence/browser-tests.log)).
 
 | Scenario | What it checks |
 |---|---|
@@ -609,6 +627,7 @@ Latest full run: **77 passed, 0 failed** ([evidence/browser-tests.log](evidence/
 | `mobile-override` | Phone value changes, desktop value stays |
 | `ai-failures` | Bad AI answers, API errors, conflicts and Undo; the page is never damaged |
 | `upload-persist`, `after-reload` | Uploaded image and page survive a reload |
+| `image-crop` | Drop a photo, crop dialog at the box's shape, 1:1, 16:9 and rotated results, crop again from the original, zoom, Undo/Redo, Cancel, Escape, image links (broken, preview, use, save a copy) |
 | `demo-sequence`, `real-ai-edits` | The demo path with **real** Claude edits; exactly the asked-for values change |
 | `full-flow-export`, `exported-site` | Export → `npm ci` → build → start → the site renders on desktop and phone |
 
@@ -619,7 +638,7 @@ Real AI generation runs (times and results) and the "not tested" list are in [do
 ## 12. Limitations
 
 - **Browser storage:** the page and images live in this browser profile's IndexedDB only. Another browser or device won't see them; private windows and *Clear site data* lose them; storage limits vary by browser. If IndexedDB is unavailable, the editor still works but shows a "not saving" warning (that path is untested). There is one page per browser, and two open tabs overwrite each other (the last save wins).
-- **Images:** AI can't create real photos, only labelled placeholders. Images added as `https://` links stay remote in the export; only uploads are bundled. The upload limit is 8 MB, with no resizing.
+- **Images:** AI can't create real photos, only labelled placeholders. Images used as `https://` links stay remote in the export; use **Save a copy & crop** to bundle them, which works only if the other website allows copying (CORS). Photos up to 25 MB can be cropped; a crop is saved at most 2400 px wide or tall. **Use without cropping** is limited to 8 MB and does no resizing. Cropping an animated GIF keeps only a still frame. Originals and replaced images stay in browser storage (nothing cleans them up), and only the image used on the page is exported.
 - **"Only" means only:** an AI edit like "only the background" won't fix contrast it breaks. In the example above, the blue button keeps its dark text. There is no automatic contrast check.
 - **Fonts** are system font stacks (no web fonts), so they look slightly different on each OS.
 - **Generation takes about 25–45 s,** with no streaming.
@@ -657,7 +676,7 @@ components/
     blocks.tsx              the six blocks
     site.css                responsive styles and design system (CSS variables, 767px breakpoint)
     render.tsx              standalone renderer used by the export and the chat preview
-  editor/                   Puck config, custom fields, AI tab, drag feedback, welcome screen, export button, autosave
+  editor/                   Puck config, custom fields, image crop dialog, AI tab, drag feedback, welcome screen, export button, autosave, editor theme
   marketing/                landing page and brand theme (CSS Modules, so nothing leaks into the editor)
   start/                    chat, build animation, live page preview
 lib/

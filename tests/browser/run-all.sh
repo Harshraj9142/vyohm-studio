@@ -54,6 +54,9 @@ mkdir -p "$(dirname "$LOG")"
   echo "=== design-options ==="
   "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/design-options.js
   echo
+  echo "=== image-crop (drop a photo, crop, crop again from the original, undo/redo, image links) ==="
+  "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/image-crop.js
+  echo
   echo "=== mobile-override ==="
   "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/mobile-override.js
   echo

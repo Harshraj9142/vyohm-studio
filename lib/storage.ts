@@ -20,7 +20,12 @@ const DB_VERSION = 1;
 const PAGES = "pages";
 const ASSETS = "assets";
 
-export type StoredAsset = { id: string; blob: Blob; name: string; type: string };
+/**
+ * `originalId`: for a cropped image, the uncropped upload it was made from, so "Crop"
+ * can start again from the full picture. Originals are stored but never referenced by
+ * the page, so the export doesn't include them.
+ */
+export type StoredAsset = { id: string; blob: Blob; name: string; type: string; originalId?: string };
 export type StoredPage = { data: Data; savedAt: number };
 
 let dbPromise: Promise<IDBDatabase> | null = null;
@@ -81,23 +86,41 @@ export async function clearPage(): Promise<void> {
 // ---------------------------------------------------------------- Assets (uploaded images)
 
 export const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
+/** Largest image the page may use as-is (it is copied into the export). */
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
+/** Largest photo we accept for cropping: the cropped result is resized, so it ends up much smaller. */
+export const MAX_ORIGINAL_BYTES = 25 * 1024 * 1024; // 25 MB
 
-export async function saveAsset(file: File): Promise<StoredAsset> {
+/** Checks type and size before an image is cropped or saved. Throws a readable Error. */
+export function checkImageFile(file: Blob, maxBytes = MAX_IMAGE_BYTES) {
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
     throw new Error("Please choose a PNG, JPG, WebP or GIF image.");
   }
-  if (file.size > MAX_IMAGE_BYTES) {
-    throw new Error("That image is larger than 8 MB. Please choose a smaller one.");
+  if (file.size > maxBytes) {
+    const mb = Math.round(maxBytes / 1024 / 1024);
+    throw new Error(`That image is larger than ${mb} MB. Please choose a smaller one${maxBytes === MAX_IMAGE_BYTES ? " or crop it" : ""}.`);
   }
+}
+
+export async function saveAsset(
+  file: File,
+  options: { originalId?: string; maxBytes?: number } = {},
+): Promise<StoredAsset> {
+  checkImageFile(file, options.maxBytes ?? MAX_IMAGE_BYTES);
   const asset: StoredAsset = {
     id: crypto.randomUUID().replace(/-/g, "").slice(0, 16),
     blob: file,
     name: file.name,
     type: file.type,
+    ...(options.originalId ? { originalId: options.originalId } : {}),
   };
   await run(ASSETS, "readwrite", (s) => s.put(asset));
   return asset;
+}
+
+export async function getAsset(id: string): Promise<StoredAsset | null> {
+  const asset = await run<StoredAsset | undefined>(ASSETS, "readonly", (s) => s.get(id));
+  return asset ?? null;
 }
 
 export async function getAllAssets(): Promise<StoredAsset[]> {

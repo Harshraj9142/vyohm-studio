@@ -31,7 +31,7 @@ npm run verify-export -- evidence/website.zip
 
 | Run | Result | Log |
 |---|---|---|
-| Browser scenarios (17 runs, 77 checks, including real mouse drags) | **77 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
+| Browser scenarios (18 runs, 93 checks, including real mouse drags and image cropping) | **93 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
 | Full flow: generate → manual edits → mobile override → AI edit → export | Completed | [full-flow.log](../evidence/full-flow.log) |
 | Export verification: fresh folder, `npm ci` + `npm run build` | **PASS** (`npm ci` 5 s, build 5 s) | [export-verify.log](../evidence/export-verify.log) |
 | Exported site served with `npm run start`, checked at 1280 px and 390 px | Matches the editor; no overflow | [exported-site.log](../evidence/exported-site.log) |
@@ -151,6 +151,27 @@ The browser tests are not affected by design directions: every generation scenar
 | Edit the headline and upload a JPEG; then close and reopen the browser (same Chrome profile) | Headline and image restored | Headline "Saved headline" restored; image saved as `asset:74d5cd9659ff4139` (not a `blob:` URL) and visible after reload |
 | Export after uploading | Image file in `public/assets/`, portable path in `page.json` | `public/assets/0305303b48234b14.jpg`, `"src": "/assets/0305303b48234b14.jpg"`; no `asset:` or `blob:` left; loads when served |
 
+## Image cropping and image links
+
+Scenario `image-crop` (16 checks, no AI calls). The test photo is a 1600 × 900 JPEG drawn in the page; the hero image box on the sample page is about 1.02 : 1.
+
+| Input | Expected | Actual (observed) |
+|---|---|---|
+| Select the hero image, **drop** the photo on the image box | Crop dialog opens at the *Image box* shape; the page is unchanged until applied | Dialog open with *Image box* selected; image still `placeholder:…` |
+| Choose **1:1**, **Apply crop** | A square image | 900 × 900, image is now `asset:…` |
+| **Crop** again | Starts from the full original, not the square | Dialog shows *Original 1600 × 900 px* |
+| Choose **16:9**, **Apply crop** | A 16:9 image from the original | 1600 × 900 |
+| Undo, then Redo | Square crop back, then 16:9 back | Same asset ids as before each step |
+| **Crop**, then **Cancel** | Nothing changes | Same asset id |
+| **Crop** → *Original* → **Rotate right** → **Apply crop** | The whole photo, turned: 900 × 1600 | 900 × 1600 |
+| **Crop** → zoom slider to 2× | The result size in the dialog halves | 921 → 460 px wide |
+| Then press **Escape** | Dialog closes, nothing changes | Closed; same asset id |
+| Link `https://example.invalid/missing.jpg` → **Preview** | Clear message, image unchanged | *"No image could be loaded from this link…"*; image unchanged |
+| Link to the builder's favicon → **Preview** → **Use link** | Preview with size; the image points at the link | *"Image found · 48 × 48 px"*; `src` = the link |
+| **Crop** on the linked image (download faked to return a PNG) | Crop dialog; the result is stored with the page | Dialog opened; after **Apply crop** the image is `asset:…` |
+
+The first run of the rotation step failed: the result was 506 × 900, only part of the turned photo (see README, debugging example 3). After the fix it is exactly 900 × 1600. The older upload tests (`upload-persist`, `after-reload`, `demo-sequence`) now go through the crop dialog too and still pass. [Screenshot of the dialog](screenshots/image-crop.png).
+
 ## Mobile rendering
 
 | Input | Expected | Actual (observed) |
@@ -177,7 +198,9 @@ Recorded honestly, with what was done instead:
 - **Browsers other than Chrome.**
 - **IndexedDB unavailable** (some private modes) and **storage quota exceeded**: there is code for a warning or an error message, but it was never triggered.
 - **Two tabs open at once:** last save wins; not tested.
-- **Very large or unusual images** (only PNG and JPEG uploads were tested; the size limit is 8 MB).
+- **Very large or unusual images** (only PNG and JPEG uploads were tested, at most 1800 × 1200 px; the limits are 25 MB to crop and 8 MB without cropping).
+- **Saving a copy of a real image from another website.** The test fakes the download; whether a real site allows it depends on that site (CORS).
+- **Dropping a file with a real mouse drag from the desktop.** The test sends the same `drop` event the browser sends.
 
 ## Test-tooling problems found along the way
 

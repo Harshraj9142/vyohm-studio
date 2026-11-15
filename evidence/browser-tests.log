@@ -1,4 +1,4 @@
-Vyohm Studio browser test run — 2026-11-15 15:30 IST
+Vyohm Studio browser test run — 2026-11-15 16:49 IST
 Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs
 
 === landing (desktop 1440px) ===
@@ -143,7 +143,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Blank page opens empty in the editor": {
       "expected": "0 sections, Blocks tab, saved",
-      "actual": "0 sections, tab blocks, Saved 15:31",
+      "actual": "0 sections, tab blocks, Saved 16:50",
       "pass": true
     }
   }
@@ -236,8 +236,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 [drag 1 after] {
   "checks": {
     "Real mouse drag moves a button into another container": {
-      "expected": "Container-dcdd9086a3fc",
-      "actual": "Container-dcdd9086a3fc",
+      "expected": "Container-9f4f0a83d058",
+      "actual": "Container-9f4f0a83d058",
       "pass": true
     },
     "No warning for an allowed drop": {
@@ -255,8 +255,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
       "pass": true
     },
     "Refused drop area outlined in red": {
-      "expected": "Container-dcdd9086a3fc:right",
-      "actual": "Container-dcdd9086a3fc:right",
+      "expected": "Container-9f4f0a83d058:right",
+      "actual": "Container-9f4f0a83d058:right",
       "pass": true
     }
   }
@@ -298,7 +298,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
   "checks": {
     "Container not nested inside the other container": {
       "expected": "still inside a section",
-      "actual": "Section-a0a3bf96349c",
+      "actual": "Section-21d08bf2fb00",
       "pass": true
     },
     "Still nothing invalid inside containers": {
@@ -310,10 +310,10 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 }
 {
   "setup": {
-    "heroId": "Container-dcdd9086a3fc",
-    "buttonId": "Button-95fa12aa7c08",
-    "cardId": "Container-dbbaab001cf8",
-    "cardParent": "Section-2a6dc628b071",
+    "heroId": "Container-9f4f0a83d058",
+    "buttonId": "Button-55c715a33fac",
+    "cardId": "Container-0c21b0947307",
+    "cardParent": "Section-2090bb28cdef",
     "sections": 3
   }
 }
@@ -356,6 +356,99 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
   }
 }
 [screenshot] tests/browser/output/design-options-1440.png
+
+=== image-crop (drop a photo, crop, crop again from the original, undo/redo, image links) ===
+{
+  "checks": {
+    "Dropping a photo opens the crop dialog, set to the image box's shape": {
+      "expected": "Image box",
+      "actual": "Image box",
+      "pass": true
+    },
+    "Nothing changes on the page until the crop is applied": {
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    "1:1 crop gives a square image (about 900 x 900)": {
+      "expected": "square, ≥ 895 px",
+      "actual": "900 x 900",
+      "pass": true
+    },
+    "The image now points at an uploaded file": {
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    "Crop again starts from the full original": {
+      "expected": "Original 1600 × 900 px",
+      "actual": "Original 1600 × 900 px",
+      "pass": true
+    },
+    "16:9 re-crop of the original keeps the full width": {
+      "expected": "16:9, ≥ 1590 px wide",
+      "actual": "1600 x 900",
+      "pass": true
+    },
+    "Undo restores the square crop": {
+      "expected": "asset:8bfe9fb6ad5742ce",
+      "actual": "asset:8bfe9fb6ad5742ce",
+      "pass": true
+    },
+    "Redo restores the 16:9 crop": {
+      "expected": "asset:92f031175bdc43de",
+      "actual": "asset:92f031175bdc43de",
+      "pass": true
+    },
+    "Cancel leaves the image unchanged": {
+      "expected": "asset:92f031175bdc43de",
+      "actual": "asset:92f031175bdc43de",
+      "pass": true
+    },
+    "Rotate right + Original gives a 900 x 1600 portrait": {
+      "expected": "about 900 x 1600",
+      "actual": "900 x 1600",
+      "pass": true
+    },
+    "Zoom 2× halves the result size": {
+      "expected": "about half",
+      "actual": "921 → 460 px wide",
+      "pass": true
+    },
+    "Escape closes the dialog and changes nothing": {
+      "expected": "asset:669081744da24313",
+      "actual": "asset:669081744da24313",
+      "pass": true
+    },
+    "A broken link shows a clear message and changes nothing": {
+      "expected": [
+        true,
+        "asset:669081744da24313"
+      ],
+      "actual": [
+        true,
+        "asset:669081744da24313"
+      ],
+      "pass": true
+    },
+    "A working link shows a preview and its size": {
+      "expected": "Image found · W × H px",
+      "actual": "Image found · 48 × 48 px",
+      "pass": true
+    },
+    "Use link points the image at the link": {
+      "expected": "http://localhost:3211/favicon.ico",
+      "actual": "http://localhost:3211/favicon.ico",
+      "pass": true
+    },
+    "Cropping a linked image stores a copy with the page": {
+      "expected": true,
+      "actual": true,
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/image-crop-1440.png
 
 === mobile-override ===
 {
@@ -451,8 +544,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 === upload-persist (part 1) ===
 {
   "headline": "Saved headline",
-  "imageSrc": "asset:b0831209d47f4ac2",
-  "saveStatus": "Saved 15:33"
+  "imageSrc": "asset:6c6972c5f777463a",
+  "saveStatus": "Saved 16:52"
 }
 [screenshot] tests/browser/output/upload-persist-1440.png
 
@@ -467,7 +560,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Image reference saved (not a blob: URL)": {
       "expected": "asset:…",
-      "actual": "asset:b0831209d47f4ac2",
+      "actual": "asset:6c6972c5f777463a",
       "pass": true
     },
     "Uploaded image visible after reload": {
@@ -502,7 +595,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Uploaded image kept": {
       "expected": "asset:…",
-      "actual": "asset:e3aadadc78134e91",
+      "actual": "asset:3ab4d5531ecf47e6",
       "pass": true
     },
     "Moved button still in hero": {
@@ -538,12 +631,12 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
   "checks": {
     "Mobile-aware edit": {
       "expected": "only the heading's mobile.fontSize changes; desktop 64px unchanged",
-      "actual": "ed-ai-status--ok (3s): [\"page.root.props.content[0].props.content[0].props.left[1].props.mobile.fontSize: undefined -> 40\"]; desktop 64px",
+      "actual": "ed-ai-status--ok (3s): [\"page.root.props.content[0].props.content[0].props.left[1].props.mobile.fontSize: undefined -> 44\"]; desktop 64px",
       "pass": true
     },
     "Whole-page edit": {
       "expected": "only button radius values change",
-      "actual": "ed-ai-status--ok (4s): 5 change(s): [\"page.root.props.content[0].props.content[0].props.left[3].props.radius: 2 -> 64\",\"page.root.props.content[1].props.content[1].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[2].props.left[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[3].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[2].props.content[3].props.radius: 2 -> 64\"]",
+      "actual": "ed-ai-status--ok (3s): 5 change(s): [\"page.root.props.content[0].props.content[0].props.left[3].props.radius: 2 -> 64\",\"page.root.props.content[1].props.content[1].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[2].props.left[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[3].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[2].props.content[3].props.radius: 2 -> 64\"]",
       "pass": true
     }
   }
