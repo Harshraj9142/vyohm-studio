@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The exported-site template is linted/built as its own project.
+    "export-template/**",
   ]),
 ]);
 

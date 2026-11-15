@@ -9,6 +9,7 @@ import { blocksPlugin, outlinePlugin, Puck, useGetPuck, type Data, type Viewport
 import { registerAssetUrl } from "@/components/site/assets";
 import { getAllAssets, loadPage, savePage } from "@/lib/storage";
 import { aiPlugin } from "./ai-panel";
+import { ExportButton } from "./export-button";
 import { puckConfig } from "./puck-config";
 import { createStarterPage } from "./starter-page";
 import { setSaveStatus, useSaveStatus } from "./save-status";
@@ -127,6 +128,7 @@ export function Editor() {
             <>
               {TEST_HOOKS ? <DevTestHook /> : null}
               <SaveIndicator />
+              <ExportButton />
               {children}
             </>
           ),
