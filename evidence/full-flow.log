@@ -1,0 +1,19 @@
+[saved] evidence/website.zip
+{
+  "generate": "ed-ai-status--ok in 20s",
+  "headline": "Roasted slowly. Poured with care.",
+  "heroImage": "asset:d7384ea087624a3d",
+  "sectionOrder": [
+    "home",
+    "contact",
+    "coffees",
+    "process"
+  ],
+  "h1Mobile": {
+    "fontSize": 34
+  },
+  "aiEdit": "ed-ai-status--ok in 3s: Changed the background of the \"Visit the café\" button to blue.Use Undo (top right) to reve",
+  "export": "Saved 11:29 | Exported with 1 image",
+  "zipBytes": 37245
+}
+[screenshot] docs/screenshots/editor.png

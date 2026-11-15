@@ -13,6 +13,24 @@ window.T = {
   },
   inputWithValue: (value) => [...document.querySelectorAll("input")].find((i) => i.value === value),
   button: (text) => [...document.querySelectorAll("button")].find((b) => b.textContent.trim() === text),
+  /** Poll until fn() returns something truthy; throw a named error on timeout (no fixed sleeps). */
+  async waitFor(fn, what, timeoutMs = 8000) {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      const value = fn();
+      if (value) return value;
+      await window.T.sleep(50);
+    }
+    throw new Error(`Timed out waiting for ${what}`);
+  },
+  /** Click an enabled button by its text, waiting for it to appear. */
+  async click(text, root = document) {
+    const el = await window.T.waitFor(
+      () => [...root.querySelectorAll("button")].find((b) => b.textContent.trim() === text && !b.disabled),
+      `button "${text}"`,
+    );
+    el.click();
+  },
   viewport: (label) => [...document.querySelectorAll("button")].find((b) => (b.getAttribute("aria-label") || "").includes(label)),
   /** First element in the page tree matching pred, with its parent id/slot/index. */
   find(pred) {

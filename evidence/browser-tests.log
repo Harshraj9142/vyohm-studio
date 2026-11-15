@@ -1,5 +1,38 @@
-Vyohm Studio browser test run — 2026-11-15 11:19 IST
-Builder: production build with NEXT_PUBLIC_TEST_HOOKS=1 on http://localhost:3211, headless Chrome (tests/browser/cdp.mjs)
+Vyohm Studio browser test run — 2026-11-15 11:42 IST
+Builder: http://localhost:3211/ (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs
+
+=== layout-and-inline ===
+{
+  "allPassed": true,
+  "checks": {
+    "Inline canvas text editing": {
+      "expected": "Typed on the canvas",
+      "actual": "Typed on the canvas",
+      "pass": true
+    },
+    "Selected element": {
+      "expected": "Paragraph",
+      "actual": "Paragraph",
+      "pass": true
+    },
+    "Duplicate (action bar)": {
+      "expected": 7,
+      "actual": 7,
+      "pass": true
+    },
+    "Delete (action bar)": {
+      "expected": 6,
+      "actual": 6,
+      "pass": true
+    },
+    "Add element (insert)": {
+      "expected": "7 headings, new one has an id + defaults",
+      "actual": "7 headings, id ok, text \"Heading\"",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/layout-and-inline-1440.png
 
 === mobile-override ===
 {
@@ -44,20 +77,63 @@ Builder: production build with NEXT_PUBLIC_TEST_HOOKS=1 on http://localhost:3211
 }
 [screenshot] tests/browser/output/mobile-override-1440.png
 
-=== ai-failures ===
-[scenario error] TypeError: Cannot read properties of undefined (reading 'click')
-    at <anonymous>:25:85
+=== ai-failures (fake AI responses) ===
+{
+  "allPassed": true,
+  "checks": {
+    "Malformed AI page rejected": {
+      "expected": "error, page unchanged",
+      "actual": "ed-ai-status--error: Generation failed. The AI result was rejected: Invalid input: expected string, received undefined (at root.props.description)Your current page was not changed.",
+      "pass": true
+    },
+    "Edit during generation -> conflict prompt": {
+      "expected": "warning, manual edit kept",
+      "actual": "ed-ai-status--warn: You edited the page while Claude was working. Replace your page with the generat",
+      "pass": true
+    },
+    "Generate -> undo -> redo": {
+      "expected": "old / new / new",
+      "actual": "Crafted to be kept. / Crafted to be kept. / Crafted to be worn, made to be remembered",
+      "pass": true
+    },
+    "Edit same element during AI edit": {
+      "expected": "warning; nothing applied until confirmed; then label + blue",
+      "actual": "ed-ai-status--warn; before confirm bg=#c9a44c; after: \"Shop the collections\" bg=#2563eb",
+      "pass": true
+    },
+    "Out-of-scope AI edit rejected": {
+      "expected": "error, page unchanged",
+      "actual": "ed-ai-status--error: Edit failed. The AI tried to change Heading \"Crafted to be kept.\", which is outside your selection. Choose \"Wh",
+      "pass": true
+    },
+    "Unsafe AI value rejected": {
+      "expected": "error, page unchanged",
+      "actual": "ed-ai-status--error: Edit failed. \"javascript:alert(1)\" is not a valid colour (use #rrggbb).Your page was not c",
+      "pass": true
+    },
+    "API error shown, page unchanged": {
+      "expected": "error message",
+      "actual": "ed-ai-status--error: Edit failed. Claude is busy (rate limit). Please wait a moment and try again.Your page was",
+      "pass": true
+    },
+    "Invalid nesting from AI rejected": {
+      "expected": "error, page unchanged",
+      "actual": "ed-ai-status--error: Edit failed. A Section cannot go inside a Container.Your page was not changed.",
+      "pass": true
+    }
+  }
+}
 [screenshot] tests/browser/output/ai-failures-1440.png
 
 === upload-persist (part 1) ===
 {
   "headline": "Saved headline",
-  "imageSrc": "asset:7969f18836f94cb0",
-  "saveStatus": "Saved 11:20"
+  "imageSrc": "asset:fcc1552050114686",
+  "saveStatus": "Saved 11:43"
 }
 [screenshot] tests/browser/output/upload-persist-1440.png
 
-=== after-reload (part 2, same browser profile = reopened browser) ===
+=== after-reload (part 2: same browser profile = browser reopened) ===
 {
   "allPassed": true,
   "checks": {
@@ -68,7 +144,7 @@ Builder: production build with NEXT_PUBLIC_TEST_HOOKS=1 on http://localhost:3211
     },
     "Image reference saved (not a blob: URL)": {
       "expected": "asset:…",
-      "actual": "asset:7969f18836f94cb0",
+      "actual": "asset:fcc1552050114686",
       "pass": true
     },
     "Uploaded image visible after reload": {
@@ -80,7 +156,7 @@ Builder: production build with NEXT_PUBLIC_TEST_HOOKS=1 on http://localhost:3211
 }
 [screenshot] tests/browser/output/after-reload-1440.png
 
-=== demo-sequence (real Claude edit) ===
+=== demo-sequence (one real Claude edit) ===
 {
   "allPassed": true,
   "checks": {
@@ -103,7 +179,7 @@ Builder: production build with NEXT_PUBLIC_TEST_HOOKS=1 on http://localhost:3211
     },
     "Uploaded image kept": {
       "expected": "asset:…",
-      "actual": "asset:6679ccce8f7e43c3",
+      "actual": "asset:76bcc10bfb0e4412",
       "pass": true
     },
     "Moved button still in hero": {
@@ -132,3 +208,21 @@ Builder: production build with NEXT_PUBLIC_TEST_HOOKS=1 on http://localhost:3211
   }
 }
 [screenshot] tests/browser/output/demo-sequence-1440.png
+
+=== real-ai-edits (two real Claude edits) ===
+{
+  "allPassed": true,
+  "checks": {
+    "Mobile-aware edit": {
+      "expected": "only the heading's mobile.fontSize changes; desktop 64px unchanged",
+      "actual": "ed-ai-status--ok (3s): [\"page.root.props.content[0].props.content[0].props.left[1].props.mobile.fontSize: undefined -> 44\"]; desktop 64px",
+      "pass": true
+    },
+    "Whole-page edit": {
+      "expected": "only button radius values change",
+      "actual": "ed-ai-status--ok (3s): 5 change(s): [\"page.root.props.content[0].props.content[0].props.left[3].props.radius: 2 -> 64\",\"page.root.props.content[1].props.content[1].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[2].props.left[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[3].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[2].props.content[2].props.radius: 2 -> 64\"]",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/real-ai-edits-1440.png

@@ -1,0 +1,53 @@
+Exported site checks (npm run start of evidence/website.zip, extracted fresh) — 2026-11-15 11:29 IST
+
+=== desktop 1280px ===
+{
+  "width": 1280,
+  "title": "Ember & Oak — Specialty Coffee Roastery, Bengaluru",
+  "h1": "Roasted slowly. Poured with care.",
+  "h1FontSize": "62px",
+  "firstButton": {
+    "label": "Visit the café",
+    "href": "#contact",
+    "background": "rgb(37, 99, 235)"
+  },
+  "uploadedImage": {
+    "src": "/assets/d7384ea087624a3d.jpg",
+    "loaded": true
+  },
+  "sections": [
+    "home",
+    "contact",
+    "coffees",
+    "process"
+  ],
+  "columnsInFirstContainer": 2,
+  "horizontalOverflow": false
+}
+[screenshot] docs/screenshots/exported-desktop.png
+
+=== mobile 390px ===
+{
+  "width": 390,
+  "title": "Ember & Oak — Specialty Coffee Roastery, Bengaluru",
+  "h1": "Roasted slowly. Poured with care.",
+  "h1FontSize": "34px",
+  "firstButton": {
+    "label": "Visit the café",
+    "href": "#contact",
+    "background": "rgb(37, 99, 235)"
+  },
+  "uploadedImage": {
+    "src": "/assets/d7384ea087624a3d.jpg",
+    "loaded": true
+  },
+  "sections": [
+    "home",
+    "contact",
+    "coffees",
+    "process"
+  ],
+  "columnsInFirstContainer": 1,
+  "horizontalOverflow": false
+}
+[screenshot] docs/screenshots/exported-mobile.png

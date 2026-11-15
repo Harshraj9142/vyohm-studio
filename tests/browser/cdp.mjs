@@ -99,10 +99,6 @@ const send = (method, params = {}) =>
 await send("Runtime.enable");
 await send("Page.enable");
 await send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
-if (args.fixture) {
-  const fixture = readFileSync(args.fixture, "utf8");
-  await send("Page.addScriptToEvaluateOnNewDocument", { source: `window.__fixture = ${fixture};` });
-}
 await send("Page.navigate", { url: args.url });
 await sleep(Number(args.wait ?? 7000));
 
@@ -112,6 +108,10 @@ if (args.script) {
   // Shared helpers (window.T) are loaded first if helpers.js sits next to the scenario.
   const helpers = join(args.script, "..", "helpers.js");
   if (existsSync(helpers)) await send("Runtime.evaluate", { expression: readFileSync(helpers, "utf8") });
+  // Inject the fixture right before the scenario (injecting on page creation proved unreliable).
+  if (args.fixture) {
+    await send("Runtime.evaluate", { expression: `window.__fixture = ${readFileSync(args.fixture, "utf8")};` });
+  }
   const res = await send("Runtime.evaluate", {
     expression: readFileSync(args.script, "utf8"),
     awaitPromise: true,

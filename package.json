@@ -2,11 +2,16 @@
   "name": "vyohm-studio",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "verify-export": "bash scripts/verify-export.sh",
+    "test:browser": "bash tests/browser/run-all.sh"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.8.0",

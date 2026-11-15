@@ -1,36 +1,209 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vyohm Studio
 
-## Getting Started
+An AI website builder: describe a business, Claude generates a landing page, you edit it visually or with AI instructions, and you download a standalone Next.js project.
 
-First, run the development server:
+Built for the Vyohm AI FDE intern challenge (6-hour build).
+
+![Vyohm Studio editor with a generated page](docs/screenshots/editor.png)
+
+| | |
+|---|---|
+| **Run it** | [Quick start](#quick-start) |
+| **What works** | [Feature status](#feature-status) |
+| **How it works** | [Architecture](#architecture) · [Decisions](#decisions-and-tradeoffs) · [Debugging examples](#debugging-examples) |
+| **Evidence** | [docs/TESTING.md](docs/TESTING.md) · [evidence/](evidence/) · [evidence/website.zip](evidence/website.zip) |
+| **AI use** | [docs/AI_USE.md](docs/AI_USE.md) |
+
+---
+
+## Quick start
+
+**Requirements:** Node.js 22 (any version ≥ 20.9 works, see `.nvmrc`), npm 10, a Claude API key.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+cp .env.example .env.local      # then put your key in ANTHROPIC_API_KEY
+npm run dev                     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Required | Default | Purpose |
+|---|---|---|---|
+| `ANTHROPIC_API_KEY` | yes | – | Claude API key. Read only on the server; never sent to the browser or included in exports. |
+| `ANTHROPIC_MODEL` | no | `claude-opus-5-5` | Model for generation and edits. |
+| `ANTHROPIC_EFFORT` | no | `medium` (generate) / `low` (edit) | Thinking effort; lower is faster. |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Other scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run verify-export -- <zip>`, `npm run test:browser` (see [docs/TESTING.md](docs/TESTING.md)).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Demo walkthrough
 
-## Learn More
+1. **Generate.** The **AI** tab is open on the left. Describe the business (or click *Use example*) and press **Generate page**. This takes about 20–30 s, with a progress bar, a timer and a Cancel button.
+2. **Edit text.** Click a heading and type directly on the canvas, or use the settings panel on the right (font size, weight, colour, alignment).
+3. **Replace an image.** Select an image and click **Upload image** / **Replace image**. Size, fit, radius and alt text are in the same panel.
+4. **Change the layout.** Drag elements between container columns and sections. Reorder sections by dragging, or in the **Outline** tab. The action bar on each selected element has duplicate and delete. Add new elements from the **Blocks** tab.
+5. **AI edit.** Select a button. In **Edit with AI**, type *"Change only this button's background to blue"* and press **Apply with AI** (about 3 s). Choose **Whole page** for page-wide edits.
+6. **Mobile.** Click the phone icon above the canvas. Under **Mobile overrides**, change e.g. the heading font size; desktop keeps its value. **Undo/Redo** are at the top right (also ⌘Z / ⇧⌘Z).
+7. **Save and reload.** The page autosaves to the browser about 1 s after each change (or press **Save**). Reloading restores the page and uploaded images.
+8. **Export.** Click **Export website.zip**, then check it like the evaluator would: `npm run verify-export -- ~/Downloads/website.zip`.
 
-To learn more about Next.js, take a look at the following resources:
+## Feature status
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Status means: **Working** = verified by an automated test run (see [docs/TESTING.md](docs/TESTING.md)); **Partial** = works with a stated gap; **Untested** = implemented but not verified.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Requirement | Status | Evidence / notes |
+|---|---|---|
+| **AI generation** from a fresh prompt via a real model call, relevant copy, requested theme, multi-section page | Working | Four briefs generated (clothing, bakery, yoga, coffee), 20–27 s each; [full-flow.log](evidence/full-flow.log) |
+| Generation loading and failure states | Working | Progress, timer and cancel; malformed result and API errors rejected with the page unchanged (`ai-failures`, server error cases in TESTING.md) |
+| Six element types; container with 1 or 2 columns and nested elements | Working | [blocks.tsx](components/site/blocks.tsx), [puck-config.tsx](components/editor/puck-config.tsx) |
+| Select and edit properties; direct canvas text editing | Working | `layout-and-inline` (typing on the canvas), `demo-sequence` (settings panel) |
+| Button label, link and style; image upload/replace, size, fit, alt | Working | Fields in [puck-config.tsx](components/editor/puck-config.tsx); upload tested in `upload-persist` and `demo-sequence` |
+| Add, duplicate, delete | Working | `layout-and-inline` (action bar duplicate/delete; insert) |
+| Move between containers, reorder sections | Working, with a gap | Tested by dispatching Puck's own `move`/`reorder` actions (what a drop dispatches). Real mouse drags were not automated; check by hand. |
+| Container padding, gap, alignment, columns | Working (not separately automated) | Fields plus the responsive grid in [site.css](components/site/site.css) |
+| Restrict invalid nesting with feedback | Partial | Drag-time: Puck slot `allow` lists plus a rules note in the Section/Container panels (not automated). AI-time: enforced in code and tested (`ai-failures` #8). Puck blocks invalid drops silently; there is no error toast. |
+| **AI revisions** of a selected element or the whole page, preserving unrelated content | Working | `demo-sequence`: after manual edits, exactly one value changed on the whole page (the button's `bgColor`). `real-ai-edits`: whole-page change touched only `radius` values. |
+| Failed or invalid AI response leaves the page intact | Working | `ai-failures` #1, #5–#8 |
+| Concurrency: manual edit while AI is pending | Working | `ai-failures` #2 and #4: conflict prompt, nothing overwritten silently |
+| Desktop/mobile preview; mobile override without changing desktop; stacking; no overflow | Working | `mobile-override`, [exported-site.log](evidence/exported-site.log) |
+| Undo/redo of content, style, layout and AI edits | Working | `demo-sequence`, `ai-failures` #3, `mobile-override` |
+| Save and reload restores page and uploaded images | Working | `upload-persist` + `after-reload` (same browser profile) |
+| **Next.js export**: independent, portable assets, clean `npm ci` / `build` / `start` | Working | [export-verify.log](evidence/export-verify.log), [exported-site.log](evidence/exported-site.log), [website.zip](evidence/website.zip) |
+| Basic accessibility | Partial | Alt-text field, heading levels, focus outlines, keyboard-reachable controls and labelled inputs. No full audit and no automatic contrast check (see [limitations](#limitations)). |
 
-## Deploy on Vercel
+## Architecture
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```mermaid
+flowchart LR
+  subgraph Browser
+    U([User]) --> ED["Puck editor<br/>components/editor"]
+    U --> AI["AI tab<br/>generate / edit"]
+    ED <--> PD[("Page data<br/>JSON tree, stable ids")]
+    AI -- "validate, conflict check,<br/>apply as one undo step" --> PD
+    PD -- "autosave" --> IDB[("IndexedDB<br/>page + image files")]
+    PD --> PV["Live preview<br/>components/site blocks + site.css"]
+    PD --> ZIP["build-zip.ts<br/>JSZip"]
+    IDB -- "image files" --> ZIP
+  end
+  subgraph Server["Next.js server (API key stays here)"]
+    GEN["POST /api/generate"]
+    REV["POST /api/revise"]
+    TPL["GET /api/export-template"]
+  end
+  AI -- "brief" --> GEN
+  AI -- "instruction + page + scope" --> REV
+  GEN -- "structured output" --> CL[("Claude API")]
+  REV -- "structured output" --> CL
+  TPL -- "allowlisted template +<br/>components/site files" --> ZIP
+  ZIP --> OUT["website.zip<br/>standalone Next.js app:<br/>same blocks + site.css,<br/>data/page.json, public/assets"]
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### The page model
+
+There is one source of truth: Puck's `Data` JSON, defined in [model.ts](components/site/model.ts).
+
+```text
+root.props            title, description, fonts, page colours
+root.props.content    [Section, Section, ...]                     <- slot: Sections only
+  Section.props       anchor, colours, paddingY, gap, maxWidth, mobile{...}
+  Section.content     [Container | Heading | Paragraph | Image | Button]
+  Container.props     columns, ratio, gap, padding, valign, bgColor, radius, mobile{...}
+  Container.left/right  [Heading | Paragraph | Image | Button]
+```
+
+- Every element is `{ type, props: { id, ...settings } }`. The `id` (e.g. `Button-7369316172c5`) never changes. AI edits use it to target exactly one element.
+- **Responsive overrides** live in `props.mobile` (e.g. `{ fontSize: 30 }`). Blocks write settings as CSS variables (`--h-size`, `--h-size-m`), and [site.css](components/site/site.css) applies the `-m` value below 768 px. Empty means "same as desktop".
+- **Images:** uploads are stored as files in IndexedDB. The page holds only `asset:<id>`. AI-generated images are `placeholder:<description>`. The export rewrites `asset:<id>` to `/assets/<id>.jpg`.
+- **Allowed values** (ranges, enums, nesting) are defined once (`LIMITS`, `NESTING` in model.ts). The editor fields, the AI clean-up and the validator ([page-schema.ts](lib/page-schema.ts)) all use them.
+
+### Trace: "Change only this button's background to blue"
+
+1. [ai-edit-panel.tsx](components/editor/ai-edit-panel.tsx) copies the current page (`before`), records the scope `{ kind: "element", id: "Button-…" }` and POSTs `{ instruction, scope, page, viewport }` to `/api/revise`.
+2. [revise.ts](lib/ai/revise.ts) calls Claude with [structured output](lib/ai/revise-schema.ts), so the reply is guaranteed to be JSON of the form `{ summary, operations: [...] }`. Claude replied with one operation: `{ op: "update", id: "Button-…", changes: [{ prop: "bgColor", value: "#2563eb" }] }`.
+3. The server test-applies the operations with [apply.ts](lib/revise/apply.ts). That step checks allowed props per type, cleans values (hex colours only, safe links, clamped numbers), stays inside the selection scope, follows the nesting rules, and passes the full page validator. On failure, Claude gets one retry with the exact error; otherwise the request fails and nothing changes.
+4. Back in the browser, `findConflicts` compares `before` with the current page for the elements the operations touch. If the user edited that button in the meantime, a prompt (*Apply anyway / Discard*) appears instead of a silent overwrite.
+5. The operations are applied to the **current** page, not to `before`, so edits made elsewhere during the request are kept. The result is validated again, then dispatched as `setData` with `recordHistory: true` (one undo step). The same button stays selected.
+6. The autosave writes the page to IndexedDB. The preview re-renders the button through the same `Button` block the export uses.
+
+A manual edit is simpler: a field change or canvas typing triggers a Puck action (`replace`, `move`, ...). Puck updates the same JSON and records history, `onChange` schedules the autosave, and the preview re-renders.
+
+### What Puck provides and what I built
+
+| Puck (library) | Built for this project |
+|---|---|
+| Editor shell, selection, drag and drop, slots, inline text fields, viewport switcher, undo/redo history, outline | The six blocks and their responsive CSS; field configuration; colour, image-upload and optional-number fields; nesting rules and notes |
+| | AI generation and edit endpoints, prompts, structured-output schemas, clean-up, validation, operation applier, scope and conflict checks, AI tab UI |
+| | IndexedDB persistence for the page and images; autosave |
+| | Export: standalone renderer, project template with a pinned lockfile, asset rewriting, ZIP; verification script |
+| | Headless-Chrome test runner and scenarios |
+
+## Decisions and tradeoffs
+
+**Editor: Puck.** It is the challenge's recommended foundation, React-native, and comes with slots for nesting, inline editing, viewports and history. Alternatives considered:
+- **GrapesJS:** HTML/CSS-string based, which makes the data harder to validate and export as React.
+- **Craft.js:** similar idea, but needs more custom UI.
+- **Writing our own editor:** not realistic in 6 hours.
+
+**Tradeoff 1: AI edits are operations, not a regenerated page.** Asking Claude for a whole new page is simpler, but any manual edit Claude doesn't reproduce exactly would be lost. Operations (`update` / `insert` / `delete` / `move` / `updatePage`) applied to the current page make that impossible by construction, and they can be scope-checked and conflict-checked. The costs: a schema and an applier to maintain, and wide changes such as "rewrite all copy" produce many operations.
+
+**Tradeoff 2: Browser storage instead of a server database.** IndexedDB holds the page and real image files with no backend or account, and survives reloads, which is enough for the prototype. The costs: data stays in one browser profile, one page per browser, no sharing, and it's lost if site data is cleared (see [limitations](#limitations)). I chose IndexedDB over localStorage because localStorage holds only ~5 MB of text, which a single photo can exceed.
+
+**Tradeoff 3: The export uses its own 50-line renderer instead of Puck's `<Render>`.** The export then needs only `next`, `react` and `react-dom` (30 packages, `npm ci` in about 4 s) and contains no editor code. Parity is kept because both sides render the same [blocks.tsx](components/site/blocks.tsx) and [site.css](components/site/site.css). The cost: the renderer must mimic Puck's slot wrapper markup.
+
+Other choices:
+- **Structured outputs + Zod everywhere.** The model output is always parseable, and everything is validated again before it touches the editor (server and browser).
+- **One fixed export template with a committed lockfile.** Dependencies don't vary per page, so the lockfile is generated and tested once.
+- **CSS variables for responsive styles.** Per-element overrides with no generated stylesheet. The prefixes are per type, so values don't leak into children.
+- **Model `claude-opus-5-5`**, with `medium` effort for generation (quality, ~20–30 s) and `low` for edits (~3 s). Both can be changed through env vars.
+
+## Debugging examples
+
+**1. AI changes were not undoable.** After a generated page was applied, Undo did nothing. I read Puck's reducer and found that `setData`, `setUi` and `set` are excluded from history unless the action passes `recordHistory: true`. History entries are also debounced by 250 ms. The fix is `dispatch({ type: "setData", data, recordHistory: true })`, verified with Undo/Redo checks in `ai-failures` #3 and `demo-sequence`.
+
+**2. "The compiled grammar is too large."** My first edit schema embedded every element's full schema inside the `insert` operation. The structured-output API rejected it with a 400. The fix was for `insert` to carry the new element as a JSON string, which [convert.ts](lib/ai/convert.ts) (`parseInsertedElement`) parses and the converters clean. Invalid elements go back to Claude once as an error. This was verified by a direct API call (one operation in 3.4 s) and the browser tests.
+
+**3. A flaky test that wasn't flaky.** The `ai-failures` scenario failed only inside my test loop. I replaced crashes with recorded diagnostics, which showed the fake response had no page fixture. The cause was zsh not word-splitting `$extra`, so `--fixture <file>` reached the runner as a single argument. I moved the suite into a bash script ([run-all.sh](tests/browser/run-all.sh)) and all 32 checks pass.
+
+## Limitations
+
+- **Browser storage:** the page and images live in this browser profile's IndexedDB only. Another browser or device won't see them; private windows and "clear site data" lose them; storage quotas vary by browser. If IndexedDB is unavailable the editor still works but shows a "not saving" warning (that path is untested). There is one page per browser, and two open tabs overwrite each other (last save wins).
+- **Images:** AI cannot create real images, only labelled placeholders. Images pasted as `https://` links stay remote in the export; only uploads are bundled. The upload limit is 8 MB, with no resizing.
+- **"Only" means only:** an AI edit like "only the background" won't fix contrast it breaks. In the coffee example the blue button keeps its dark text. There is no automatic contrast check.
+- **Fonts** are system font stacks (no web fonts), so they vary slightly by OS.
+- **Generation latency** is about 20–30 s, with no streaming.
+- **No contact form backend:** buttons are links to sections or `mailto:`.
+- A test hook (`window.__vsPuck`) is active only in development or builds with `NEXT_PUBLIC_TEST_HOOKS=1`.
+
+## Next improvements
+
+1. Warn about low contrast after any colour change (manual or AI) and offer an AI fix.
+2. Server-side persistence (database plus object storage) with page versions and sharing.
+3. Stream generation and render sections as they arrive, to cut the perceived 20–30 s wait.
+4. Unit tests for `apply.ts` and the converters, alongside the browser scenarios.
+5. Show a toast when a drop is blocked by nesting rules, instead of a silent refusal.
+
+## Project structure
+
+```text
+app/
+  page.tsx                  editor page
+  api/generate/route.ts     POST: brief -> validated page
+  api/revise/route.ts       POST: instruction + page + scope -> operations
+  api/export-template/      GET: allowlisted template + shared component sources
+components/
+  site/                     shared by editor preview AND export (no editor code)
+    model.ts                page model types, defaults, LIMITS, NESTING
+    blocks.tsx              the six blocks
+    site.css                responsive styles (CSS variables, 767px breakpoint)
+    render.tsx              standalone renderer used by the export
+  editor/                   Puck config, custom fields, AI tab, export button, autosave
+lib/
+  ai/                       Claude client, prompts, schemas, convert, generate, revise
+  revise/apply.ts           applies AI operations safely (scope, nesting, conflicts)
+  page-schema.ts            strict page validator
+  storage.ts                IndexedDB page + image storage
+  export/build-zip.ts       builds website.zip in the browser
+export-template/            Next.js project template (pinned deps + lockfile)
+scripts/verify-export.sh    checks a website.zip like the evaluator
+tests/browser/              headless-Chrome runner, scenarios, fixture
+evidence/                   test logs + final website.zip
+docs/                       TESTING.md, AI_USE.md, screenshots
+```
