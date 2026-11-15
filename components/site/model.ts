@@ -196,6 +196,28 @@ export const DEFAULT_PROPS = {
 export type ElementType = keyof typeof DEFAULT_PROPS;
 export const ELEMENT_TYPES = Object.keys(DEFAULT_PROPS) as ElementType[];
 
+/** Which settings each element type can override on phones (inside `mobile`). */
+export const MOBILE_KEYS: Record<ElementType, readonly string[]> = {
+  Section: ["paddingY", "gap"],
+  Container: ["columns", "gap", "padding"],
+  Heading: ["fontSize", "align"],
+  Paragraph: ["fontSize", "align"],
+  Image: ["width", "height"],
+  Button: ["fullWidth", "align"],
+};
+
+/** Every editable setting of a type, e.g. Button -> ["label", "href", ..., "mobile.align"]. */
+export function editableProps(type: ElementType): string[] {
+  return [
+    ...Object.keys(DEFAULT_PROPS[type]).filter((key) => key !== "mobile"),
+    ...MOBILE_KEYS[type].map((key) => `mobile.${key}`),
+  ];
+}
+
+export function isElementType(value: unknown): value is ElementType {
+  return typeof value === "string" && value in DEFAULT_PROPS;
+}
+
 /** Which element types each slot accepts. Used by the editor and by AI validation. */
 export const NESTING = {
   page: ["Section"],

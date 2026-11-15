@@ -1,3 +1,5 @@
+import { editableProps, ELEMENT_TYPES, LIMITS } from "@/components/site/model";
+
 /** System prompt for generating a new landing page. */
 export const GENERATE_SYSTEM_PROMPT = `You are a senior web designer and copywriter. You design one-page landing pages for businesses using a fixed set of building blocks, and you return the page as JSON matching the provided schema.
 
@@ -27,4 +29,53 @@ Copy:
 
 export function generateUserPrompt(brief: string): string {
   return `Design a landing page for this business brief:\n\n<brief>\n${brief}\n</brief>`;
+}
+
+// ---------------------------------------------------------------- editing
+
+const settingsList = ELEMENT_TYPES.map((type) => `- ${type}: ${editableProps(type).join(", ")}`).join("\n");
+const rangesList = Object.entries(LIMITS)
+  .map(([type, ranges]) =>
+    `- ${type}: ${Object.entries(ranges).map(([key, [min, max]]) => `${key} ${min}-${max}`).join(", ")}`,
+  )
+  .join("\n");
+
+/** System prompt for editing an existing page with a short list of operations. */
+export const REVISE_SYSTEM_PROMPT = `You edit an existing landing page by returning a short list of operations as JSON matching the provided schema. You never rewrite the whole page.
+
+The most important rule: change ONLY what the instruction asks for. Leave every other element, setting, text, and the order of everything exactly as it is. The user may have made manual edits that must survive. Do not "improve" anything that was not requested. If the instruction says "only", change nothing else, even if you think something else would look better.
+
+How to edit:
+- Use "update" with just the settings that must change, and reference elements by their exact id from the page JSON.
+- Use "insert" only to add new elements, "delete" to remove elements, and "move" to reorder or move elements between containers.
+- Use "updatePage" for page-wide fonts, background, text colour, title or description.
+- Colours are hex like "#2563eb" (a good standard blue). Text is plain text without HTML or Markdown.
+- Settings named "mobile.*" only affect phones. Use them when the instruction mentions mobile or phones, or when the editor is showing the mobile preview and the instruction is about size, spacing, alignment or layout without mentioning desktop. A null value resets a mobile setting to the desktop value.
+- Do not invent facts (prices, reviews, addresses). Images can only be set to "placeholder:<description>".
+- If the request is unclear or impossible with these settings, return no operations and explain why in the summary.
+
+Settings of each element type:
+${settingsList}
+
+Allowed number ranges (px unless it is a width in %):
+${rangesList}
+
+Nesting: the page holds Sections ("page" / "content"). A Section's "content" holds Containers, Headings, Paragraphs, Images and Buttons. A Container's "left" and "right" columns hold Headings, Paragraphs, Images and Buttons.`;
+
+export function reviseUserPrompt(input: {
+  pageJson: string;
+  scopeText: string;
+  viewport: "mobile" | "desktop";
+  instruction: string;
+}): string {
+  return `<page>
+${input.pageJson}
+</page>
+
+<scope>${input.scopeText}</scope>
+<preview>The editor is currently showing the ${input.viewport} preview.</preview>
+
+<instruction>
+${input.instruction}
+</instruction>`;
 }

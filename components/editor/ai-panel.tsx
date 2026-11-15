@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useGetPuck, type Data, type Plugin } from "@puckeditor/core";
 import { findPageProblem } from "@/lib/page-schema";
+import { EditPanel } from "./ai-edit-panel";
+import { useElapsedSeconds } from "./use-elapsed";
 
 /**
  * The "AI" tab in the editor's left rail.
@@ -100,7 +102,7 @@ function GeneratePanel() {
       <textarea
         id="ed-ai-brief"
         className="ed-input ed-ai-textarea"
-        rows={6}
+        rows={4}
         placeholder={EXAMPLE_BRIEF}
         value={brief}
         disabled={loading}
@@ -202,20 +204,12 @@ function GenerateStatus({
   return null;
 }
 
-function useElapsedSeconds(startedAt: number | null): number {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    if (startedAt === null) return;
-    const timer = setInterval(() => setNow(Date.now()), 500);
-    return () => clearInterval(timer);
-  }, [startedAt]);
-  return startedAt === null ? 0 : Math.max(0, Math.round((now - startedAt) / 1000));
-}
-
 function AiPanel() {
   return (
     <div className="ed-ai-panel">
       <GeneratePanel />
+      <hr className="ed-ai-divider" />
+      <EditPanel />
     </div>
   );
 }

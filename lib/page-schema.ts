@@ -28,10 +28,10 @@ const imageSrc = z
     /^(asset:[a-z0-9]{6,40}|placeholder:[^\n]{0,200}|https?:\/\/\S+|\/\S*)$/i,
     "Unsupported image source",
   );
-const href = z
-  .string()
-  .max(2048)
-  .regex(/^(https?:\/\/\S*|mailto:\S*|tel:\S*|#[\w-]*|\/\S*)?$/i, "Unsupported link");
+// Any text is allowed here because users may type links like "www.example.com".
+// Unsafe links are neutralised when the button is drawn (safeHref in style.ts),
+// and AI-written links are cleaned with safeHref before they are stored.
+const href = z.string().max(2048);
 
 // ---------------------------------------------------------------- elements
 

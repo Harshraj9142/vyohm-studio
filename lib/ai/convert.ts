@@ -2,7 +2,7 @@ import type { Data } from "@puckeditor/core";
 import { DEFAULT_ROOT, LIMITS, type ElementNode } from "@/components/site/model";
 import { safeColor, safeHref, slugify } from "@/components/site/style";
 import { makeElement, makePage } from "@/lib/page-tree";
-import type { GeneratedElement, GeneratedPage } from "./generate-schema";
+import type { GeneratedElement, GeneratedPage, GeneratedSection } from "./generate-schema";
 
 /**
  * Turns Claude's generated JSON into a real page.
@@ -16,12 +16,12 @@ import type { GeneratedElement, GeneratedPage } from "./generate-schema";
  * The result is then checked again with the strict page validator.
  */
 
-function clamp(value: unknown, [min, max]: readonly [number, number], fallback: number): number {
+export function clamp(value: unknown, [min, max]: readonly [number, number], fallback: number): number {
   if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
   return Math.round(Math.min(max, Math.max(min, value)));
 }
 
-function cleanText(value: unknown, maxLength: number): string {
+export function cleanText(value: unknown, maxLength: number): string {
   if (typeof value !== "string") return "";
   return value
     .replace(/[\u0000-\u0009\u000B-\u001F\u007F]/g, "") // control characters (keep \n)
@@ -78,7 +78,7 @@ function toContentElement(el: GeneratedElement): ElementNode | null {
   }
 }
 
-function toSectionChild(el: GeneratedElement): ElementNode | null {
+export function toSectionChild(el: GeneratedElement): ElementNode | null {
   if (el.type !== "Container") return toContentElement(el);
   const column = (items: GeneratedElement[]) =>
     items
@@ -101,29 +101,38 @@ function toSectionChild(el: GeneratedElement): ElementNode | null {
   });
 }
 
-export function generatedToPage(generated: GeneratedPage): Data {
-  const usedAnchors = new Set<string>();
-  const uniqueAnchor = (value: unknown, index: number) => {
-    const base = slugify(value) || `section-${index + 1}`;
+/** Convert one generated section. `anchorFor` makes sure anchors are unique on the page. */
+export function toSection(section: GeneratedSection, anchor: string): ElementNode {
+  return makeElement("Section", {
+    anchor,
+    bgColor: color(section.bgColor),
+    textColor: color(section.textColor),
+    paddingY: clamp(section.paddingY, LIMITS.Section.paddingY, 80),
+    gap: clamp(section.gap, LIMITS.Section.gap, 24),
+    content: section.children
+      .slice(0, 20)
+      .map(toSectionChild)
+      .filter((node): node is ElementNode => node !== null),
+  });
+}
+
+/** Returns a function that turns a wanted anchor into one not used yet ("about", "about-2", ...). */
+export function anchorMaker(existing: Iterable<string> = []) {
+  const used = new Set(existing);
+  return (value: unknown, fallback: string) => {
+    const base = slugify(value) || fallback;
     let anchor = base;
-    for (let n = 2; usedAnchors.has(anchor); n++) anchor = `${base}-${n}`;
-    usedAnchors.add(anchor);
+    for (let n = 2; used.has(anchor); n++) anchor = `${base}-${n}`;
+    used.add(anchor);
     return anchor;
   };
+}
 
-  const sections = generated.sections.slice(0, 10).map((section, index) =>
-    makeElement("Section", {
-      anchor: uniqueAnchor(section.anchor, index),
-      bgColor: color(section.bgColor),
-      textColor: color(section.textColor),
-      paddingY: clamp(section.paddingY, LIMITS.Section.paddingY, 80),
-      gap: clamp(section.gap, LIMITS.Section.gap, 24),
-      content: section.children
-        .slice(0, 20)
-        .map(toSectionChild)
-        .filter((node): node is ElementNode => node !== null),
-    }),
-  );
+export function generatedToPage(generated: GeneratedPage): Data {
+  const uniqueAnchor = anchorMaker();
+  const sections = generated.sections
+    .slice(0, 10)
+    .map((section, index) => toSection(section, uniqueAnchor(section.anchor, `section-${index + 1}`)));
 
   return makePage(
     {
