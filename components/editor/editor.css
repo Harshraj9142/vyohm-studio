@@ -1,0 +1,155 @@
+/* Styles for Vyohm Studio's own editor UI (not the website being built). */
+
+.ed-loading {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  font: 15px/1.5 system-ui, sans-serif;
+  color: #4b5563;
+}
+
+.ed-banner {
+  padding: 8px 16px;
+  font: 13px/1.4 system-ui, sans-serif;
+}
+
+.ed-banner--warn {
+  background: #fff4db;
+  color: #6b4a07;
+}
+
+.ed-save {
+  align-self: center;
+  margin-right: 8px;
+  font: 12px/1.2 system-ui, sans-serif;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.ed-save--error,
+.ed-save--unavailable {
+  color: #b42318;
+}
+
+/* ---------- custom fields ---------- */
+
+.ed-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ed-input {
+  width: 100%;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  background: #fff;
+  color: #101828;
+  font: 13px/1.4 system-ui, sans-serif;
+}
+
+.ed-input:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 0;
+  border-color: transparent;
+}
+
+.ed-input--invalid {
+  border-color: #d92d20;
+}
+
+.ed-unit {
+  font: 12px system-ui, sans-serif;
+  color: #667085;
+}
+
+.ed-mini-button {
+  flex: none;
+  padding: 6px 10px;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  background: #fff;
+  color: #344054;
+  font: 600 12px/1.2 system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.ed-mini-button:hover:not(:disabled) {
+  background: #f2f4f7;
+}
+
+.ed-mini-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ed-mini-button--primary {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.ed-mini-button--primary:hover:not(:disabled) {
+  background: #1e40af;
+}
+
+.ed-color-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ed-color-field input[type="color"] {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 2px;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.ed-image-field {
+  display: grid;
+  gap: 8px;
+}
+
+.ed-image-field__preview {
+  display: grid;
+  place-items: center;
+  height: 120px;
+  overflow: hidden;
+  border: 1px dashed #d0d5dd;
+  border-radius: 6px;
+  background: #f9fafb;
+  color: #667085;
+  font: 12px/1.4 system-ui, sans-serif;
+  text-align: center;
+}
+
+.ed-image-field__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ed-field-note {
+  margin: 0;
+  font: 12px/1.45 system-ui, sans-serif;
+  color: #475467;
+}
+
+.ed-field-note--error {
+  color: #b42318;
+}
+
+.ed-field-note--info {
+  margin: 12px 16px 4px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1e3a8a;
+}

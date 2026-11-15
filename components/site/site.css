@@ -1,0 +1,213 @@
+/*
+ * Vyohm Studio site styles.
+ * Used by the editor preview AND copied into the exported Next.js project.
+ *
+ * Each element sets CSS variables in its inline style (see style.ts).
+ * Desktop uses e.g. --h-size; phones (max-width: 767px) use --h-size-m if it is set.
+ * Variable prefixes are per element type (s = section, c = container, h = heading,
+ * p = paragraph, i = image, b = button) so a parent's values never leak into a child.
+ */
+
+.vs-page {
+  min-height: 100vh;
+  background: var(--vs-bg, #ffffff);
+  color: var(--vs-text, #16181d);
+  font-family: var(--vs-font, system-ui, sans-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+.vs-page *,
+.vs-page *::before,
+.vs-page *::after {
+  box-sizing: border-box;
+}
+
+/* ---------------- Section ---------------- */
+
+.vs-section {
+  background: var(--s-bg, transparent);
+  color: var(--s-color, inherit);
+  padding: var(--s-py, 80px) 24px;
+}
+
+.vs-section__inner {
+  max-width: var(--s-maxw, 1120px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-gap, 24px);
+}
+
+/* ---------------- Container ---------------- */
+
+.vs-container {
+  display: grid;
+  grid-template-columns: var(--c-cols, minmax(0, 1fr));
+  gap: var(--c-gap, 32px);
+  padding: var(--c-pad, 0);
+  align-items: var(--c-valign, start);
+  background: var(--c-bg, transparent);
+  border-radius: var(--c-radius, 0);
+}
+
+.vs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.vs-col--live:empty {
+  display: none;
+}
+
+/* ---------------- Heading ---------------- */
+
+.vs-heading {
+  margin: 0;
+  font-family: var(--vs-heading-font, inherit);
+  font-size: var(--h-size, 40px);
+  font-weight: var(--h-weight, 700);
+  color: var(--h-color, inherit);
+  text-align: var(--h-align, left);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  overflow-wrap: break-word;
+}
+
+/* ---------------- Paragraph ---------------- */
+
+.vs-paragraph {
+  margin: 0;
+  font-size: var(--p-size, 17px);
+  color: var(--p-color, inherit);
+  text-align: var(--p-align, left);
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+/* ---------------- Image ---------------- */
+
+.vs-image {
+  margin: 0;
+}
+
+.vs-image__media {
+  display: block;
+  width: var(--i-width, 100%);
+  max-width: 100%;
+  height: var(--i-height, auto);
+  object-fit: var(--i-fit, cover);
+  border-radius: var(--i-radius, 0);
+  margin-left: var(--i-ml, 0);
+  margin-right: var(--i-mr, 0);
+}
+
+.vs-image__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  aspect-ratio: 4 / 3;
+  padding: 16px;
+  text-align: center;
+  background: color-mix(in srgb, currentColor 7%, transparent);
+  border: 1.5px dashed color-mix(in srgb, currentColor 35%, transparent);
+}
+
+.vs-image__placeholder span {
+  font-weight: 600;
+}
+
+.vs-image__placeholder small {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* ---------------- Button ---------------- */
+
+.vs-button-row {
+  display: flex;
+  justify-content: var(--b-justify, flex-start);
+}
+
+.vs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--b-bg, #16181d);
+  border-radius: var(--b-radius, 8px);
+  background: var(--b-bg, #16181d);
+  color: var(--b-color, #ffffff);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.vs-button:hover {
+  filter: brightness(1.1);
+}
+
+.vs-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--b-bg, #16181d) 55%, transparent);
+  outline-offset: 3px;
+}
+
+.vs-button--outline {
+  background: transparent;
+  color: var(--b-bg, currentColor);
+}
+
+.vs-button--sm { padding: 8px 16px; font-size: 14px; }
+.vs-button--md { padding: 12px 24px; font-size: 16px; }
+.vs-button--lg { padding: 16px 32px; font-size: 18px; }
+
+/* ---------------- Phones ----------------
+ * A "-m" value is the mobile override. If it is not set, we fall back to the
+ * desktop value (or a sensible smaller default for spacing and headings).
+ */
+@media (max-width: 767px) {
+  .vs-section {
+    padding: var(--s-py-m, calc(var(--s-py, 80px) * 0.65)) 20px;
+  }
+
+  .vs-section__inner {
+    gap: var(--s-gap-m, var(--s-gap, 24px));
+  }
+
+  .vs-container {
+    grid-template-columns: var(--c-cols-m, minmax(0, 1fr));
+    gap: var(--c-gap-m, var(--c-gap, 32px));
+    padding: var(--c-pad-m, var(--c-pad, 0));
+  }
+
+  .vs-heading {
+    font-size: var(--h-size-m, calc(var(--h-size, 40px) * 0.75));
+    text-align: var(--h-align-m, var(--h-align, left));
+  }
+
+  .vs-paragraph {
+    font-size: var(--p-size-m, var(--p-size, 17px));
+    text-align: var(--p-align-m, var(--p-align, left));
+  }
+
+  .vs-image__media {
+    width: var(--i-width-m, var(--i-width, 100%));
+    height: var(--i-height-m, var(--i-height, auto));
+  }
+
+  .vs-button-row {
+    justify-content: var(--b-justify-m, var(--b-justify, flex-start));
+  }
+
+  .vs-button--full-m {
+    width: 100%;
+  }
+}
