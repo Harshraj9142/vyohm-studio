@@ -128,3 +128,62 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 [screenshot] tests/browser/output/start-flow-1440.png
 
 === editor-welcome (no saved page -> choice, then blank page) ===
+{
+  "allPassed": true,
+  "checks": {
+    "Welcome screen instead of a sample page": {
+      "expected": "welcome text, no editor preview",
+      "actual": "welcome shown, no editor",
+      "pass": true
+    },
+    "Three choices; Generate goes to the chat": {
+      "expected": "Generate (/start), Blank, Sample",
+      "actual": "/start, true, true",
+      "pass": true
+    },
+    "Blank page opens empty in the editor": {
+      "expected": "0 sections, Blocks tab, saved",
+      "actual": "0 sections, tab blocks, Saved 15:16",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/editor-welcome-1440.png
+
+=== editor-sample-choice ===
+{
+  "allPassed": true,
+  "checks": {
+    "Sample opens only when chosen": {
+      "expected": "Crafted to be kept.",
+      "actual": "Crafted to be kept.",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/editor-sample-choice-1440.png
+
+=== legacy-sample (an old auto-saved sample must not open by itself; 3 steps, same browser) ===
+"old auto-saved sample in place"
+[screenshot] tests/browser/output/legacy-sample-setup-1440.png
+{
+  "allPassed": true,
+  "checks": {
+    "Old auto-saved sample is not opened by itself": {
+      "expected": "welcome screen, no editor",
+      "actual": "welcome, no editor",
+      "pass": true
+    },
+    "Offers to continue with it": {
+      "expected": "mentions the page + Continue button",
+      "actual": "offered",
+      "pass": true
+    },
+    "Continue opens the existing page": {
+      "expected": "Crafted to be worn, made to be remembered",
+      "actual": "Crafted to be worn, made to be remembered",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/legacy-sample-check-1440.png
