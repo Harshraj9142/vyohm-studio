@@ -195,3 +195,72 @@ Builder: http://localhost:3211/ (build with NEXT_PUBLIC_TEST_HOOKS=1), headless 
 [screenshot] tests/browser/output/after-reload-1440.png
 
 === demo-sequence (one real Claude edit) ===
+{
+  "allPassed": true,
+  "checks": {
+    "AI status": {
+      "expected": "ok",
+      "actual": "ed-ai-status--ok (3s): Changed the background of the \"Explore the collections\" button to blue.Use Undo (top right) to revert.",
+      "pass": true
+    },
+    "Only change on the page": {
+      "expected": "exactly 1 change: the button's bgColor",
+      "actual": [
+        "page.root.props.content[0].props.content[0].props.left[3].props.bgColor: \"#c9a44c\" -> \"#2563eb\""
+      ],
+      "pass": true
+    },
+    "Headline kept": {
+      "expected": "Wear the story, not the trend",
+      "actual": "Wear the story, not the trend",
+      "pass": true
+    },
+    "Uploaded image kept": {
+      "expected": "asset:…",
+      "actual": "asset:c249ba759c3d4a3d",
+      "pass": true
+    },
+    "Moved button still in hero": {
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    "Section order kept": {
+      "expected": [
+        "",
+        "contact",
+        "collections"
+      ],
+      "actual": [
+        "",
+        "contact",
+        "collections"
+      ],
+      "pass": true
+    },
+    "Undo / redo": {
+      "expected": "#c9a44c / blue",
+      "actual": "#c9a44c / #2563eb",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/demo-sequence-1440.png
+
+=== real-ai-edits (two real Claude edits) ===
+{
+  "allPassed": true,
+  "checks": {
+    "Mobile-aware edit": {
+      "expected": "only the heading's mobile.fontSize changes; desktop 64px unchanged",
+      "actual": "ed-ai-status--ok (3s): [\"page.root.props.content[0].props.content[0].props.left[1].props.mobile.fontSize: undefined -> 40\"]; desktop 64px",
+      "pass": true
+    },
+    "Whole-page edit": {
+      "expected": "only button radius values change",
+      "actual": "ed-ai-status--ok (3s): 5 change(s): [\"page.root.props.content[0].props.content[0].props.left[3].props.radius: 2 -> 64\",\"page.root.props.content[1].props.content[1].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[2].props.left[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[3].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[2].props.content[3].props.radius: 2 -> 64\"]",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/real-ai-edits-1440.png

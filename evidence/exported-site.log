@@ -1,4 +1,4 @@
-Exported site checks (npm run start of evidence/website.zip, extracted fresh) â€” 2026-11-15 11:29 IST
+Exported site checks (npm run start of evidence/website.zip, extracted fresh) â€” 2026-11-15 12:14 IST
 
 === desktop 1280px ===
 {
@@ -12,7 +12,7 @@ Exported site checks (npm run start of evidence/website.zip, extracted fresh) â€
     "background": "rgb(37, 99, 235)"
   },
   "uploadedImage": {
-    "src": "/assets/d7384ea087624a3d.jpg",
+    "src": "/assets/0305303b48234b14.jpg",
     "loaded": true
   },
   "sections": [
@@ -22,7 +22,17 @@ Exported site checks (npm run start of evidence/website.zip, extracted fresh) â€
     "process"
   ],
   "columnsInFirstContainer": 2,
-  "horizontalOverflow": false
+  "horizontalOverflow": false,
+  "designOptions": {
+    "liveSections": 4,
+    "surfaces": [
+      "vs-container--card",
+      "vs-container--card",
+      "vs-container--card"
+    ],
+    "paragraphStyles": 11,
+    "arrowButtons": 2
+  }
 }
 [screenshot] docs/screenshots/exported-desktop.png
 
@@ -38,7 +48,7 @@ Exported site checks (npm run start of evidence/website.zip, extracted fresh) â€
     "background": "rgb(37, 99, 235)"
   },
   "uploadedImage": {
-    "src": "/assets/d7384ea087624a3d.jpg",
+    "src": "/assets/0305303b48234b14.jpg",
     "loaded": true
   },
   "sections": [
@@ -48,6 +58,16 @@ Exported site checks (npm run start of evidence/website.zip, extracted fresh) â€
     "process"
   ],
   "columnsInFirstContainer": 1,
-  "horizontalOverflow": false
+  "horizontalOverflow": false,
+  "designOptions": {
+    "liveSections": 4,
+    "surfaces": [
+      "vs-container--card",
+      "vs-container--card",
+      "vs-container--card"
+    ],
+    "paragraphStyles": 11,
+    "arrowButtons": 2
+  }
 }
 [screenshot] docs/screenshots/exported-mobile.png
