@@ -30,7 +30,7 @@ npm run verify-export -- evidence/website.zip
 
 | Run | Result | Log |
 |---|---|---|
-| Browser scenarios (11 runs, 58 checks) | **58 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
+| Browser scenarios (12 runs, 69 checks, including real mouse drags) | **69 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
 | Full flow: generate → manual edits → mobile override → AI edit → export | Completed | [full-flow.log](../evidence/full-flow.log) |
 | Export verification: fresh folder, `npm ci` + `npm run build` | **PASS** (`npm ci` 5 s, build 5 s) | [export-verify.log](../evidence/export-verify.log) |
 | Exported site served with `npm run start`, checked at 1280 px and 390 px | Matches the editor; no overflow | [exported-site.log](../evidence/exported-site.log) |
