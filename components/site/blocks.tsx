@@ -8,6 +8,7 @@ import type {
   ParagraphData,
   SectionData,
 } from "./model";
+import { HOVER } from "./model";
 import { resolveImage } from "./assets";
 import {
   cssVars,
@@ -125,12 +126,14 @@ export function Container({
   bgColor,
   radius,
   surface,
+  hover,
   mobile,
   left: Left,
   right: Right,
   puck,
 }: ContainerData & { left: SlotComponent; right: SlotComponent } & EditorFlag) {
   const look = oneOf(surface, ["none", "card", "glow", "outline"] as const, "none");
+  const hoverEffect = oneOf(hover, HOVER.Container, "default");
   const desktopColumns = columns === "2" ? COLUMN_TEMPLATES[ratio] ?? COLUMN_TEMPLATES["1:1"] : ONE_COLUMN;
   // Phones stack columns unless the user picks "side by side" for mobile.
   const mobileColumns = mobile?.columns === "2" ? desktopColumns : ONE_COLUMN;
@@ -139,11 +142,13 @@ export function Container({
 
   return (
     <div
-      // Hover effects only on the real site, so they don't fight the editor's selection outline.
+      // The default card lift runs only on the real site, so it doesn't fight the editor's
+      // selection outline. A hover effect the user chose shows in the editor too.
       className={cx(
         "vs-container",
         look !== "none" && `vs-container--surface vs-container--${look}`,
-        !puck?.isEditing && "vs-container--live",
+        hoverEffect === "default" && !puck?.isEditing && "vs-container--live",
+        hoverEffect !== "default" && hoverEffect !== "none" && `vs-container--hover-${hoverEffect}`,
       )}
       style={cssVars({
         "--c-cols": desktopColumns,
@@ -238,8 +243,9 @@ export function Paragraph({
 // ---------------------------------------------------------------- Image
 
 
-export function Image({ src, alt, width, height, fit, radius, align, mobile }: ImageData) {
+export function Image({ src, alt, width, height, fit, radius, align, hover, mobile }: ImageData) {
   const image = resolveImage(src);
+  const hoverEffect = oneOf(hover, HOVER.Image, "none");
   const [marginLeft, marginRight] = MARGINS[align] ?? MARGINS.left;
   const style = cssVars({
     "--i-width": pct(width),
@@ -253,7 +259,7 @@ export function Image({ src, alt, width, height, fit, radius, align, mobile }: I
   });
 
   return (
-    <figure className="vs-image" style={style}>
+    <figure className={cx("vs-image", hoverEffect !== "none" && `vs-image--hover-${hoverEffect}`)} style={style}>
       {image.kind === "image" ? (
         // A plain <img> keeps the export simple (no next/image config needed).
         // eslint-disable-next-line @next/next/no-img-element
@@ -290,15 +296,18 @@ export function Button({
   radius,
   align,
   icon,
+  hover,
   mobile,
   puck,
 }: Editable<ButtonData, "label"> & EditorFlag) {
   const editing = puck?.isEditing;
+  const hoverEffect = oneOf(hover, HOVER.Button, "default");
   const classes = [
     "vs-button",
     `vs-button--${size === "sm" || size === "lg" ? size : "md"}`,
     variant === "outline" ? "vs-button--outline" : "",
     mobile?.fullWidth === "yes" ? "vs-button--full-m" : "",
+    hoverEffect !== "default" ? `vs-button--hover-${hoverEffect}` : "",
   ]
     .filter(Boolean)
     .join(" ");

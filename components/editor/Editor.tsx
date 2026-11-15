@@ -185,8 +185,11 @@ export function Editor() {
         ui={{ plugin: { current: load.firstTab ?? "ai" } }}
         viewports={viewports}
         iframe={{ enabled: true }}
+        // Headings, paragraphs and button labels are editable text: pressing on them places the
+        // cursor instead of starting a drag. The handle (⠿) in the action bar drags any element.
+        dnd={{ enableDragHandle: true }}
         headerTitle="Vyohm Studio"
-        dictionary={{ "header-publish": "Save" }}
+        dictionary={{ "header-publish": "Save", "action-drag": "Drag to move" }}
         overrides={{
           // Puck's own "Publish" button (with a globe icon) is replaced by our Save button.
           headerActions: () => (

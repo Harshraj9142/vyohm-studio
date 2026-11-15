@@ -1,28 +1,27 @@
-Full flow for the final export — 2026-11-15 16:56 IST
+Full flow for the final export — 2026-11-15 17:25 IST
 Builder: production build of the final code (NEXT_PUBLIC_TEST_HOOKS=1) on :3211; scenario tests/browser/scenarios/full-flow-export.js; real Claude calls
 
 [saved] evidence/website.zip
 {
-  "generate": "ed-ai-status--ok in 44s",
+  "generate": "ed-ai-status--ok in 38s",
   "headline": "Roasted slowly. Poured with care.",
-  "heroImage": "asset:fcf7825b1a504f7b",
+  "heroImage": "asset:48dc1125bacf4754",
   "sectionOrder": [
     "home",
     "contact",
-    "coffees",
+    "origins",
     "process",
-    "philosophy",
-    "cafe"
+    "story"
   ],
   "h1Mobile": {
     "fontSize": 34
   },
-  "aiEdit": "ed-ai-status--ok in 2s: Changed the selected button's background colour to blue.Use Undo (top right) to revert.",
-  "export": "Saved 16:56 | Exported with 1 image",
-  "zipBytes": 42407
+  "aiEdit": "ed-ai-status--ok in 3s: Changed the hero 'Visit the café' button background to blue.Use Undo (top right) to revert",
+  "export": "Saved 17:24 | Exported with 1 image",
+  "zipBytes": 42740
 }
 [screenshot] docs/screenshots/editor.png
 
 Server log (proof of the real model calls):
-[ai] generated page with claude-opus-5-5 in 44199 ms — direction 3: Kiln Ledger | raw roastery-floor honesty, mono type set like batch logs, sharp corners and one dark espresso band for the roast process | background #F3E9D8, accent #3B2316 | mono | asymmetric-big-type
-[ai] revision with claude-opus-5-5 in 2224 ms, 1 operation(s), attempt 1
+[ai] generated page with claude-opus-5-5 in 37449 ms — direction 3: Kiln Type | bold, industrial roastery energy; oversized heavy sans headlines, mono body text, sharp 0px corners, outline cards and one dark espresso band | background #f3e9dc, accent #6b3a22 | sans | asymmetric-big-type
+[ai] revision with claude-opus-5-5 in 2718 ms, 1 operation(s), attempt 1

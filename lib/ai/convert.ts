@@ -1,5 +1,5 @@
 import type { Data } from "@puckeditor/core";
-import { DEFAULT_ROOT, LIMITS, type ElementNode } from "@/components/site/model";
+import { DEFAULT_ROOT, HOVER, LIMITS, type ElementNode } from "@/components/site/model";
 import { safeColor, safeHref, slugify } from "@/components/site/style";
 import { makeElement, makePage } from "@/lib/page-tree";
 import type { GeneratedElement, GeneratedPage, GeneratedSection } from "./generate-schema";
@@ -34,6 +34,8 @@ const pick = <T extends string>(value: unknown, allowed: readonly T[], fallback:
   allowed.includes(value as T) ? (value as T) : fallback;
 
 const ALIGN = ["left", "center", "right"] as const;
+/** Hover isn't in the generation schema (it is at the API's size limit), but an AI-inserted element may set it. */
+const hoverOf = (el: unknown) => (el as { hover?: unknown }).hover;
 
 function toContentElement(el: GeneratedElement): ElementNode | null {
   switch (el.type) {
@@ -61,6 +63,7 @@ function toContentElement(el: GeneratedElement): ElementNode | null {
         alt: cleanText(el.alt, 300) || label,
         height: clamp(el.height, LIMITS.Image.height, 0),
         radius: clamp(el.radius, LIMITS.Image.radius, 0),
+        hover: pick(hoverOf(el), HOVER.Image, "none"),
       });
     }
     case "Button":
@@ -74,6 +77,7 @@ function toContentElement(el: GeneratedElement): ElementNode | null {
         radius: clamp(el.radius, LIMITS.Button.radius, 8),
         align: pick(el.align, ALIGN, "left"),
         icon: pick(el.icon, ["none", "arrow"] as const, "none"),
+        hover: pick(hoverOf(el), HOVER.Button, "default"),
       });
     default:
       return null;
@@ -99,6 +103,7 @@ export function toSectionChild(el: GeneratedElement): ElementNode | null {
     bgColor: color(el.bgColor),
     radius: clamp(el.radius, LIMITS.Container.radius, 0),
     surface: pick(el.surface, ["none", "card", "glow", "outline"] as const, "none"),
+    hover: pick(hoverOf(el), HOVER.Container, "default"),
     left: column(el.left),
     right: column(el.right),
   });

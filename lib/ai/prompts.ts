@@ -108,6 +108,7 @@ Allowed values for choice settings:
 ${choicesList}
 
 Design meaning of the style settings: Paragraph variant "lead" = muted intro text, "eyebrow" = small caps label, "badge" = pill label. Container surface "card" = soft shadow card, "glow" = card with a top light, "outline" = hairline border with corner marks. Section bgStyle "spotlight" = glow at the top, "gradient" = soft wash. Button icon "arrow" adds a → icon.
+Hover effects ("hover"): Button "default" = small lift and brighten, "lift" = rises with a shadow, "grow" = gets a little bigger, "glow" = glowing ring in the button colour, "none" = no effect. Image "zoom" = grows a little, "lift" = rises with a shadow, "color" = black and white until hovered, "none". Container "default" = cards lift slightly on the live site, "lift" = rises with a shadow, "glow" = soft glow, "none". If someone asks for a hover effect without naming one, pick the one that suits the page (often "lift").
 
 Allowed number ranges (px unless it is a width in %):
 ${rangesList}

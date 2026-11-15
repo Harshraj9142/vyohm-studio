@@ -192,7 +192,7 @@ If the browser still holds a page from before that you never chose (for example 
 
 ![Editing a heading](docs/screenshots/editor-heading.png)
 
-1. **Click** any element on the canvas. A violet frame and a small action bar appear. The bar shows the element type and has **select parent** (↑), **duplicate** and **delete**.
+1. **Click** any element on the canvas. A violet frame and a small action bar appear. The bar shows the element type and has **select parent** (↑), **duplicate**, **delete** and the **⠿ drag handle** (*Drag to move*).
 2. **Type directly on the page** to change text in headings, paragraphs and button labels.
 3. **Use the settings panel** on the right for everything else. The breadcrumb at the top (*Container › Heading*) shows where the element sits, and clicking a part of it selects that parent.
 
@@ -203,11 +203,11 @@ Colour fields have a colour picker, a hex box and **Clear**. An empty colour mea
 | Element | Settings | Phone-only settings |
 |---|---|---|
 | **Section** (a full-width band of the page) | Anchor name (for links like `#contact`), background colour, text colour, background style (*Solid*, *Soft gradient*, *Spotlight glow*), vertical padding, space between items, content width | Vertical padding, space between items |
-| **Container** (one or two columns inside a section) | Columns (one or two), column widths (1:1, 2:1, 1:2), vertical alignment, gap, padding, background, surface (*None*, *Card*, *Glow*, *Outline*), corner radius | Stack or keep side by side, gap, padding |
+| **Container** (one or two columns inside a section) | Columns (one or two), column widths (1:1, 2:1, 1:2), vertical alignment, gap, padding, background, surface (*None*, *Card*, *Glow*, *Outline*), corner radius, hover effect (*Default*: cards lift on the live site, *None*, *Lift*, *Glow*) | Stack or keep side by side, gap, padding |
 | **Heading** | Text, level (H1 page title, H2 section title, H3 small title), font size, weight, colour, alignment | Font size, alignment |
 | **Paragraph** | Text, style (*Body*, *Lead*, *Eyebrow*, *Badge*), font size, colour, alignment | Font size, alignment |
-| **Image** | Upload (button or drag and drop) with cropping, crop again, replace, remove, or use an image link; alt text, width (% of column), height (0 = automatic), fit (*Fill* or *Fit*), corner radius, alignment | Width, height |
-| **Button** | Label, link (`https://…`, `mailto:…` or `#section`), open in same or new tab, style (*Solid* or *Outline*), icon (*None* or *Arrow →*), background colour, text colour, size (S, M, L), corner radius, alignment | Full width on phones, alignment |
+| **Image** | Upload (button or drag and drop) with cropping, crop again, replace, remove, or use an image link; alt text, width (% of column), height (0 = automatic), fit (*Fill* or *Fit*), corner radius, alignment, hover effect (*None*, *Zoom*, *Lift*, *Colour*: black and white until hovered) | Width, height |
+| **Button** | Label, link (`https://…`, `mailto:…` or `#section`), open in same or new tab, style (*Solid* or *Outline*), icon (*None* or *Arrow →*), background colour, text colour, size (S, M, L), corner radius, alignment, hover effect (*Default*: small lift, *None*, *Lift*, *Grow*, *Glow*) | Full width on phones, alignment |
 | **Page** (nothing selected) | Page title (browser tab), page description (search engines), heading font, body font, page background, page text colour | – |
 
 **Images: upload, crop, links.** Images that Claude generates are labelled placeholders (for example *"Hero photo – model in signature coat"*), because Claude writes text, not photos. To add your own picture, select the image:
@@ -231,7 +231,7 @@ Every image change is one Undo step. Uploaded files and crops are stored in your
 | ![Container settings](docs/screenshots/editor-container.png) | ![Outline tab](docs/screenshots/editor-outline.png) |
 
 - **Add** an element: open **Blocks** and drag it onto the canvas. Blocks are grouped into *Layout* (Section, Container) and *Content* (Heading, Paragraph, Image, Button).
-- **Move** an element: drag it to another place, for example from one container column into another, or into a different section.
+- **Move** an element: drag it to another place, for example from one container column into another, or into a different section. Images, buttons, containers and sections can be dragged directly. **Headings and paragraphs** are editable text, so pressing on them puts the cursor there instead: click the element, then drag the **⠿ handle** at the right end of its action bar (this works for every element). If you try to drag text, a short message says so.
 - **Reorder sections:** drag them on the canvas, or in the **Outline** tab.
 - **Duplicate or delete:** use the action bar of the selected element.
 - **Container layout:** columns, column widths, vertical alignment, gap, padding, background, surface and corner radius, as shown in the screenshot above.
@@ -260,7 +260,9 @@ The settings panel of a section or container repeats its rule in a short note.
 4. Click **Apply with AI** (or press ⌘Enter). Edits take about 3 seconds.
 5. A green box says what changed: *"Changed the hero button's background to blue. Use Undo (top right) to revert."* (Claude writes this summary itself, so the wording varies a little.) The element stays selected, and its settings panel shows the new value (`#2563eb`).
 
-What the AI can do: change any setting or text, add, delete or move elements, and change page settings (fonts, colours, title).
+What the AI can do: change any setting or text (including hover effects), add, delete or move elements, and change page settings (fonts, colours, title). With *Selected*, it can also move that element somewhere else (*"Move this button to the right column"*).
+
+What it can't do: anything the editor has no setting for (it then says so and changes nothing, for example *"No changes made: …"*), real photos (images stay labelled placeholders until you upload one), and code or custom CSS (the page stays validated data, never model-written code).
 
 What keeps your work safe:
 
@@ -337,7 +339,7 @@ Proof: [export-verify.log](evidence/export-verify.log), [exported-site.log](evid
 | 0:00 | **Generate** | On `/`, click **Get started**. Pick the *Clothing brand* example (or type a brief) and press **Enter**. Point out the build steps and the timer. After ~35 s the real page previews. Click **Open in editor**. |
 | 1:30 | **Edit text** | Click the h1 and type on the canvas. Change its size and weight in the settings panel. |
 | 2:15 | **Replace an image** | Select the hero image → drop a photo on the image box (or **Upload image**) → the crop dialog opens at the box's shape → **Apply crop**. Change the height and the radius. |
-| 3:00 | **Change the layout** | Drag a button into the other column. Reorder two sections in **Outline**. Duplicate a card. Drag a Section over a container column to show the red refusal. |
+| 3:00 | **Change the layout** | Drag a button into the other column (for a heading or paragraph, use the ⠿ handle in its action bar). Reorder two sections in **Outline**. Duplicate a card. Drag a Section over a container column to show the red refusal. |
 | 4:15 | **AI edit** | Select a button → *"Change only this button's background to blue"* → **Apply with AI** (~3 s). Point out that nothing else changed. Try a **Whole page** edit, e.g. *"Make all corners more rounded"*. |
 | 5:30 | **Mobile** | Phone view → set a heading's phone font size. Switch back to desktop: unchanged. |
 | 6:15 | **Undo, save, reload** | Undo the AI edit, Redo it. Reload the page: everything, including the uploaded image, is still there. |
@@ -361,9 +363,10 @@ Proof: [export-verify.log](evidence/export-verify.log), [exported-site.log](evid
 | Add, duplicate, delete | Working | `layout-and-inline` (action bar duplicate/delete; insert) |
 | Move between containers, reorder sections | Working | `drag-and-drop`: a **real mouse drag** (Chrome input events) moves a button into another container. Section reorder is tested with Puck's `reorder` action. |
 | Container padding, gap, alignment, columns | Working (not separately automated) | Fields plus the responsive grid in [site.css](components/site/site.css) |
-| Restrict invalid nesting with clear feedback | Working | Red dashed outline and an explanation while dragging; an honest message after the drop. Rules come from `NESTING` ([drag-feedback.tsx](components/editor/drag-feedback.tsx)); AI edits are checked in code. `drag-and-drop` (11 checks, real mouse), `ai-failures` #8, [screenshot](docs/screenshots/drag-refused.png) |
-| **AI revisions** of a selected element or the whole page, preserving unrelated content | Working | `demo-sequence`: after manual edits, exactly one value changed on the whole page (the button's `bgColor`). `real-ai-edits`: a whole-page change touched only `radius` values. |
-| Failed or invalid AI response leaves the page intact | Working | `ai-failures` #1, #5–#8 |
+| Restrict invalid nesting with clear feedback | Working | Red dashed outline and an explanation while dragging; an honest message after the drop. Rules come from `NESTING` ([drag-feedback.tsx](components/editor/drag-feedback.tsx)); AI edits are checked in code. `drag-and-drop` (14 checks, real mouse, including the ⠿ handle for text and the hint when text is dragged), `ai-failures` #8, [screenshot](docs/screenshots/drag-refused.png) |
+| **AI revisions** of a selected element or the whole page, preserving unrelated content | Working | `demo-sequence`: after manual edits, exactly one value changed on the whole page (the button's `bgColor`). `real-ai-edits`: a whole-page change touched only `radius` values; with only a button selected, *"Move this button to the right column"* moved just that button, and *"Add a hover effect to this button"* changed exactly one value (`hover`). |
+| Hover effects for buttons, images and containers (manual or AI) | Working | Settings in [puck-config.tsx](components/editor/puck-config.tsx), CSS in [site.css](components/site/site.css) (also in the export; off for reduced motion). `real-ai-edits` #4 |
+| Failed or invalid AI response leaves the page intact | Working | `ai-failures` #1, #5–#8 (and #6b: an answer that would clear a required setting, like a link, is refused) |
 | Concurrency: manual edit while AI is pending | Working | `ai-failures` #2 and #4: conflict prompt, nothing overwritten silently |
 | Desktop/mobile preview; mobile override without changing desktop; stacking; no overflow | Working | `mobile-override`, [exported-site.log](evidence/exported-site.log) |
 | Undo/redo of content, style, layout and AI edits | Working | `demo-sequence`, `ai-failures` #3, `mobile-override` |
@@ -603,6 +606,8 @@ Other choices:
 
 **6. A rotated crop that lost half the photo.** The `image-crop` test turns a 1600 × 900 photo 90° with the *Original* shape and expects 900 × 1600. The first run gave 506 × 900. After a 90° turn the picture is taller than the crop stage, and the crop box (which must fit the stage) could only reach part of it because the zoom could not go below 1. Fix: allow zooming out to the level where the turned picture still covers the crop box, and jump there on every turn. The next run gave 882 × 1568, still 2 % short. Measuring the cropper's boxes in the browser showed the picture had been measured at 731.7 px instead of 746.7 px: the dialog's opening animation used `scale(0.98)`, and the size was taken while it played. Fix: no scaling in the animation, and the zoom is calculated from the stage's layout size, which animations don't change. Now 900 × 1600 exactly ([image-crop.tsx](components/editor/image-crop.tsx), `coverZoom`).
 
+**7. An AI edit that changed the wrong setting.** After adding hover effects, *"Add a hover effect to this button"* answered *"Set the hover effect to glow"*, but nothing changed on the page. Capturing the `/api/revise` response showed the real operation: `{"prop": "href", "value": null}`, so the button's **link** was being reset. The list of setting names in the edit schema was written by hand and didn't include `hover`; structured output allowed only names from that list, so Claude picked another one. Two fixes: the list is now built from the page model (`editableProps`), so a new setting reaches the AI automatically, and `null` is refused for any setting that needs a value (it only resets phone overrides or colours), so a confused answer fails visibly instead of silently breaking a link. Checked by `real-ai-edits` #4 (exactly one change: `hover`) and `ai-failures` #6b.
+
 ---
 
 ## 11. Testing
@@ -614,7 +619,7 @@ NEXT_PUBLIC_TEST_HOOKS=1 npm run build && npx next start -p 3211   # terminal 1
 npm run test:browser                                                # terminal 2
 ```
 
-Latest full run: **93 passed, 0 failed** ([evidence/browser-tests.log](evidence/browser-tests.log)).
+Latest full run: **99 passed, 0 failed** ([evidence/browser-tests.log](evidence/browser-tests.log)).
 
 | Scenario | What it checks |
 |---|---|
@@ -622,13 +627,13 @@ Latest full run: **93 passed, 0 failed** ([evidence/browser-tests.log](evidence/
 | `start-flow` | Chat → build animation → preview → editor |
 | `editor-welcome`, `editor-sample-choice`, `legacy-sample-*` | No page is shown without the user choosing one |
 | `layout-and-inline` | Typing on the canvas, insert, duplicate, delete |
-| `drag-and-drop` | Real mouse drags, red refusal outline, after-drop messages, Undo |
+| `drag-and-drop` | Real mouse drags, red refusal outline, after-drop messages, Undo; text needs the ⠿ handle (hint shown), and the handle moves a paragraph to the other column |
 | `design-options` | Surfaces, label styles, backgrounds and icons from the settings panel |
 | `mobile-override` | Phone value changes, desktop value stays |
 | `ai-failures` | Bad AI answers, API errors, conflicts and Undo; the page is never damaged |
 | `upload-persist`, `after-reload` | Uploaded image and page survive a reload |
 | `image-crop` | Drop a photo, crop dialog at the box's shape, 1:1, 16:9 and rotated results, crop again from the original, zoom, Undo/Redo, Cancel, Escape, image links (broken, preview, use, save a copy) |
-| `demo-sequence`, `real-ai-edits` | The demo path with **real** Claude edits; exactly the asked-for values change |
+| `demo-sequence`, `real-ai-edits` | The demo path with **real** Claude edits; exactly the asked-for values change; the AI moves a selected button and adds a hover effect |
 | `full-flow-export`, `exported-site` | Export → `npm ci` → build → start → the site renders on desktop and phone |
 
 Real AI generation runs (times and results) and the "not tested" list are in [docs/TESTING.md](docs/TESTING.md).
@@ -645,7 +650,8 @@ Real AI generation runs (times and results) and the "not tested" list are in [do
 - **The generation schema is at the API's size limit.** Adding another field (for example a 3-column option) can make every generation fail with *"compiled grammar is too large"*, so any new field must be tested with a real request first ([TESTING.md](docs/TESTING.md)).
 - **Design directions are random:** you can't yet choose between the four directions Claude proposed.
 - **AI time limits:** generation stops after 150 s and edits after 60 s, with a clear *"Claude took too long"* message. During testing one edit once took 6 minutes to come back from the API; without limits the user would just wait.
-- **Drag and drop** works with a mouse; touch dragging on tablets was not tested.
+- **Drag and drop** works with a mouse; touch dragging on tablets was not tested. Headings and paragraphs move only with the ⠿ handle, because pressing on text starts text editing (Puck's inline editing).
+- **Hover effects** need a mouse; on touch screens there is no hover, so they simply don't show.
 - **No contact-form backend:** buttons are links to sections or `mailto:`.
 - A test hook (`window.__vsPuck`) is active only in development or in builds with `NEXT_PUBLIC_TEST_HOOKS=1`.
 

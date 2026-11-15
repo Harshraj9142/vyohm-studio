@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LIMITS } from "@/components/site/model";
+import { HOVER, LIMITS } from "@/components/site/model";
 
 /**
  * Strict validation of a whole page (Puck data).
@@ -9,7 +9,7 @@ import { LIMITS } from "@/components/site/model";
  *
  * It checks: allowed element types, allowed nesting, colours, number ranges,
  * image sources, links, and that every id is unique.
- * Newer design settings (variant, surface, bgStyle, icon) are optional so pages
+ * Newer design settings (variant, surface, bgStyle, icon, hover) are optional so pages
  * saved before they existed still validate.
  */
 
@@ -75,6 +75,7 @@ const Image = z.object({
     fit: z.enum(["cover", "contain"]),
     radius: num(LIMITS.Image.radius),
     align,
+    hover: z.enum(HOVER.Image).optional(),
     mobile: z.object({ width: optNum(LIMITS.Image.width), height: optNum(LIMITS.Image.height) }),
   }),
 });
@@ -93,6 +94,7 @@ const Button = z.object({
     radius: num(LIMITS.Button.radius),
     align,
     icon: z.enum(["none", "arrow"]).optional(),
+    hover: z.enum(HOVER.Button).optional(),
     mobile: z.object({ fullWidth: z.enum(["", "yes"]).optional(), align: mobileAlign }),
   }),
 });
@@ -112,6 +114,7 @@ const Container = z.object({
     bgColor: color,
     radius: num(LIMITS.Container.radius),
     surface: z.enum(["none", "card", "glow", "outline"]).optional(),
+    hover: z.enum(HOVER.Container).optional(),
     mobile: z.object({
       columns: z.enum(["", "1", "2"]).optional(),
       gap: optNum(LIMITS.Container.gap),

@@ -6,7 +6,7 @@
 #
 # Defaults: base http://localhost:3211 (landing "/", chat "/start", editor "/editor"),
 # log evidence/browser-tests.log.
-# Note: demo-sequence (1) and real-ai-edits (2) make small real Claude calls; everything else is free.
+# Note: demo-sequence (1) and real-ai-edits (4) make small real Claude calls; everything else is free.
 set -uo pipefail
 
 BASE="${1:-http://localhost:3211}"
@@ -72,7 +72,7 @@ mkdir -p "$(dirname "$LOG")"
   echo "=== demo-sequence (one real Claude edit) ==="
   "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/demo-sequence.js
   echo
-  echo "=== real-ai-edits (two real Claude edits) ==="
+  echo "=== real-ai-edits (four real Claude edits) ==="
   "${RUN[@]}" --url "$EDITOR" --script tests/browser/scenarios/real-ai-edits.js
 } > "$LOG" 2>&1
 

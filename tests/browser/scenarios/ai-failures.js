@@ -81,6 +81,13 @@
   s = await aiStatus("edit", 10000);
   checks["Unsafe AI value rejected"] = { expected: "error, page unchanged", actual: `${s.kind}: ${s.text.slice(0, 90)}`, pass: s.kind.includes("error") && json() === before };
 
+  // 6b. AI "clears" a setting that needs a value (seen once: it sent href: null when it
+  //     could not name the setting it meant) -> rejected instead of silently breaking the link.
+  mockFetch((body) => ({ summary: "fake", operations: [{ op: "update", id: body.scope.id, changes: [{ prop: "href", value: null }] }] }));
+  await click("Apply with AI");
+  s = await aiStatus("edit", 10000);
+  checks["AI clearing a required setting rejected"] = { expected: "error (needs a value), page unchanged", actual: `${s.kind}: ${s.text.slice(0, 110)}`, pass: s.kind.includes("error") && /needs a value/.test(s.text) && json() === before };
+
   // 7. Server error -> readable message, page unchanged.
   mockFetch(() => ({ error: "Claude is busy (rate limit). Please wait a moment and try again." }), { status: 429 });
   await click("Apply with AI");

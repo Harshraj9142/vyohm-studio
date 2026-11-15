@@ -47,6 +47,7 @@ export function DragFeedback() {
   const marked = useRef<Element | null>(null);
   const [during, setDuring] = useState<Feedback | null>(null);
   const [afterDrop, setAfterDrop] = useState<Feedback | null>(null);
+  const [hint, setHint] = useState<Feedback | null>(null);
 
   // 1. Remember what the user starts dragging (from the Blocks panel or the page).
   useEffect(() => {
@@ -56,6 +57,8 @@ export function DragFeedback() {
       dragged.current = { type: item.getAttribute("data-testid")!.slice("drawer-item:".length) };
       before.current = JSON.stringify(getPuck().appState.data);
       setDuring(null);
+      setAfterDrop(null); // a new action: the last drop's message is old news
+      setHint(null);
     };
     const fromPage = (e: PointerEvent) => {
       const el = (e.target as Element | null)?.closest?.("[data-puck-component]");
@@ -64,24 +67,64 @@ export function DragFeedback() {
       dragged.current = type ? { type: String(type), id } : null;
       before.current = JSON.stringify(getPuck().appState.data);
       setDuring(null);
+      setAfterDrop(null); // a new action: the last drop's message is old news
+      setHint(null);
     };
+    // Pressing on editable text (headings, paragraphs, button labels) places the cursor,
+    // so dragging there does nothing. If someone tries, point them to the ⠿ handle.
+    let press: { x: number; y: number; done: boolean } | null = null;
+    let hintTimer: ReturnType<typeof setTimeout> | undefined;
+    const onFrameDown = (e: PointerEvent) => {
+      fromPage(e);
+      const target = e.target as Element | null;
+      const onText = !!target?.closest?.("[data-puck-overlay-portal]") && !target?.closest?.("[data-puck-drag-handle]");
+      press = onText ? { x: e.clientX, y: e.clientY, done: false } : null;
+    };
+    const onFrameMove = (e: PointerEvent) => {
+      if (!press || press.done || !(e.buttons & 1)) return;
+      if (Math.hypot(e.clientX - press.x, e.clientY - press.y) < 12) return;
+      press.done = true;
+      // Give Puck a moment: if a real drag started after all, say nothing.
+      setTimeout(() => {
+        if (getPuck().appState.ui.isDragging) return;
+        setHint({
+          title: "To move text, drag the ⠿ handle",
+          message: "Pressing on text puts the cursor there. Click the element, then drag the ⠿ handle at the right end of its toolbar.",
+          tone: "info",
+        });
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(() => setHint(null), 5000);
+      }, 250);
+    };
+    const onFrameUp = () => {
+      press = null;
+    };
+
     document.addEventListener("pointerdown", fromPanel, true);
     // The preview iframe can be re-created (e.g. when switching viewports), so re-attach.
     let frameDoc: Document | null = null;
+    const detach = () => {
+      frameDoc?.removeEventListener("pointerdown", onFrameDown, true);
+      frameDoc?.removeEventListener("pointermove", onFrameMove, true);
+      frameDoc?.removeEventListener("pointerup", onFrameUp, true);
+    };
     const attach = () => {
       const doc = document.querySelector("iframe")?.contentDocument ?? null;
       if (doc && doc !== frameDoc) {
-        frameDoc?.removeEventListener("pointerdown", fromPage, true);
+        detach();
         frameDoc = doc;
-        doc.addEventListener("pointerdown", fromPage, true);
+        doc.addEventListener("pointerdown", onFrameDown, true);
+        doc.addEventListener("pointermove", onFrameMove, true);
+        doc.addEventListener("pointerup", onFrameUp, true);
       }
     };
     attach();
     const timer = setInterval(attach, 1000);
     return () => {
       clearInterval(timer);
+      clearTimeout(hintTimer);
       document.removeEventListener("pointerdown", fromPanel, true);
-      frameDoc?.removeEventListener("pointerdown", fromPage, true);
+      detach();
     };
   }, [getPuck]);
 
@@ -180,8 +223,8 @@ export function DragFeedback() {
     };
   }, [isDragging, getPuck]);
 
-  // While dragging show the live message; afterwards the "Not moved" note (if any).
-  const feedback = isDragging ? during : afterDrop;
+  // While dragging show the live message; afterwards the "Not moved" note or the handle hint (if any).
+  const feedback = isDragging ? during : (afterDrop ?? hint);
   if (!feedback || typeof document === "undefined") return null;
   return createPortal(
     <div className={`ed-drop-toast ed-drop-toast--${feedback.tone}`} role="status" aria-live="polite">

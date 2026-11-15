@@ -148,7 +148,9 @@ function applyOne(
       const loc = mustLocate(root, op.id);
       assertInScope(scope, loc);
       const dest = mustSlot(root, op.parentId, op.slot);
-      assertParentInScope(root, scope, op.parentId);
+      // The selected element itself may move anywhere it is allowed ("move this button to the
+      // right column"): only its position changes, nothing else on the page.
+      if (!(scope.kind === "element" && op.id === scope.id)) assertParentInScope(root, scope, op.parentId);
       assertNesting(dest.parentType, loc.node.type);
       if (op.parentId === op.id) throw new ApplyError("An element cannot be moved into itself.");
       loc.list.splice(loc.index, 1);
@@ -213,6 +215,12 @@ function cleanValue(
     const color = safeColor(value);
     if (!color) throw new ApplyError(`"${String(value)}" is not a valid colour (use #rrggbb).`);
     return color;
+  }
+  // null only means "same as desktop" for phone settings (handled by the caller) or
+  // "inherit" for colours (above). Anywhere else it would silently wipe a real setting,
+  // e.g. a button's link, so the whole answer is refused instead.
+  if (value === null) {
+    throw new ApplyError(`The AI tried to clear the ${type}'s "${key}" setting, which needs a value.`);
   }
   if (range) {
     const n = typeof value === "number" ? value : Number(value);

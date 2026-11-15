@@ -1,39 +1,38 @@
-Exported site checks (npm run start of evidence/website.zip, extracted fresh) — 2026-11-15 16:56 IST
+Exported site checks (npm run start of evidence/website.zip, extracted fresh) — 2026-11-15 17:24 IST
 
 === desktop 1280px ===
 {
   "width": 1280,
   "title": "Ember & Oak — Specialty Coffee Roastery, Bengaluru",
   "h1": "Roasted slowly. Poured with care.",
-  "h1FontSize": "78px",
+  "h1FontSize": "80px",
   "firstButton": {
     "label": "Visit the café",
     "href": "#contact",
     "background": "rgb(37, 99, 235)"
   },
   "uploadedImage": {
-    "src": "/assets/fcf7825b1a504f7b.jpg",
+    "src": "/assets/48dc1125bacf4754.jpg",
     "loaded": true
   },
   "sections": [
     "home",
     "contact",
-    "coffees",
+    "origins",
     "process",
-    "philosophy",
-    "cafe"
+    "story"
   ],
   "columnsInFirstContainer": 2,
   "horizontalOverflow": false,
   "designOptions": {
-    "liveSections": 6,
+    "liveSections": 5,
     "surfaces": [
       "vs-container--outline",
       "vs-container--outline",
       "vs-container--outline"
     ],
-    "paragraphStyles": 7,
-    "arrowButtons": 1
+    "paragraphStyles": 6,
+    "arrowButtons": 2
   }
 }
 [screenshot] docs/screenshots/exported-desktop.png
@@ -50,28 +49,27 @@ Exported site checks (npm run start of evidence/website.zip, extracted fresh) �
     "background": "rgb(37, 99, 235)"
   },
   "uploadedImage": {
-    "src": "/assets/fcf7825b1a504f7b.jpg",
+    "src": "/assets/48dc1125bacf4754.jpg",
     "loaded": true
   },
   "sections": [
     "home",
     "contact",
-    "coffees",
+    "origins",
     "process",
-    "philosophy",
-    "cafe"
+    "story"
   ],
   "columnsInFirstContainer": 1,
   "horizontalOverflow": false,
   "designOptions": {
-    "liveSections": 6,
+    "liveSections": 5,
     "surfaces": [
       "vs-container--outline",
       "vs-container--outline",
       "vs-container--outline"
     ],
-    "paragraphStyles": 7,
-    "arrowButtons": 1
+    "paragraphStyles": 6,
+    "arrowButtons": 2
   }
 }
 [screenshot] docs/screenshots/exported-mobile.png

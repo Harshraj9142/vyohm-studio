@@ -31,7 +31,7 @@ npm run verify-export -- evidence/website.zip
 
 | Run | Result | Log |
 |---|---|---|
-| Browser scenarios (18 runs, 93 checks, including real mouse drags and image cropping) | **93 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
+| Browser scenarios (18 runs, 99 checks, including real mouse drags, image cropping and 5 real AI edits) | **99 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
 | Full flow: generate → manual edits → mobile override → AI edit → export | Completed | [full-flow.log](../evidence/full-flow.log) |
 | Export verification: fresh folder, `npm ci` + `npm run build` | **PASS** (`npm ci`: 30 packages in 3 s; build compiled in 1.4 s) | [export-verify.log](../evidence/export-verify.log) |
 | Exported site served with `npm run start`, checked at 1280 px and 390 px | Matches the editor; no overflow | [exported-site.log](../evidence/exported-site.log) |
@@ -44,6 +44,8 @@ npm run verify-export -- evidence/website.zip
 | Starter page. Manual edits: rewrite the headline, upload a hero image, move the "View collection" button into the hero container, move the contact section to second place. Then select the hero button and ask: *"Change only this button's background to blue"* (real Claude call). | Only that button's background changes; every manual edit survives. | A deep diff of the whole page before and after the AI edit found **exactly one change**: `…left[3].props.bgColor: "#c9a44c" -> "#2563eb"`. Headline, uploaded image (`asset:…`), moved button and section order unchanged. Response time 3 s. Undo restores `#c9a44c`; Redo restores blue. |
 | Mobile preview, heading selected: *"Make this heading smaller"* (real) | Only a phone-only override; desktop untouched | One change: `mobile.fontSize: undefined -> 40`; desktop still 64 px (3 s) |
 | Whole page: *"Make every button on the page fully rounded"* (real) | Only button radii change | 5 changes, all `…radius: N -> 64`; no text or other settings touched (3 s) |
+| Hero button selected: *"Move this button to the right column, under the image"* (real) | Only that button moves | Button now in the hero's right column; its settings and the number of buttons unchanged. Before the fix, a selected element could not be moved at all (*"outside the selected element's scope"*). |
+| Hero button selected: *"Add a hover effect to this button"* (real) | Exactly one change: the hover setting | One change: `hover: "default" -> "glow"` (Claude chose the effect; in earlier tries it chose "lift"). The first try, before the fix, changed the button's link instead (README, debugging example 7). |
 
 ## AI failure and concurrency cases
 
@@ -59,6 +61,7 @@ Fake responses, run in the real editor ([ai-failures.js](../tests/browser/scenar
 | 6 | AI returns `bgColor: "javascript:alert(1)"` | Rejected | *""javascript:alert(1)" is not a valid colour"*; page unchanged |
 | 7 | Server returns HTTP 429 | Readable error, page unchanged | *"Claude is busy (rate limit)…"*; page unchanged |
 | 8 | AI inserts a Section inside a Container | Rejected (nesting) | *"A Section cannot go inside a Container."*; page unchanged |
+| 6b | AI sends `href: null` for the selected button (what Claude once did when it couldn't name a setting) | Rejected, link unchanged | *"The AI tried to clear the Button's "href" setting, which needs a value."*; page unchanged |
 
 Server-side error handling, observed by starting the builder with a broken configuration and calling `POST /api/generate`:
 
@@ -81,6 +84,8 @@ During one full test run, a single AI edit took **356 s** to come back from the 
 | Drag a new **Section** from the Blocks panel over the hero's right column (hold) | Red dashed outline on that column + explanation | Outline on `Container-…:right`; *"Can't drop a Section here: Sections go directly on the page. Drop it between other sections."* ([screenshot](screenshots/drag-refused.png)) |
 | …and let go | Message matches what really happened; nothing invalid nested | Puck placed the section on the page instead; message *"Placed on the page instead…"*; 0 invalid children in containers; outline removed; **Undo** removes the section |
 | Drag an existing **Container** card over the hero's right column (hold), then let go | Explanation; not nested | *"Can't drop a Container here: A container can't go inside another container…"*; card still inside its section |
+| Press on the hero **paragraph's text** and drag it to the image column | Nothing moves (pressing on text starts text editing); a hint explains the ⠿ handle | Paragraph still in the left column; message *"To move text, drag the ⠿ handle…"* |
+| Click the paragraph, drag its **⠿ handle** to the image column | Moves to the other column | Paragraph is now in `Container-…:right` |
 
 The first version said *"Not moved"* after the Section drop, but the page had actually gained a section. The test caught it, and the message now compares the page before and after the drop (see README, debugging example 5).
 

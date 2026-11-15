@@ -420,6 +420,85 @@
   }
 }
 
+/* ---------------- Hover effects (chosen per element) ----------------
+ * Button: default (small lift, above) | none | lift | grow | glow
+ * Image:  none | zoom | lift | color (black-and-white until hovered)
+ * Container: default (cards lift on the live site, above) | none | lift | glow
+ * Effects the user chose also run inside the editor, so they can be seen there.
+ */
+.vs-button--hover-none:hover {
+  filter: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.vs-button--hover-none.vs-button--outline:hover {
+  background: transparent;
+}
+
+.vs-button--hover-none:hover .vs-button__icon {
+  transform: none;
+}
+
+.vs-button--hover-lift:hover {
+  filter: brightness(1.06);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 34px -14px color-mix(in srgb, var(--b-bg, #16181d) 85%, transparent);
+}
+
+.vs-button--hover-grow:hover {
+  filter: brightness(1.06);
+  transform: scale(1.06);
+  box-shadow: none;
+}
+
+.vs-button--hover-glow:hover {
+  filter: brightness(1.1);
+  transform: none;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--b-bg, #16181d) 28%, transparent),
+    0 0 30px 2px color-mix(in srgb, var(--b-bg, #16181d) 60%, transparent);
+}
+
+.vs-image--hover-zoom .vs-image__media,
+.vs-image--hover-lift .vs-image__media,
+.vs-image--hover-color .vs-image__media {
+  transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+}
+
+.vs-image--hover-zoom .vs-image__media:hover {
+  transform: scale(1.04);
+}
+
+.vs-image--hover-lift .vs-image__media:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 50px -22px rgb(0 0 0 / 0.55);
+}
+
+.vs-image--hover-color .vs-image__media {
+  filter: grayscale(1);
+}
+
+.vs-image--hover-color .vs-image__media:hover {
+  filter: grayscale(0);
+}
+
+.vs-container--hover-lift,
+.vs-container--hover-glow {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vs-container--hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.08), 0 28px 56px -24px rgb(0 0 0 / 0.55);
+}
+
+.vs-container--hover-glow:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, currentColor 28%, transparent),
+    0 0 44px -8px color-mix(in srgb, currentColor 45%, transparent);
+}
+
 /* ---------------- Reduced motion ---------------- */
 @media (prefers-reduced-motion: reduce) {
   .vs-page *,
@@ -431,6 +510,8 @@
 
   .vs-button:hover,
   .vs-container--live:hover,
+  .vs-container--hover-lift:hover,
+  .vs-image__media:hover,
   .vs-button:hover .vs-button__icon {
     transform: none;
   }

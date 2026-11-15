@@ -1,4 +1,4 @@
-Vyohm Studio browser test run — 2026-11-15 16:49 IST
+Vyohm Studio browser test run — 2026-11-15 17:17 IST
 Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs
 
 === landing (desktop 1440px) ===
@@ -143,7 +143,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Blank page opens empty in the editor": {
       "expected": "0 sections, Blocks tab, saved",
-      "actual": "0 sections, tab blocks, Saved 16:50",
+      "actual": "0 sections, tab blocks, Saved 17:17",
       "pass": true
     }
   }
@@ -236,8 +236,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 [drag 1 after] {
   "checks": {
     "Real mouse drag moves a button into another container": {
-      "expected": "Container-9f4f0a83d058",
-      "actual": "Container-9f4f0a83d058",
+      "expected": "Container-2d1e0ebc95bf",
+      "actual": "Container-2d1e0ebc95bf",
       "pass": true
     },
     "No warning for an allowed drop": {
@@ -255,8 +255,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
       "pass": true
     },
     "Refused drop area outlined in red": {
-      "expected": "Container-9f4f0a83d058:right",
-      "actual": "Container-9f4f0a83d058:right",
+      "expected": "Container-2d1e0ebc95bf:right",
+      "actual": "Container-2d1e0ebc95bf:right",
       "pass": true
     }
   }
@@ -298,7 +298,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
   "checks": {
     "Container not nested inside the other container": {
       "expected": "still inside a section",
-      "actual": "Section-21d08bf2fb00",
+      "actual": "Section-df0df14957e5",
       "pass": true
     },
     "Still nothing invalid inside containers": {
@@ -308,12 +308,40 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     }
   }
 }
+[drag 4 during] {
+  "checks": {
+    "Dragging on text shows the handle hint": {
+      "expected": "To move text, drag the ⠿ handle…",
+      "actual": "To move text, drag the ⠿ handlePressing on text puts the cursor there. Click the element, then drag the ⠿ handle at the right end of its toolbar.",
+      "pass": true
+    }
+  }
+}
+[drag 4 after] {
+  "checks": {
+    "Text drag without the handle moves nothing": {
+      "expected": "Container-2d1e0ebc95bf (left column)",
+      "actual": "Container-2d1e0ebc95bf",
+      "pass": true
+    }
+  }
+}
+[drag 5 after] {
+  "checks": {
+    "Paragraph moves to the other column with the ⠿ handle": {
+      "expected": "Container-2d1e0ebc95bf:right",
+      "actual": "Container-2d1e0ebc95bf:right",
+      "pass": true
+    }
+  }
+}
 {
   "setup": {
-    "heroId": "Container-9f4f0a83d058",
-    "buttonId": "Button-55c715a33fac",
-    "cardId": "Container-0c21b0947307",
-    "cardParent": "Section-2090bb28cdef",
+    "heroId": "Container-2d1e0ebc95bf",
+    "buttonId": "Button-0f2819c68a3b",
+    "cardId": "Container-6c4759bff7f7",
+    "cardParent": "Section-42d5688b1b95",
+    "paraId": "Paragraph-e5c041f06ce0",
     "sections": 3
   }
 }
@@ -391,18 +419,18 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
       "pass": true
     },
     "Undo restores the square crop": {
-      "expected": "asset:8bfe9fb6ad5742ce",
-      "actual": "asset:8bfe9fb6ad5742ce",
+      "expected": "asset:df239c2addc649c6",
+      "actual": "asset:df239c2addc649c6",
       "pass": true
     },
     "Redo restores the 16:9 crop": {
-      "expected": "asset:92f031175bdc43de",
-      "actual": "asset:92f031175bdc43de",
+      "expected": "asset:f4ffbebe7820468f",
+      "actual": "asset:f4ffbebe7820468f",
       "pass": true
     },
     "Cancel leaves the image unchanged": {
-      "expected": "asset:92f031175bdc43de",
-      "actual": "asset:92f031175bdc43de",
+      "expected": "asset:f4ffbebe7820468f",
+      "actual": "asset:f4ffbebe7820468f",
       "pass": true
     },
     "Rotate right + Original gives a 900 x 1600 portrait": {
@@ -416,18 +444,18 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
       "pass": true
     },
     "Escape closes the dialog and changes nothing": {
-      "expected": "asset:669081744da24313",
-      "actual": "asset:669081744da24313",
+      "expected": "asset:6b90a9c88a294cc7",
+      "actual": "asset:6b90a9c88a294cc7",
       "pass": true
     },
     "A broken link shows a clear message and changes nothing": {
       "expected": [
         true,
-        "asset:669081744da24313"
+        "asset:6b90a9c88a294cc7"
       ],
       "actual": [
         true,
-        "asset:669081744da24313"
+        "asset:6b90a9c88a294cc7"
       ],
       "pass": true
     },
@@ -527,6 +555,11 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
       "actual": "ed-ai-status--error: Edit failed. \"javascript:alert(1)\" is not a valid colour (use #rrggbb).Your page was not c",
       "pass": true
     },
+    "AI clearing a required setting rejected": {
+      "expected": "error (needs a value), page unchanged",
+      "actual": "ed-ai-status--error: Edit failed. The AI tried to clear the Button's \"href\" setting, which needs a value.Your page was not changed.",
+      "pass": true
+    },
     "API error shown, page unchanged": {
       "expected": "error message",
       "actual": "ed-ai-status--error: Edit failed. Claude is busy (rate limit). Please wait a moment and try again.Your page was",
@@ -544,8 +577,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 === upload-persist (part 1) ===
 {
   "headline": "Saved headline",
-  "imageSrc": "asset:6c6972c5f777463a",
-  "saveStatus": "Saved 16:52"
+  "imageSrc": "asset:9c4afc7cb0f34080",
+  "saveStatus": "Saved 17:20"
 }
 [screenshot] tests/browser/output/upload-persist-1440.png
 
@@ -560,7 +593,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Image reference saved (not a blob: URL)": {
       "expected": "asset:…",
-      "actual": "asset:6c6972c5f777463a",
+      "actual": "asset:9c4afc7cb0f34080",
       "pass": true
     },
     "Uploaded image visible after reload": {
@@ -578,7 +611,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
   "checks": {
     "AI status": {
       "expected": "ok",
-      "actual": "ed-ai-status--ok (3s): Changed the background of the \"Explore the collections\" button to blue.Use Undo (top right) to revert.",
+      "actual": "ed-ai-status--ok (3s): Changed the background colour of the \"Explore the collections\" button to blue.Use Undo (top right) to revert.",
       "pass": true
     },
     "Only change on the page": {
@@ -595,7 +628,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Uploaded image kept": {
       "expected": "asset:…",
-      "actual": "asset:3ab4d5531ecf47e6",
+      "actual": "asset:5e5c239bc0924ee6",
       "pass": true
     },
     "Moved button still in hero": {
@@ -625,18 +658,28 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 }
 [screenshot] tests/browser/output/demo-sequence-1440.png
 
-=== real-ai-edits (two real Claude edits) ===
+=== real-ai-edits (four real Claude edits) ===
 {
   "allPassed": true,
   "checks": {
     "Mobile-aware edit": {
       "expected": "only the heading's mobile.fontSize changes; desktop 64px unchanged",
-      "actual": "ed-ai-status--ok (3s): [\"page.root.props.content[0].props.content[0].props.left[1].props.mobile.fontSize: undefined -> 44\"]; desktop 64px",
+      "actual": "ed-ai-status--ok (3s): [\"page.root.props.content[0].props.content[0].props.left[1].props.mobile.fontSize: undefined -> 40\"]; desktop 64px",
       "pass": true
     },
     "Whole-page edit": {
       "expected": "only button radius values change",
       "actual": "ed-ai-status--ok (3s): 5 change(s): [\"page.root.props.content[0].props.content[0].props.left[3].props.radius: 2 -> 64\",\"page.root.props.content[1].props.content[1].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[2].props.left[2].props.radius: 8 -> 64\",\"page.root.props.content[1].props.content[3].props.right[2].props.radius: 8 -> 64\",\"page.root.props.content[2].props.content[3].props.radius: 2 -> 64\"]",
+      "pass": true
+    },
+    "Selected button moved to the other column": {
+      "expected": "Container-3e57de0e0699:right, button unchanged, same number of buttons",
+      "actual": "ed-ai-status--ok (3s): Container-3e57de0e0699:right",
+      "pass": true
+    },
+    "Hover effect added by AI": {
+      "expected": "exactly one change: the button's hover",
+      "actual": "ed-ai-status--ok (2s): [\"page.root.props.content[0].props.content[0].props.right[1].props.hover: \\\"default\\\" -> \\\"glow\\\"\"]",
       "pass": true
     }
   }

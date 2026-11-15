@@ -147,6 +147,16 @@ const ContainerConfig: ComponentConfig<Props["Container"]> = {
         { label: "Outline (corner marks)", value: "outline" },
       ],
     },
+    hover: {
+      type: "select",
+      label: "Hover effect",
+      options: [
+        { label: "Default (cards lift on the live site)", value: "default" },
+        { label: "None", value: "none" },
+        { label: "Lift", value: "lift" },
+        { label: "Glow", value: "glow" },
+      ],
+    },
     radius: { type: "number", label: "Corner radius (px)", ...range(LIMITS.Container.radius) },
     mobile: {
       type: "object",
@@ -266,6 +276,16 @@ const ImageConfig: ComponentConfig<Props["Image"]> = {
     },
     radius: { type: "number", label: "Corner radius (px)", ...range(LIMITS.Image.radius) },
     align: { type: "radio", label: "Alignment", options: alignOptions },
+    hover: {
+      type: "select",
+      label: "Hover effect",
+      options: [
+        { label: "None", value: "none" },
+        { label: "Zoom (grows a little)", value: "zoom" },
+        { label: "Lift (rises with a shadow)", value: "lift" },
+        { label: "Colour (black and white until hovered)", value: "color" },
+      ],
+    },
     mobile: {
       type: "object",
       label: "Mobile overrides",
@@ -308,6 +328,17 @@ const ButtonConfig: ComponentConfig<Props["Button"]> = {
       options: [
         { label: "None", value: "none" },
         { label: "Arrow →", value: "arrow" },
+      ],
+    },
+    hover: {
+      type: "select",
+      label: "Hover effect",
+      options: [
+        { label: "Default (small lift)", value: "default" },
+        { label: "None", value: "none" },
+        { label: "Lift", value: "lift" },
+        { label: "Grow", value: "grow" },
+        { label: "Glow", value: "glow" },
       ],
     },
     bgColor: colorField("Background colour", "Default"),

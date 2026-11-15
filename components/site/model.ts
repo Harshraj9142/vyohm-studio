@@ -58,6 +58,8 @@ export type ContainerData = {
   radius: number;
   /** Card look: "card" (soft shadow), "glow" (top glow), "outline" (hairline + corner marks). */
   surface?: "none" | "card" | "glow" | "outline";
+  /** Hover effect. "default" = cards lift a little on the live site. */
+  hover?: (typeof HOVER.Container)[number];
   mobile: {
     columns?: "" | "1" | "2"; // "" = stack (default on phones)
     gap?: number | null;
@@ -100,6 +102,8 @@ export type ImageData = {
   fit: "cover" | "contain";
   radius: number;
   align: Align;
+  /** Hover effect: "zoom" grows slightly, "lift" rises with a shadow, "color" is black-and-white until hovered. */
+  hover?: (typeof HOVER.Image)[number];
   mobile: { width?: number | null; height?: number | null };
 };
 
@@ -114,8 +118,20 @@ export type ButtonData = {
   radius: number;
   align: Align;
   icon?: "none" | "arrow";
+  /** Hover effect. "default" = a small lift and brighten. */
+  hover?: (typeof HOVER.Button)[number];
   mobile: { fullWidth?: "" | "yes"; align?: Align | "" };
 };
+
+/**
+ * Hover effects people (or the AI) can choose. Optional in saved pages: pages made
+ * before this setting existed behave as the first value of each list.
+ */
+export const HOVER = {
+  Container: ["default", "none", "lift", "glow"],
+  Image: ["none", "zoom", "lift", "color"],
+  Button: ["default", "none", "lift", "grow", "glow"],
+} as const;
 
 /**
  * Allowed number ranges, [min, max]. One source of truth for:
@@ -160,6 +176,7 @@ export const DEFAULT_PROPS = {
     bgColor: "",
     radius: 0,
     surface: "none",
+    hover: "default",
     mobile: {},
   } satisfies ContainerData,
   Heading: {
@@ -187,6 +204,7 @@ export const DEFAULT_PROPS = {
     fit: "cover",
     radius: 0,
     align: "center",
+    hover: "none",
     mobile: {},
   } satisfies ImageData,
   Button: {
@@ -200,6 +218,7 @@ export const DEFAULT_PROPS = {
     radius: 8,
     align: "left",
     icon: "none",
+    hover: "default",
     mobile: {},
   } satisfies ButtonData,
 };
@@ -237,15 +256,17 @@ export const CHOICES = {
     ratio: ["1:1", "2:1", "1:2"],
     valign: ["start", "center", "end"],
     surface: ["none", "card", "glow", "outline"],
+    hover: HOVER.Container,
     "mobile.columns": ["", "2"],
   },
   Heading: { level: ["h1", "h2", "h3"], fontWeight: ["400", "500", "600", "700", "800"], align: ["left", "center", "right"] },
   Paragraph: { variant: ["body", "lead", "eyebrow", "badge"], align: ["left", "center", "right"] },
-  Image: { fit: ["cover", "contain"], align: ["left", "center", "right"] },
+  Image: { fit: ["cover", "contain"], align: ["left", "center", "right"], hover: HOVER.Image },
   Button: {
     variant: ["solid", "outline"],
     size: ["sm", "md", "lg"],
     icon: ["none", "arrow"],
+    hover: HOVER.Button,
     align: ["left", "center", "right"],
     "mobile.fullWidth": ["", "yes"],
   },

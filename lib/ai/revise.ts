@@ -29,7 +29,7 @@ export async function revisePage(input: {
       if (node.props.id === id) selected = node;
     });
     if (!selected) throw new AiError("The selected element was not found on the page.", 400);
-    scopeText = `Only the selected element: id "${id}" (${describe(selected)}). Operate only on this element or elements inside it. Do not change anything else.`;
+    scopeText = `Only the selected element: id "${id}" (${describe(selected)}). Operate only on this element or elements inside it. You may also move this element itself to another place on the page (a "move" operation with its id) when the instruction asks for that. Do not change anything else.`;
   }
 
   const messages: Anthropic.Beta.BetaMessageParam[] = [

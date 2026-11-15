@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { editableProps, ELEMENT_TYPES } from "@/components/site/model";
 
 /**
  * The JSON shape Claude must return when EDITING an existing page.
@@ -11,17 +12,13 @@ import { z } from "zod";
  * We then apply only those operations to the user's CURRENT page.
  */
 
-/** Every setting name an "update" may change. Which ones are valid depends on the element type. */
-export const PROP_NAMES = [
-  "text", "level", "fontSize", "fontWeight", "color", "align",
-  "label", "href", "newTab", "variant", "bgColor", "textColor", "size", "radius",
-  "src", "alt", "width", "height", "fit",
-  "columns", "ratio", "valign", "gap", "padding",
-  "anchor", "paddingY", "maxWidth",
-  "surface", "bgStyle", "icon",
-  "mobile.fontSize", "mobile.align", "mobile.paddingY", "mobile.gap", "mobile.columns",
-  "mobile.padding", "mobile.width", "mobile.height", "mobile.fullWidth",
-] as const;
+/**
+ * Every setting name an "update" may change (which ones are valid depends on the element type).
+ * Built from the page model, so a new setting is offered to the AI automatically. It used to be
+ * a hand-written list; when "hover" was added to the model but not here, the AI could not name
+ * it and changed the wrong setting instead.
+ */
+export const PROP_NAMES = [...new Set(ELEMENT_TYPES.flatMap((type) => editableProps(type)))] as [string, ...string[]];
 
 export const PAGE_PROP_NAMES = [
   "title", "description", "headingFont", "bodyFont", "background", "textColor",
