@@ -19,6 +19,7 @@ npm run test:browser              # = bash tests/browser/run-all.sh
 npm run verify-export -- evidence/website.zip
 ```
 
+- For full-page screenshots, `cdp.mjs` takes `--full 1 --reduced-motion 1`. Reduced motion turns off the scroll fade-in, which would otherwise leave off-screen parts invisible in a full-page capture.
 - `npm run test:browser` makes three small real Claude calls (`demo-sequence` makes one, `real-ai-edits` makes two). Everything else uses fake responses and is free.
 - The runner is [`tests/browser/cdp.mjs`](../tests/browser/cdp.mjs), which drives Chrome through the DevTools protocol with no extra dependencies. Each scenario in [`tests/browser/scenarios/`](../tests/browser/scenarios/) prints *expected / actual / pass* for every check.
 - Drag-and-drop is simulated by dispatching Puck's own `move` / `reorder` / `insert` actions, the same actions a drop produces.
@@ -28,9 +29,9 @@ npm run verify-export -- evidence/website.zip
 
 | Run | Result | Log |
 |---|---|---|
-| Browser scenarios (7 scenarios, 32 checks) | **32 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
+| Browser scenarios (8 scenarios, 38 checks) | **38 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
 | Full flow: generate → manual edits → mobile override → AI edit → export | Completed | [full-flow.log](../evidence/full-flow.log) |
-| Export verification: fresh folder, `npm ci` + `npm run build` | **PASS** (`npm ci` 4 s, build 5 s) | [export-verify.log](../evidence/export-verify.log) |
+| Export verification: fresh folder, `npm ci` + `npm run build` | **PASS** (`npm ci` 5 s, build 5 s) | [export-verify.log](../evidence/export-verify.log) |
 | Exported site served with `npm run start`, checked at 1280 px and 390 px | Matches the editor; no overflow | [exported-site.log](../evidence/exported-site.log) |
 | `tsc --noEmit`, `eslint`, `next build` of the builder | Clean | — |
 
@@ -39,7 +40,7 @@ npm run verify-export -- evidence/website.zip
 | Input | Expected | Actual (observed) |
 |---|---|---|
 | Starter page. Manual edits: rewrite the headline, upload a hero image, move the "View collection" button into the hero container, move the contact section to second place. Then select the hero button and ask: *"Change only this button's background to blue"* (real Claude call). | Only that button's background changes; every manual edit survives. | A deep diff of the whole page before and after the AI edit found **exactly one change**: `…left[3].props.bgColor: "#c9a44c" -> "#2563eb"`. Headline, uploaded image (`asset:…`), moved button and section order unchanged. Response time 3 s. Undo restores `#c9a44c`; Redo restores blue. |
-| Mobile preview, heading selected: *"Make this heading smaller"* (real) | Only a phone-only override; desktop untouched | One change: `mobile.fontSize: undefined -> 44`; desktop still 64 px (3 s) |
+| Mobile preview, heading selected: *"Make this heading smaller"* (real) | Only a phone-only override; desktop untouched | One change: `mobile.fontSize: undefined -> 40`; desktop still 64 px (3 s) |
 | Whole page: *"Make every button on the page fully rounded"* (real) | Only button radii change | 5 changes, all `…radius: N -> 64`; no text or other settings touched (3 s) |
 
 ## AI failure and concurrency cases
@@ -66,6 +67,19 @@ Server-side error handling, observed by starting the builder with a broken confi
 | API unreachable (`ANTHROPIC_BASE_URL=http://127.0.0.1:9`) | Clear message | HTTP 503: *"Could not reach the Claude API…"* |
 | Prompt `"hi"` or a non-JSON body | Validation message | HTTP 400: *"Please describe your business in at least one sentence."* |
 
+## Design system
+
+[design-options.js](../tests/browser/scenarios/design-options.js), plus checks on the exported site:
+
+| Input | Expected | Actual (observed) |
+|---|---|---|
+| Settings panel: Container *Surface* → Card | Preview shows the card style | `surface: "card"`, class `vs-container--card` present |
+| Settings panel: Paragraph *Style* → Badge | Pill label | `variant: "badge"` |
+| Settings panel: Section *Background style* → Soft gradient, then Undo | Gradient, then back to solid | `vs-section--gradient` applied; Undo → `solid` |
+| Editor preview | No scroll fade-in or hover lift inside the editor | 0 live sections / 0 live containers |
+| Exported coffee page | Live effects on; generated options rendered | 4 live sections, 3 `card` surfaces, 11 styled paragraphs, 2 arrow buttons ([exported-site.log](../evidence/exported-site.log)) |
+| Old pages without the new settings (test fixture) | Still load and validate | `ai-failures` uses the older fixture and passes |
+
 ## AI generation runs (real model, `claude-opus-5-5`, effort `medium`)
 
 | Brief (summary) | Time | Observed result |
@@ -73,14 +87,18 @@ Server-side error handling, observed by starting the builder with a broken confi
 | Loom & Line, premium clothing, black and gold, three collections, contact button | 27 s | Near-black backgrounds, gold `#c9a227` buttons, serif headings, exactly 3 collections, contact section |
 | Crumb & Co., family vegan bakery in Pune, warm pastels, four signature bakes, order button | 20 s | Pastel peach/cream, rounded fonts, exactly 4 bakes as cards. This run had no contact section; I then made the prompt require one. |
 | Still Point, yoga studio, sage green and cream, three class types, booking button | 22 s | Sections `home, classes, about, contact`; 3 class types, each with a booking button |
-| Ember & Oak, coffee roastery in Bengaluru, espresso brown and cream, three coffees, roasting process, café button | 20 s | Brown/cream theme, serif headings; used for the final export ([full-flow.log](../evidence/full-flow.log)) |
+| Ember & Oak, coffee roastery in Bengaluru, espresso brown and cream, three coffees, roasting process, café button | 20 s | Brown/cream theme, serif headings (before the design system) |
+| Northline, minimal architecture studio in Pune, white/charcoal + terracotta, three services, consultation button | 31 s | *With the design system:* gradient hero, 7 eyebrow labels, 4 lead paragraphs, 3 `outline` service cards, charcoal CTA band, 2 arrow buttons |
+| Ember & Oak again, for the final export | 42 s | *With the design system:* badge labels, 3 `card` coffee cards, espresso-brown CTA band ([full-flow.log](../evidence/full-flow.log), [screenshot](screenshots/exported-full-page.png)) |
+
+Generation got slower (20–27 s → 31–42 s) after the design system was added, because Claude's JSON now includes more style fields.
 
 ## Image persistence
 
 | Input | Expected | Actual (observed) |
 |---|---|---|
-| Edit the headline and upload a JPEG; then close and reopen the browser (same Chrome profile) | Headline and image restored | Headline "Saved headline" restored; image saved as `asset:fcc1552050114686` (not a `blob:` URL) and visible after reload |
-| Export after uploading | Image file in `public/assets/`, portable path in `page.json` | `public/assets/d7384ea087624a3d.jpg`, `"src": "/assets/d7384ea087624a3d.jpg"`; no `asset:` or `blob:` left; HTTP 200 when served |
+| Edit the headline and upload a JPEG; then close and reopen the browser (same Chrome profile) | Headline and image restored | Headline "Saved headline" restored; image saved as `asset:74d5cd9659ff4139` (not a `blob:` URL) and visible after reload |
+| Export after uploading | Image file in `public/assets/`, portable path in `page.json` | `public/assets/0305303b48234b14.jpg`, `"src": "/assets/0305303b48234b14.jpg"`; no `asset:` or `blob:` left; loads when served |
 
 ## Mobile rendering
 
@@ -95,7 +113,7 @@ Server-side error handling, observed by starting the builder with a broken confi
 
 | Input | Expected | Actual (observed) |
 |---|---|---|
-| [evidence/website.zip](../evidence/website.zip), produced after a generation, manual edits, a mobile override and an AI edit | Fresh-folder `npm ci`, `npm run build`, `npm run start` work without the builder or an API key | `npm ci`: 30 packages in 4 s. `npm run build`: compiled, `/` prerendered as static. `npm run start` serves the page. |
+| [evidence/website.zip](../evidence/website.zip), produced after a generation, manual edits, a mobile override and an AI edit | Fresh-folder `npm ci`, `npm run build`, `npm run start` work without the builder or an API key | `npm ci`: 30 packages in 5 s. `npm run build`: compiled, `/` prerendered as static. `npm run start` serves the page. |
 | ZIP contents | No secrets, no editor-only references | No `.env`, no `sk-ant` strings, no `asset:` or `blob:` in `data/page.json` (checked by [verify-export.sh](../scripts/verify-export.sh)) |
 | Served export vs editor | Same text, links, order, styles | Title, headline, blue `#2563eb` button with `#contact` link, uploaded image, section order `home, contact, coffees, process` all as edited ([screenshots](screenshots/)) |
 

@@ -7,6 +7,7 @@
 | Where | Tool / model | Used for |
 |---|---|---|
 | Building the project | **Claude Code** (VS Code extension) running **Claude Opus 5.5** (`claude-opus-5-5`) | Planning the architecture, writing almost all of the code, the browser tests and these docs, running builds and tests, debugging |
+| Design references | **21st.dev MCP server** (component catalog), called by Claude Code | Searching for landing-page design patterns; reading the code of 2 components (the free tier's daily limit) |
 | Inside the product | **Claude API**, `claude-opus-5-5` via `@anthropic-ai/sdk` 1.8.0, structured outputs | Generating pages (`/api/generate`) and AI edits (`/api/revise`) |
 | Verification | TypeScript, ESLint, `next build`, headless Google Chrome (own CDP runner), `scripts/verify-export.sh` | Checking the AI-written code and the AI-generated pages |
 
@@ -48,6 +49,16 @@ AI coding tools are allowed by the challenge rules. Claude Code wrote the large 
 **Change:** both the generation and the edit paths now dispatch `setData` with `recordHistory: true`.
 
 **Verification:** Undo/Redo checks in `ai-failures` #3, `demo-sequence` and `mobile-override`.
+
+### Changed: 21st.dev component designs adapted instead of copied
+
+**Suggestion:** 21st.dev returned ready-made React components ("Feature Grid Spotlight Cards", "CTA Section"). The obvious move is to install them as they are.
+
+**Why changed:** they are built on Tailwind + shadcn, and one uses JavaScript for a pointer-following spotlight. Installing them would add Tailwind and extra packages to every exported site (today the export has 3 dependencies), and pull editor-unfriendly JavaScript into the blocks.
+
+**Change:** I kept the visual ideas (card surfaces, a top glow, corner "+" marks, pill labels, a call-to-action band, arrow buttons), rebuilt them as four optional settings in plain CSS, and dropped the pointer spotlight. The design sources are credited in `site.css` and the README.
+
+**Verification:** `design-options` scenario (38/38 checks overall), Claude using the options in two new generations (TESTING.md), and the export still installing and building with 30 packages ([export-verify.log](../evidence/export-verify.log)).
 
 ### Rejected: storing uploaded images inside the saved page in localStorage
 
