@@ -559,9 +559,9 @@ Generated pages share a small design system. The ideas came from the **21st.dev*
 
 All tints use `color-mix()` with `currentColor`, so they work with any brand colour and on dark or light pages. On the exported site, items fade up as they scroll into view (CSS scroll-driven animation) and cards lift on hover. Both are off inside the editor and for visitors who prefer reduced motion. The generation prompt explains each option so Claude uses them where they fit the chosen direction, not everywhere.
 
-<p align="center"><img src="docs/screenshots/exported-design-system.png" alt="Exported page using the design system: eyebrow labels, an arrow button, and three outline cards with corner marks" width="640"></p>
+<p align="center"><img src="docs/screenshots/exported-design-system.png" alt="Exported page using the design system: eyebrow labels, arrow buttons, a brand-colour band and three outline cards with corner marks" width="640"></p>
 
-*The final exported page ([evidence/website.zip](evidence/website.zip)): Ember & Oak, a coffee roastery, built in the "Kiln Ledger" direction (mono headings, sharp corners, big-type hero). It shows eyebrow labels, an arrow button (turned blue by the AI edit), and three `outline` cards with "+" corner marks. [See the full page](docs/screenshots/exported-full-page.png).*
+*The final exported page ([evidence/website.zip](evidence/website.zip)): Ember & Oak, a coffee roastery, built in the "Kiln Type" direction (heavy sans headings, mono body text, sharp corners, big-type hero). It shows eyebrow labels, arrow buttons (the hero one turned blue by the AI edit), a brand-colour call-to-action band, and three `outline` cards with "+" corner marks. [See the full page](docs/screenshots/exported-full-page.png).*
 
 ---
 
