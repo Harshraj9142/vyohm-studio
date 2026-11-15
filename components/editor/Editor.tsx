@@ -5,7 +5,7 @@ import "@/components/site/site.css";
 import "./editor.css";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { blocksPlugin, outlinePlugin, Puck, type Data, type Viewports } from "@puckeditor/core";
+import { blocksPlugin, outlinePlugin, Puck, useGetPuck, type Data, type Viewports } from "@puckeditor/core";
 import { registerAssetUrl } from "@/components/site/assets";
 import { getAllAssets, loadPage, savePage } from "@/lib/storage";
 import { aiPlugin } from "./ai-panel";
@@ -21,6 +21,10 @@ const viewports: Viewports = [
 ];
 
 const AUTOSAVE_DELAY_MS = 800;
+
+/** Test hook for automated browser tests: on in development, or when built with NEXT_PUBLIC_TEST_HOOKS=1. */
+const TEST_HOOKS =
+  process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_TEST_HOOKS === "1";
 
 /**
  * Left rail tabs. Puck always adds Blocks and Outline first; listing them again
@@ -121,6 +125,7 @@ export function Editor() {
         overrides={{
           headerActions: ({ children }: { children: ReactNode }) => (
             <>
+              {TEST_HOOKS ? <DevTestHook /> : null}
               <SaveIndicator />
               {children}
             </>
@@ -148,4 +153,17 @@ function SaveIndicator() {
       {text}
     </span>
   );
+}
+
+/**
+ * Test hook: exposes Puck's API as window.__vsPuck so automated browser tests can
+ * dispatch the same actions the UI does (e.g. "move" after a drag).
+ * Off in normal production builds (see TEST_HOOKS).
+ */
+function DevTestHook() {
+  const getPuck = useGetPuck();
+  useEffect(() => {
+    (window as unknown as { __vsPuck?: typeof getPuck }).__vsPuck = getPuck;
+  }, [getPuck]);
+  return null;
 }

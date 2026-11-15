@@ -8,7 +8,14 @@ import {
   type ElementNode,
 } from "@/components/site/model";
 import { safeColor, safeHref, slugify } from "@/components/site/style";
-import { anchorMaker, clamp, cleanText, toSection, toSectionChild } from "@/lib/ai/convert";
+import {
+  anchorMaker,
+  clamp,
+  cleanText,
+  parseInsertedElement,
+  toSection,
+  toSectionChild,
+} from "@/lib/ai/convert";
 import type { Operation } from "@/lib/ai/revise-schema";
 import { findPageProblem } from "@/lib/page-schema";
 
@@ -152,10 +159,16 @@ function applyOne(
     case "insert": {
       const dest = mustSlot(root, op.parentId, op.slot);
       assertParentInScope(root, scope, op.parentId);
+      let parsed: ReturnType<typeof parseInsertedElement>;
+      try {
+        parsed = parseInsertedElement(op.element);
+      } catch (error) {
+        throw new ApplyError(error instanceof Error ? error.message : "The new element is invalid.");
+      }
       const node =
-        op.element.type === "Section"
-          ? toSection(op.element, uniqueAnchor(op.element.anchor, "section"))
-          : toSectionChild(op.element);
+        parsed.type === "Section"
+          ? toSection(parsed.section, uniqueAnchor(parsed.section.anchor, "section"))
+          : toSectionChild(parsed.element);
       if (!node) throw new ApplyError("The AI tried to insert an unknown element.");
       assertNesting(dest.parentType, node.type);
       dest.list.splice(clampIndex(op.index, dest.list.length), 0, node);

@@ -69,5 +69,8 @@ export function toAiError(error: unknown): AiError {
   if (error instanceof Anthropic.APIError) {
     return new AiError(`Claude API error (${error.status ?? "unknown"}). Please try again.`, 502);
   }
-  return new AiError("Something went wrong while talking to Claude. Please try again.", 500);
+  // In development, show the underlying cause to make debugging easier.
+  const detail =
+    process.env.NODE_ENV === "development" && error instanceof Error ? ` (${error.message})` : "";
+  return new AiError(`Something went wrong while talking to Claude. Please try again.${detail}`, 500);
 }

@@ -1,12 +1,4 @@
 import { z } from "zod";
-import {
-  ButtonGen,
-  ContainerGen,
-  HeadingGen,
-  ImageGen,
-  ParagraphGen,
-  SectionGen,
-} from "./generate-schema";
 
 /**
  * The JSON shape Claude must return when EDITING an existing page.
@@ -69,17 +61,27 @@ const target = {
 
 const MoveOp = z.object({ op: z.literal("move"), id: z.string(), ...target });
 
+/**
+ * The new element is a JSON *string* (not a nested schema). Embedding every element
+ * type's full schema here made the structured-output grammar too large for the API
+ * ("compiled grammar is too large"), so we parse and check this string ourselves
+ * (see parseInsertedElement in lib/ai/convert.ts).
+ */
 const InsertOp = z.object({
   op: z.literal("insert"),
   ...target,
-  element: z.union([
-    SectionGen.extend({ type: z.literal("Section") }),
-    ContainerGen,
-    HeadingGen,
-    ParagraphGen,
-    ImageGen,
-    ButtonGen,
-  ]),
+  element: z
+    .string()
+    .describe(
+      'The new element as a JSON string, e.g. {"type":"Button","label":"Book now","href":"#contact","variant":"solid","bgColor":"#2563eb","textColor":"#ffffff","size":"md","radius":8,"align":"left"}. ' +
+        "Types and fields: " +
+        "Section {anchor, bgColor, textColor, paddingY, gap, children: [Container|Heading|Paragraph|Image|Button]}; " +
+        'Container {columns:"1"|"2", ratio:"1:1"|"2:1"|"1:2", valign:"start"|"center"|"end", gap, padding, bgColor, radius, left: [...], right: [...]}; ' +
+        'Heading {text, level:"h1"|"h2"|"h3", fontSize, fontWeight:"400"-"800", color, align}; ' +
+        "Paragraph {text, fontSize, color, align}; " +
+        "Image {placeholderLabel, alt, height, radius}; " +
+        'Button {label, href, variant:"solid"|"outline", bgColor, textColor, size:"sm"|"md"|"lg", radius, align}.',
+    ),
 });
 
 export const OperationSchema = z.union([UpdateOp, UpdatePageOp, DeleteOp, MoveOp, InsertOp]);

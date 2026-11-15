@@ -146,3 +146,43 @@ export function generatedToPage(generated: GeneratedPage): Data {
     sections,
   );
 }
+
+// ---------------------------------------------------------------- inserted elements (AI edits)
+
+const INSERTABLE = ["Section", "Container", "Heading", "Paragraph", "Image", "Button"] as const;
+type Insertable = (typeof INSERTABLE)[number];
+
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+/** Keep only array items that look like elements; missing lists become []. */
+function elementList(value: unknown): Record<string, unknown>[] {
+  return Array.isArray(value) ? value.filter((item) => isObject(item) && typeof item.type === "string") : [];
+}
+
+/**
+ * Parse the JSON string an AI "insert" operation carries.
+ * Returns the element in the same shape as generated pages, so the converters above
+ * can clean it (missing fields get safe defaults). Throws a readable Error if unusable.
+ */
+export function parseInsertedElement(
+  json: string,
+): { type: "Section"; section: GeneratedSection } | { type: Exclude<Insertable, "Section">; element: GeneratedElement } {
+  let value: unknown;
+  try {
+    value = JSON.parse(json);
+  } catch {
+    throw new Error("The new element is not valid JSON.");
+  }
+  if (!isObject(value) || !INSERTABLE.includes(value.type as Insertable)) {
+    throw new Error(`The new element must have a type of ${INSERTABLE.join(", ")}.`);
+  }
+  if (value.type === "Section") {
+    return { type: "Section", section: { ...value, children: elementList(value.children) } as unknown as GeneratedSection };
+  }
+  if (value.type === "Container") {
+    const container = { ...value, left: elementList(value.left), right: elementList(value.right) };
+    return { type: "Container", element: container as unknown as GeneratedElement };
+  }
+  return { type: value.type as Exclude<Insertable, "Section">, element: value as unknown as GeneratedElement };
+}
