@@ -125,7 +125,24 @@ The first version said *"Not moved"* after the Section drop, but the page had ac
 | Northline, minimal architecture studio in Pune, white/charcoal + terracotta, three services, consultation button | 31 s | *With the design system:* gradient hero, 7 eyebrow labels, 4 lead paragraphs, 3 `outline` service cards, charcoal CTA band, 2 arrow buttons |
 | Ember & Oak again, for the final export | 42 s | *With the design system:* badge labels, 3 `card` coffee cards, espresso-brown CTA band ([full-flow.log](../evidence/full-flow.log), [screenshot](screenshots/exported-full-page.png)) |
 
-Generation got slower (20–27 s → 31–42 s) after the design system was added, because Claude's JSON now includes more style fields.
+| Spoke & Chain, bicycle repair shop and café corner in Pune, green and cream | 35 s | *With design directions:* Claude wrote 4 directions and the server picked number 1, "Garden Workshop" (cream `#F6F1E3`, green `#2F6B3A`, rounded headings, hero layout `split-image-left`). The page followed it: hero image on the left, then 6 sections using different patterns (card grid, two-up, steps, café row with gradient, green contact band). Server log: `[ai] generated page with claude-opus-5-5 in 35367 ms — direction 1: Garden Workshop …` |
+
+Generation got slower (20–27 s → 31–42 s) after the design system was added, because Claude's JSON now includes more style fields. Design directions add a few lines of planning to each answer (35 s in the run above).
+
+The first version of design directions (one object per direction, with a hero-layout enum) failed every generation with HTTP 502 *"The compiled grammar is too large"*. The Spoke & Chain run above used the next version (a list of plain strings). After that, both planning fields (`designDirections` and `sectionPlan`) were made single plain strings to stay under the API's schema size limit.
+
+**Design variety on the final code: 8 more real generations** ([design-variety.log](../evidence/design-variety.log), 30–45 s each):
+
+| Round | Briefs | What happened |
+|---|---|---|
+| 1 | Loom & Line ×2, Crumb & Co bakery, Ledgerly fintech app (no colours given), IronPeak gym | Fonts, colours, radius and section patterns followed each brief. **Problem found:** the random number was 4 in four of five runs, and direction 4 was "asymmetric big type" each time, so the two Loom pages looked alike. **Changes:** the server never picks the same number twice in a row, and the four directions must use four different hero layouts. |
+| 2 | The same Loom & Line brief three times | Directions 3 *Bullion* (gold hero band, centred sans), 1 *Atelier Noir* (serif, image on the left) and 3 *Editorial Monolith* (huge serif headline, wide image below): three clearly different pages, all black and gold. [Screenshot](screenshots/design-variety-same-brief.png) |
+
+All 8 pages were also rendered at 390 px: nothing overflows the screen, and the h1 shrinks to 51–60 px. [Four different briefs side by side](screenshots/design-variety-briefs.png).
+
+**Schema size limit** (direct API calls, from the same log): the design-direction fields fail with *"compiled grammar is too large"* as objects with an enum, and as two string arrays plus a string. One string array plus a string passes, with no room left. The final version, two plain strings, passes. Any new field in the generation schema must be tested with a real request first.
+
+The browser tests are not affected by design directions: every generation scenario uses a mocked `/api/generate` response.
 
 ## Image persistence
 

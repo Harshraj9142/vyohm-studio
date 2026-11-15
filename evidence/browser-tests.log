@@ -1,4 +1,4 @@
-Vyohm Studio browser test run — 2026-11-15 15:16 IST
+Vyohm Studio browser test run — 2026-11-15 15:30 IST
 Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless Chrome via tests/browser/cdp.mjs
 
 === landing (desktop 1440px) ===
@@ -143,7 +143,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Blank page opens empty in the editor": {
       "expected": "0 sections, Blocks tab, saved",
-      "actual": "0 sections, tab blocks, Saved 15:16",
+      "actual": "0 sections, tab blocks, Saved 15:31",
       "pass": true
     }
   }
@@ -236,8 +236,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 [drag 1 after] {
   "checks": {
     "Real mouse drag moves a button into another container": {
-      "expected": "Container-00f567b649b4",
-      "actual": "Container-00f567b649b4",
+      "expected": "Container-dcdd9086a3fc",
+      "actual": "Container-dcdd9086a3fc",
       "pass": true
     },
     "No warning for an allowed drop": {
@@ -255,8 +255,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
       "pass": true
     },
     "Refused drop area outlined in red": {
-      "expected": "Container-00f567b649b4:right",
-      "actual": "Container-00f567b649b4:right",
+      "expected": "Container-dcdd9086a3fc:right",
+      "actual": "Container-dcdd9086a3fc:right",
       "pass": true
     }
   }
@@ -298,7 +298,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
   "checks": {
     "Container not nested inside the other container": {
       "expected": "still inside a section",
-      "actual": "Section-71c4dbc00abb",
+      "actual": "Section-a0a3bf96349c",
       "pass": true
     },
     "Still nothing invalid inside containers": {
@@ -310,10 +310,10 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 }
 {
   "setup": {
-    "heroId": "Container-00f567b649b4",
-    "buttonId": "Button-219042360ce3",
-    "cardId": "Container-36c946fe2312",
-    "cardParent": "Section-c2c35ca49af5",
+    "heroId": "Container-dcdd9086a3fc",
+    "buttonId": "Button-95fa12aa7c08",
+    "cardId": "Container-dbbaab001cf8",
+    "cardParent": "Section-2a6dc628b071",
     "sections": 3
   }
 }
@@ -451,8 +451,8 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
 === upload-persist (part 1) ===
 {
   "headline": "Saved headline",
-  "imageSrc": "asset:b940e6f196094606",
-  "saveStatus": "Saved 15:18"
+  "imageSrc": "asset:b0831209d47f4ac2",
+  "saveStatus": "Saved 15:33"
 }
 [screenshot] tests/browser/output/upload-persist-1440.png
 
@@ -467,7 +467,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Image reference saved (not a blob: URL)": {
       "expected": "asset:…",
-      "actual": "asset:b940e6f196094606",
+      "actual": "asset:b0831209d47f4ac2",
       "pass": true
     },
     "Uploaded image visible after reload": {
@@ -502,7 +502,7 @@ Builder: http://localhost:3211 (build with NEXT_PUBLIC_TEST_HOOKS=1), headless C
     },
     "Uploaded image kept": {
       "expected": "asset:…",
-      "actual": "asset:009bc471f3b04bb8",
+      "actual": "asset:e3aadadc78134e91",
       "pass": true
     },
     "Moved button still in hero": {

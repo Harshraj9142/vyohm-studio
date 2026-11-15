@@ -16,7 +16,7 @@ export const BUILD_STEPS = [
   { label: "Reading your brief", log: "› understanding the business, audience and tone" },
   { label: "Choosing colours & fonts", log: "› building a palette and type pairing for the brand" },
   { label: "Writing headlines & copy", log: "› hero, sections and call to action in your voice" },
-  { label: "Designing your sections", log: "› cards, images and layout for 4–6 sections" },
+  { label: "Designing your sections", log: "› cards, images and layout for 4–7 sections" },
   { label: "Tuning for phones", log: "› stacking columns and sizing text for mobile" },
   { label: "Checking & polishing", log: "› validating structure, unique ids and safe links" },
 ];
