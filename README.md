@@ -36,7 +36,7 @@ Other scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run verify
 
 ## Demo walkthrough
 
-1. **Generate.** The **AI** tab is open on the left. Describe the business (or click *Use example*) and press **Generate page**. This takes about 20–30 s, with a progress bar, a timer and a Cancel button.
+1. **Generate.** The **AI** tab is open on the left. Describe the business (or click *Use example*) and press **Generate page**. This takes about 30–45 s, with a progress bar, a timer and a Cancel button.
 2. **Edit text.** Click a heading and type directly on the canvas, or use the settings panel on the right (font size, weight, colour, alignment).
 3. **Replace an image.** Select an image and click **Upload image** / **Replace image**. Size, fit, radius and alt text are in the same panel.
 4. **Change the layout.** Drag elements between container columns and sections. Reorder sections by dragging, or in the **Outline** tab. The action bar on each selected element has duplicate and delete. Add new elements from the **Blocks** tab.
@@ -51,7 +51,7 @@ Status means: **Working** = verified by an automated test run (see [docs/TESTING
 
 | Requirement | Status | Evidence / notes |
 |---|---|---|
-| **AI generation** from a fresh prompt via a real model call, relevant copy, requested theme, multi-section page | Working | Four briefs generated (clothing, bakery, yoga, coffee), 20–27 s each; [full-flow.log](evidence/full-flow.log) |
+| **AI generation** from a fresh prompt via a real model call, relevant copy, requested theme, multi-section page | Working | Six briefs generated (clothing, bakery, yoga, architecture, coffee ×2), 20–42 s each; [full-flow.log](evidence/full-flow.log) |
 | Generation loading and failure states | Working | Progress, timer and cancel; malformed result and API errors rejected with the page unchanged (`ai-failures`, server error cases in TESTING.md) |
 | Six element types; container with 1 or 2 columns and nested elements | Working | [blocks.tsx](components/site/blocks.tsx), [puck-config.tsx](components/editor/puck-config.tsx) |
 | Select and edit properties; direct canvas text editing | Working | `layout-and-inline` (typing on the canvas), `demo-sequence` (settings panel) |
@@ -67,6 +67,7 @@ Status means: **Working** = verified by an automated test run (see [docs/TESTING
 | Undo/redo of content, style, layout and AI edits | Working | `demo-sequence`, `ai-failures` #3, `mobile-override` |
 | Save and reload restores page and uploaded images | Working | `upload-persist` + `after-reload` (same browser profile) |
 | **Next.js export**: independent, portable assets, clean `npm ci` / `build` / `start` | Working | [export-verify.log](evidence/export-verify.log), [exported-site.log](evidence/exported-site.log), [website.zip](evidence/website.zip) |
+| Design system: card surfaces, label styles, section backgrounds, arrow buttons, scroll fade-in (see [Design system](#design-system)) | Working | `design-options` (settings panel → preview, undo, no live effects in editor); generated pages use the options ([exported-site.log](evidence/exported-site.log)) |
 | Basic accessibility | Partial | Alt-text field, heading levels, focus outlines, keyboard-reachable controls and labelled inputs. No full audit and no automatic contrast check (see [limitations](#limitations)). |
 
 ## Architecture
@@ -110,6 +111,7 @@ root.props.content    [Section, Section, ...]                     <- slot: Secti
 ```
 
 - Every element is `{ type, props: { id, ...settings } }`. The `id` (e.g. `Button-7369316172c5`) never changes. AI edits use it to target exactly one element.
+- **Optional style settings** (`Section.bgStyle`, `Container.surface`, `Paragraph.variant`, `Button.icon`) were added later; pages saved without them still load and validate.
 - **Responsive overrides** live in `props.mobile` (e.g. `{ fontSize: 30 }`). Blocks write settings as CSS variables (`--h-size`, `--h-size-m`), and [site.css](components/site/site.css) applies the `-m` value below 768 px. Empty means "same as desktop".
 - **Images:** uploads are stored as files in IndexedDB. The page holds only `asset:<id>`. AI-generated images are `placeholder:<description>`. The export rewrites `asset:<id>` to `/assets/<id>.jpg`.
 - **Allowed values** (ranges, enums, nesting) are defined once (`LIMITS`, `NESTING` in model.ts). The editor fields, the AI clean-up and the validator ([page-schema.ts](lib/page-schema.ts)) all use them.
@@ -124,6 +126,21 @@ root.props.content    [Section, Section, ...]                     <- slot: Secti
 6. The autosave writes the page to IndexedDB. The preview re-renders the button through the same `Button` block the export uses.
 
 A manual edit is simpler: a field change or canvas typing triggers a Puck action (`replace`, `move`, ...). Puck updates the same JSON and records history, `onChange` schedules the autosave, and the preview re-renders.
+
+### Design system
+
+Generated pages share a small design system. The ideas came from the **21st.dev** component catalog (searched through its MCP server). They are rewritten as plain CSS in [site.css](components/site/site.css), so the export still has no extra dependencies.
+
+| Setting | Options | Inspired by |
+|---|---|---|
+| Container `surface` | `card` (soft shadow, lifts on hover), `glow` (light from the top corner), `outline` (hairline border with "+" corner marks) | 21st.dev *Feature Grid Spotlight Cards* (Hirael, MIT) |
+| Paragraph `variant` | `lead` (muted intro), `eyebrow` (small caps label), `badge` (pill label) | the same component's section header badge |
+| Section `bgStyle` | `spotlight` (glow at the top), `gradient` (soft wash) | the same component's top glow |
+| Button `icon` | `arrow` (→ that nudges on hover) | 21st.dev *CTA Section* (shadcndesign) |
+
+All tints use `color-mix()` with `currentColor`, so they work on any brand colour and on dark or light themes. On the exported site, items fade up as they scroll into view (CSS scroll-driven animation) and cards lift on hover. Both are switched off inside the editor and for visitors who prefer reduced motion. The generation prompt teaches Claude when to use each option: a badge above section headings, a lead under the h1, one card style per page, a spotlight hero on dark themes, and the contact section as a brand-colour call-to-action band.
+
+![Exported page using the design system](docs/screenshots/exported-full-page.png)
 
 ### What Puck provides and what I built
 
@@ -152,7 +169,8 @@ Other choices:
 - **Structured outputs + Zod everywhere.** The model output is always parseable, and everything is validated again before it touches the editor (server and browser).
 - **One fixed export template with a committed lockfile.** Dependencies don't vary per page, so the lockfile is generated and tested once.
 - **CSS variables for responsive styles.** Per-element overrides with no generated stylesheet. The prefixes are per type, so values don't leak into children.
-- **Model `claude-opus-5-5`**, with `medium` effort for generation (quality, ~20–30 s) and `low` for edits (~3 s). Both can be changed through env vars.
+- **Model `claude-opus-5-5`**, with `medium` effort for generation (quality, ~30–45 s) and `low` for edits (~3 s). Both can be changed through env vars.
+- **Design references from 21st.dev, written as our own CSS.** 21st.dev components are Tailwind + shadcn and sometimes need JavaScript (e.g. a spotlight that follows the pointer). Copying them would add Tailwind to every export and break the "3 dependencies" property, so I took the visual ideas (surfaces, glows, corner marks, pill labels, CTA band) and rebuilt them as four optional settings in plain CSS. I dropped the pointer-following spotlight because it needs client-side JavaScript.
 
 ## Debugging examples
 
@@ -160,7 +178,7 @@ Other choices:
 
 **2. "The compiled grammar is too large."** My first edit schema embedded every element's full schema inside the `insert` operation. The structured-output API rejected it with a 400. The fix was for `insert` to carry the new element as a JSON string, which [convert.ts](lib/ai/convert.ts) (`parseInsertedElement`) parses and the converters clean. Invalid elements go back to Claude once as an error. This was verified by a direct API call (one operation in 3.4 s) and the browser tests.
 
-**3. A flaky test that wasn't flaky.** The `ai-failures` scenario failed only inside my test loop. I replaced crashes with recorded diagnostics, which showed the fake response had no page fixture. The cause was zsh not word-splitting `$extra`, so `--fixture <file>` reached the runner as a single argument. I moved the suite into a bash script ([run-all.sh](tests/browser/run-all.sh)) and all 32 checks pass.
+**3. A flaky test that wasn't flaky.** The `ai-failures` scenario failed only inside my test loop. I replaced crashes with recorded diagnostics, which showed the fake response had no page fixture. The cause was zsh not word-splitting `$extra`, so `--fixture <file>` reached the runner as a single argument. I moved the suite into a bash script ([run-all.sh](tests/browser/run-all.sh)); all checks now pass (38 in the latest run).
 
 ## Limitations
 
@@ -168,7 +186,7 @@ Other choices:
 - **Images:** AI cannot create real images, only labelled placeholders. Images pasted as `https://` links stay remote in the export; only uploads are bundled. The upload limit is 8 MB, with no resizing.
 - **"Only" means only:** an AI edit like "only the background" won't fix contrast it breaks. In the coffee example the blue button keeps its dark text. There is no automatic contrast check.
 - **Fonts** are system font stacks (no web fonts), so they vary slightly by OS.
-- **Generation latency** is about 20–30 s, with no streaming.
+- **Generation latency** is about 30–45 s, with no streaming. It was 20–27 s before the design system made Claude's output richer.
 - **No contact form backend:** buttons are links to sections or `mailto:`.
 - A test hook (`window.__vsPuck`) is active only in development or builds with `NEXT_PUBLIC_TEST_HOOKS=1`.
 
@@ -176,7 +194,7 @@ Other choices:
 
 1. Warn about low contrast after any colour change (manual or AI) and offer an AI fix.
 2. Server-side persistence (database plus object storage) with page versions and sharing.
-3. Stream generation and render sections as they arrive, to cut the perceived 20–30 s wait.
+3. Stream generation and render sections as they arrive, to cut the perceived 30–45 s wait.
 4. Unit tests for `apply.ts` and the converters, alongside the browser scenarios.
 5. Show a toast when a drop is blocked by nesting rules, instead of a silent refusal.
 
