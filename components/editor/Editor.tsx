@@ -1,6 +1,6 @@
 "use client";
 
-import "@puckeditor/core/puck.css";
+// Puck (0.22+) loads its own CSS automatically, so we only import our styles.
 import "@/components/site/site.css";
 import "./editor.css";
 
@@ -36,9 +36,12 @@ export function Editor() {
         const assets = await getAllAssets();
         for (const asset of assets) registerAssetUrl(asset.id, URL.createObjectURL(asset.blob));
         const saved = await loadPage();
+        // First visit: save the starter page right away so a reload shows the same page.
+        const data = saved?.data ?? createStarterPage();
+        const savedAt = saved?.savedAt ?? (await savePage(data));
         if (cancelled) return;
-        if (saved) setSaveStatus({ kind: "saved", at: saved.savedAt });
-        setLoad({ kind: "ready", data: saved?.data ?? createStarterPage(), storageOk: true });
+        setSaveStatus({ kind: "saved", at: savedAt });
+        setLoad({ kind: "ready", data, storageOk: true });
       } catch (error) {
         console.error("Could not open browser storage", error);
         if (cancelled) return;
