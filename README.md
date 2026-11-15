@@ -146,7 +146,7 @@ A manual edit is simpler: a field change or canvas typing triggers a Puck action
 
 **Tradeoff 2: Browser storage instead of a server database.** IndexedDB holds the page and real image files with no backend or account, and survives reloads, which is enough for the prototype. The costs: data stays in one browser profile, one page per browser, no sharing, and it's lost if site data is cleared (see [limitations](#limitations)). I chose IndexedDB over localStorage because localStorage holds only ~5 MB of text, which a single photo can exceed.
 
-**Tradeoff 3: The export uses its own 50-line renderer instead of Puck's `<Render>`.** The export then needs only `next`, `react` and `react-dom` (30 packages, `npm ci` in about 4 s) and contains no editor code. Parity is kept because both sides render the same [blocks.tsx](components/site/blocks.tsx) and [site.css](components/site/site.css). The cost: the renderer must mimic Puck's slot wrapper markup.
+**Tradeoff 3: The export uses its own ~60-line renderer instead of Puck's `<Render>`.** The export then needs only `next`, `react` and `react-dom` (30 packages, `npm ci` in about 4 s) and contains no editor code. Parity is kept because both sides render the same [blocks.tsx](components/site/blocks.tsx) and [site.css](components/site/site.css). The cost: the renderer must mimic Puck's slot wrapper markup.
 
 Other choices:
 - **Structured outputs + Zod everywhere.** The model output is always parseable, and everything is validated again before it touches the editor (server and browser).
