@@ -9,6 +9,8 @@ import { LIMITS } from "@/components/site/model";
  *
  * It checks: allowed element types, allowed nesting, colours, number ranges,
  * image sources, links, and that every id is unique.
+ * Newer design settings (variant, surface, bgStyle, icon) are optional so pages
+ * saved before they existed still validate.
  */
 
 const num = ([min, max]: readonly [number, number]) => z.number().finite().min(min).max(max);
@@ -57,6 +59,7 @@ const Paragraph = z.object({
     fontSize: num(LIMITS.Paragraph.fontSize),
     color,
     align,
+    variant: z.enum(["body", "lead", "eyebrow", "badge"]).optional(),
     mobile: z.object({ fontSize: optNum(LIMITS.Paragraph.fontSize), align: mobileAlign }),
   }),
 });
@@ -89,6 +92,7 @@ const Button = z.object({
     size: z.enum(["sm", "md", "lg"]),
     radius: num(LIMITS.Button.radius),
     align,
+    icon: z.enum(["none", "arrow"]).optional(),
     mobile: z.object({ fullWidth: z.enum(["", "yes"]).optional(), align: mobileAlign }),
   }),
 });
@@ -107,6 +111,7 @@ const Container = z.object({
     padding: num(LIMITS.Container.padding),
     bgColor: color,
     radius: num(LIMITS.Container.radius),
+    surface: z.enum(["none", "card", "glow", "outline"]).optional(),
     mobile: z.object({
       columns: z.enum(["", "1", "2"]).optional(),
       gap: optNum(LIMITS.Container.gap),
@@ -130,6 +135,7 @@ const Section = z.object({
     paddingY: num(LIMITS.Section.paddingY),
     gap: num(LIMITS.Section.gap),
     maxWidth: num(LIMITS.Section.maxWidth),
+    bgStyle: z.enum(["solid", "gradient", "spotlight"]).optional(),
     mobile: z.object({ paddingY: optNum(LIMITS.Section.paddingY), gap: optNum(LIMITS.Section.gap) }),
     content: z.array(SectionElement).max(60),
   }),

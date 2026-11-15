@@ -1,4 +1,4 @@
-import { editableProps, ELEMENT_TYPES, LIMITS } from "@/components/site/model";
+import { CHOICES, editableProps, ELEMENT_TYPES, LIMITS } from "@/components/site/model";
 
 /** System prompt for generating a new landing page. */
 export const GENERATE_SYSTEM_PROMPT = `You are a senior web designer and copywriter. You design one-page landing pages for businesses using a fixed set of building blocks, and you return the page as JSON matching the provided schema.
@@ -22,6 +22,15 @@ Visual direction:
 - Fonts: serif for premium/editorial, rounded for friendly/family/food, mono for technical, sans for modern.
 - Use "" for colours that should simply inherit from the section or page.
 
+Design system (use these options to make the page feel premium and consistent):
+- Above most section headings, put a short label Paragraph with variant "badge" (pill) or "eyebrow" (small caps), 12-13px, often in the accent colour. Use one style consistently across the page.
+- The paragraph right under the h1 or an h2 uses variant "lead". Normal text uses "body".
+- In sections (not the hero), group the label + heading + lead paragraph in a one-column Container with surface "none" so they sit close together; the section gap then spaces this header from the cards.
+- Product, service, plan or feature items are Containers with a surface: "card" (soft shadow), "glow" (top light, great on dark themes) or "outline" (hairline with corner marks, minimal or editorial brands). Give cards padding 28-40 and radius 12-24, and keep one surface style per page. Layout-only containers (like the hero) use surface "none".
+- The hero section uses bgStyle "spotlight" on dark themes or "gradient" on light themes; most other sections use "solid".
+- Make the closing contact section a call-to-action band: background in the brand/accent colour, contrasting textColor, centred badge + h2 + lead paragraph + a button whose colours invert the band (e.g. dark band -> light button).
+- Primary call-to-action buttons use icon "arrow"; secondary buttons use variant "outline" and icon "none".
+
 Copy:
 - Specific to this business: use its name, offer and tone. Concise and benefit-led.
 - Do not invent facts: no real addresses, phone numbers, prices, statistics, awards or customer reviews. If a testimonial or contact detail helps the layout, label it clearly as a placeholder (e.g. "Customer quote placeholder"). Use example.com for email addresses.
@@ -34,6 +43,13 @@ export function generateUserPrompt(brief: string): string {
 // ---------------------------------------------------------------- editing
 
 const settingsList = ELEMENT_TYPES.map((type) => `- ${type}: ${editableProps(type).join(", ")}`).join("\n");
+const choicesList = Object.entries(CHOICES)
+  .map(([type, choices]) =>
+    `- ${type}: ${Object.entries(choices)
+      .map(([key, values]) => `${key} = ${(values as readonly string[]).map((v) => JSON.stringify(v)).join(" | ")}`)
+      .join("; ")}`,
+  )
+  .join("\n");
 const rangesList = Object.entries(LIMITS)
   .map(([type, ranges]) =>
     `- ${type}: ${Object.entries(ranges).map(([key, [min, max]]) => `${key} ${min}-${max}`).join(", ")}`,
@@ -56,6 +72,11 @@ How to edit:
 
 Settings of each element type:
 ${settingsList}
+
+Allowed values for choice settings:
+${choicesList}
+
+Design meaning of the style settings: Paragraph variant "lead" = muted intro text, "eyebrow" = small caps label, "badge" = pill label. Container surface "card" = soft shadow card, "glow" = card with a top light, "outline" = hairline border with corner marks. Section bgStyle "spotlight" = glow at the top, "gradient" = soft wash. Button icon "arrow" adds a → icon.
 
 Allowed number ranges (px unless it is a width in %):
 ${rangesList}

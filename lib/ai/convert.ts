@@ -52,6 +52,7 @@ function toContentElement(el: GeneratedElement): ElementNode | null {
         fontSize: clamp(el.fontSize, LIMITS.Paragraph.fontSize, 17),
         color: color(el.color),
         align: pick(el.align, ALIGN, "left"),
+        variant: pick(el.variant, ["body", "lead", "eyebrow", "badge"] as const, "body"),
       });
     case "Image": {
       const label = cleanText(el.placeholderLabel, 120).replace(/\n/g, " ") || "Image";
@@ -72,6 +73,7 @@ function toContentElement(el: GeneratedElement): ElementNode | null {
         size: pick(el.size, ["sm", "md", "lg"] as const, "md"),
         radius: clamp(el.radius, LIMITS.Button.radius, 8),
         align: pick(el.align, ALIGN, "left"),
+        icon: pick(el.icon, ["none", "arrow"] as const, "none"),
       });
     default:
       return null;
@@ -96,6 +98,7 @@ export function toSectionChild(el: GeneratedElement): ElementNode | null {
     padding: clamp(el.padding, LIMITS.Container.padding, 0),
     bgColor: color(el.bgColor),
     radius: clamp(el.radius, LIMITS.Container.radius, 0),
+    surface: pick(el.surface, ["none", "card", "glow", "outline"] as const, "none"),
     left: column(el.left),
     right: column(el.right),
   });
@@ -109,6 +112,7 @@ export function toSection(section: GeneratedSection, anchor: string): ElementNod
     textColor: color(section.textColor),
     paddingY: clamp(section.paddingY, LIMITS.Section.paddingY, 80),
     gap: clamp(section.gap, LIMITS.Section.gap, 24),
+    bgStyle: pick(section.bgStyle, ["solid", "gradient", "spotlight"] as const, "solid"),
     content: section.children
       .slice(0, 20)
       .map(toSectionChild)

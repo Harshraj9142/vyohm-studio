@@ -73,6 +73,15 @@ const SectionConfig: ComponentConfig<Props["Section"]> = {
     anchor: { type: "text", label: "Anchor name (for links like #contact)" },
     bgColor: colorField("Background"),
     textColor: colorField("Text colour"),
+    bgStyle: {
+      type: "select",
+      label: "Background style",
+      options: [
+        { label: "Solid", value: "solid" },
+        { label: "Soft gradient", value: "gradient" },
+        { label: "Spotlight glow (best on dark)", value: "spotlight" },
+      ],
+    },
     paddingY: { type: "number", label: "Vertical padding (px)", ...range(LIMITS.Section.paddingY) },
     gap: { type: "number", label: "Space between items (px)", ...range(LIMITS.Section.gap) },
     maxWidth: { type: "number", label: "Content width (px)", ...range(LIMITS.Section.maxWidth) },
@@ -128,6 +137,16 @@ const ContainerConfig: ComponentConfig<Props["Container"]> = {
     gap: { type: "number", label: "Gap between columns (px)", ...range(LIMITS.Container.gap) },
     padding: { type: "number", label: "Padding (px)", ...range(LIMITS.Container.padding) },
     bgColor: colorField("Background", "None"),
+    surface: {
+      type: "select",
+      label: "Surface",
+      options: [
+        { label: "None", value: "none" },
+        { label: "Card (soft shadow)", value: "card" },
+        { label: "Glow (top light)", value: "glow" },
+        { label: "Outline (corner marks)", value: "outline" },
+      ],
+    },
     radius: { type: "number", label: "Corner radius (px)", ...range(LIMITS.Container.radius) },
     mobile: {
       type: "object",
@@ -202,6 +221,16 @@ const ParagraphConfig: ComponentConfig<Props["Paragraph"]> = {
   label: "Paragraph",
   fields: {
     text: { type: "textarea", label: "Text", contentEditable: true },
+    variant: {
+      type: "select",
+      label: "Style",
+      options: [
+        { label: "Body text", value: "body" },
+        { label: "Lead (muted intro)", value: "lead" },
+        { label: "Eyebrow (small caps label)", value: "eyebrow" },
+        { label: "Badge (pill label)", value: "badge" },
+      ],
+    },
     fontSize: { type: "number", label: "Font size (px)", ...range(LIMITS.Paragraph.fontSize) },
     color: colorField("Colour"),
     align: { type: "radio", label: "Alignment", options: alignOptions },
@@ -271,6 +300,14 @@ const ButtonConfig: ComponentConfig<Props["Button"]> = {
       options: [
         { label: "Solid", value: "solid" },
         { label: "Outline", value: "outline" },
+      ],
+    },
+    icon: {
+      type: "radio",
+      label: "Icon",
+      options: [
+        { label: "None", value: "none" },
+        { label: "Arrow →", value: "arrow" },
       ],
     },
     bgColor: colorField("Background colour", "Default"),

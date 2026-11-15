@@ -18,6 +18,7 @@ export const PROP_NAMES = [
   "src", "alt", "width", "height", "fit",
   "columns", "ratio", "valign", "gap", "padding",
   "anchor", "paddingY", "maxWidth",
+  "surface", "bgStyle", "icon",
   "mobile.fontSize", "mobile.align", "mobile.paddingY", "mobile.gap", "mobile.columns",
   "mobile.padding", "mobile.width", "mobile.height", "mobile.fullWidth",
 ] as const;

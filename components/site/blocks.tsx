@@ -41,6 +41,13 @@ type EditorFlag = { puck?: { isEditing?: boolean } };
 /** In the editor, inline-editable text arrives as a React element instead of a string. */
 type Editable<T, K extends keyof T> = Omit<T, K> & { [P in K]: ReactNode };
 
+/** Join class names, skipping empty ones. */
+const cx = (...names: (string | false | undefined)[]) => names.filter(Boolean).join(" ");
+
+/** Pick a known option, or fall back (older pages may not have newer settings). */
+const oneOf = <T extends string>(value: unknown, options: readonly T[], fallback: T): T =>
+  options.includes(value as T) ? (value as T) : fallback;
+
 // ---------------------------------------------------------------- Page
 
 export function PageShell({
@@ -74,13 +81,17 @@ export function Section({
   paddingY,
   maxWidth,
   gap,
+  bgStyle,
   mobile,
   content: Content,
-}: SectionData & { content: SlotComponent }) {
+  puck,
+}: SectionData & { content: SlotComponent } & EditorFlag) {
+  const background = oneOf(bgStyle, ["solid", "gradient", "spotlight"] as const, "solid");
   return (
     <section
       id={slugify(anchor) || undefined}
-      className="vs-section"
+      // "--live" turns on the scroll fade-in on the real site (never inside the editor).
+      className={cx("vs-section", `vs-section--${background}`, !puck?.isEditing && "vs-section--live")}
       style={cssVars({
         "--s-bg": safeColor(bgColor),
         "--s-color": safeColor(textColor),
@@ -113,11 +124,13 @@ export function Container({
   valign,
   bgColor,
   radius,
+  surface,
   mobile,
   left: Left,
   right: Right,
   puck,
 }: ContainerData & { left: SlotComponent; right: SlotComponent } & EditorFlag) {
+  const look = oneOf(surface, ["none", "card", "glow", "outline"] as const, "none");
   const desktopColumns = columns === "2" ? COLUMN_TEMPLATES[ratio] ?? COLUMN_TEMPLATES["1:1"] : ONE_COLUMN;
   // Phones stack columns unless the user picks "side by side" for mobile.
   const mobileColumns = mobile?.columns === "2" ? desktopColumns : ONE_COLUMN;
@@ -126,7 +139,12 @@ export function Container({
 
   return (
     <div
-      className="vs-container"
+      // Hover effects only on the real site, so they don't fight the editor's selection outline.
+      className={cx(
+        "vs-container",
+        look !== "none" && `vs-container--surface vs-container--${look}`,
+        !puck?.isEditing && "vs-container--live",
+      )}
       style={cssVars({
         "--c-cols": desktopColumns,
         "--c-cols-m": mobileColumns,
@@ -176,22 +194,38 @@ export function Heading({
 
 // ---------------------------------------------------------------- Paragraph
 
+/** Left/right margins that line a narrower box up with the chosen alignment. */
+const MARGINS = {
+  left: ["0", "auto"],
+  center: ["auto", "auto"],
+  right: ["auto", "0"],
+} as const;
+
 export function Paragraph({
   text,
   fontSize,
   color,
   align,
+  variant,
   mobile,
 }: Editable<ParagraphData, "text">) {
+  const style = oneOf(variant, ["body", "lead", "eyebrow", "badge"] as const, "body");
+  // Lead text and badges are narrower than the column, so they need margins to align.
+  const [ml, mr] = MARGINS[align] ?? MARGINS.left;
+  const [mlMobile, mrMobile] = mobile?.align ? MARGINS[mobile.align] : [undefined, undefined];
   return (
     <p
-      className="vs-paragraph"
+      className={cx("vs-paragraph", style !== "body" && `vs-paragraph--${style}`)}
       style={cssVars({
         "--p-size": px(fontSize),
         "--p-size-m": px(mobile?.fontSize),
         "--p-color": safeColor(color),
         "--p-align": align,
         "--p-align-m": mobile?.align,
+        "--p-ml": ml,
+        "--p-mr": mr,
+        "--p-ml-m": mlMobile,
+        "--p-mr-m": mrMobile,
       })}
     >
       {text}
@@ -201,11 +235,6 @@ export function Paragraph({
 
 // ---------------------------------------------------------------- Image
 
-const MARGINS = {
-  left: ["0", "auto"],
-  center: ["auto", "auto"],
-  right: ["auto", "0"],
-} as const;
 
 export function Image({ src, alt, width, height, fit, radius, align, mobile }: ImageData) {
   const image = resolveImage(src);
@@ -233,6 +262,11 @@ export function Image({ src, alt, width, height, fit, radius, align, mobile }: I
           role="img"
           aria-label={alt || image.label}
         >
+          <svg className="vs-image__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" rx="2.5" />
+            <circle cx="9" cy="10" r="1.8" />
+            <path d="M4 18l5.5-5.5 3.5 3.5 2.5-2.5L20 18" />
+          </svg>
           <span>{image.label}</span>
           <small>Placeholder image</small>
         </div>
@@ -253,6 +287,7 @@ export function Button({
   size,
   radius,
   align,
+  icon,
   mobile,
   puck,
 }: Editable<ButtonData, "label"> & EditorFlag) {
@@ -286,7 +321,12 @@ export function Button({
           "--b-radius": px(radius),
         })}
       >
-        {label}
+        <span>{label}</span>
+        {icon === "arrow" ? (
+          <svg className="vs-button__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        ) : null}
       </a>
     </div>
   );

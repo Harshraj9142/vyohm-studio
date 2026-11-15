@@ -6,6 +6,14 @@
  * Desktop uses e.g. --h-size; phones (max-width: 767px) use --h-size-m if it is set.
  * Variable prefixes are per element type (s = section, c = container, h = heading,
  * p = paragraph, i = image, b = button) so a parent's values never leak into a child.
+ *
+ * Design references (ideas only, rewritten here as plain CSS): 21st.dev
+ * "Feature Grid Spotlight Cards" (Hirael, MIT) for card surfaces, top glows,
+ * corner marks and pill labels; 21st.dev "CTA Section" (shadcndesign) for the
+ * call-to-action band and arrow buttons.
+ *
+ * Colour tints use color-mix() with currentColor, so every effect adapts to
+ * whatever text colour the AI or the user picked (dark and light themes).
  */
 
 .vs-page {
@@ -16,6 +24,7 @@
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   overflow-x: clip;
 }
 
@@ -25,12 +34,26 @@
   box-sizing: border-box;
 }
 
+.vs-page ::selection {
+  background: color-mix(in srgb, currentColor 22%, transparent);
+}
+
 /* ---------------- Section ---------------- */
 
 .vs-section {
-  background: var(--s-bg, transparent);
+  background-color: var(--s-bg, transparent);
   color: var(--s-color, inherit);
   padding: var(--s-py, 80px) 24px;
+}
+
+/* A soft wash from the top of the section. */
+.vs-section--gradient {
+  background-image: linear-gradient(180deg, color-mix(in srgb, currentColor 7%, transparent), transparent 70%);
+}
+
+/* A glow behind the top centre, like a stage light (best on dark backgrounds). */
+.vs-section--spotlight {
+  background-image: radial-gradient(70% 60% at 50% 0%, color-mix(in srgb, currentColor 13%, transparent), transparent 70%);
 }
 
 .vs-section__inner {
@@ -53,6 +76,70 @@
   border-radius: var(--c-radius, 0);
 }
 
+/* Surfaces turn a container into a card. They always get some padding. */
+.vs-container--surface {
+  position: relative;
+  padding: max(var(--c-pad, 0px), 28px);
+}
+
+.vs-container--card {
+  background: var(--c-bg, color-mix(in srgb, currentColor 4%, transparent));
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 16px 36px -20px rgb(0 0 0 / 0.4);
+}
+
+.vs-container--glow {
+  background:
+    radial-gradient(60% 90% at 20% 0%, color-mix(in srgb, currentColor 13%, transparent), transparent 70%),
+    var(--c-bg, color-mix(in srgb, currentColor 3%, transparent));
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.vs-container--outline {
+  background: var(--c-bg, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+}
+
+/* Small "+" marks on two corners. Absolutely positioned, so they are not grid items. */
+.vs-container--outline::before,
+.vs-container--outline::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    linear-gradient(currentColor, currentColor) center / 1px 100% no-repeat,
+    linear-gradient(currentColor, currentColor) center / 100% 1px no-repeat;
+}
+
+.vs-container--outline::before {
+  top: -8px;
+  left: -8px;
+}
+
+.vs-container--outline::after {
+  right: -8px;
+  bottom: -8px;
+}
+
+/* Hover lift: only on the real site (".--live"), never inside the editor. */
+.vs-container--live.vs-container--surface {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.vs-container--live.vs-container--card:hover,
+.vs-container--live.vs-container--glow:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, currentColor 24%, transparent);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.08), 0 24px 48px -22px rgb(0 0 0 / 0.5);
+}
+
+.vs-container--live.vs-container--outline:hover {
+  border-color: color-mix(in srgb, currentColor 32%, transparent);
+}
+
 .vs-col {
   display: flex;
   flex-direction: column;
@@ -73,8 +160,9 @@
   font-weight: var(--h-weight, 700);
   color: var(--h-color, inherit);
   text-align: var(--h-align, left);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
   overflow-wrap: break-word;
 }
 
@@ -85,8 +173,43 @@
   font-size: var(--p-size, 17px);
   color: var(--p-color, inherit);
   text-align: var(--p-align, left);
+  line-height: 1.65;
   white-space: pre-line;
+  text-wrap: pretty;
   overflow-wrap: break-word;
+}
+
+/* Intro text under a heading: slightly muted and kept to a readable width. */
+.vs-paragraph--lead {
+  max-width: 62ch;
+  margin-left: var(--p-ml, 0);
+  margin-right: var(--p-mr, auto);
+  color: var(--p-color, color-mix(in srgb, currentColor 78%, transparent));
+  line-height: 1.7;
+}
+
+/* Small label above a heading. */
+.vs-paragraph--eyebrow {
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* Pill-shaped label above a heading. */
+.vs-paragraph--badge {
+  width: fit-content;
+  max-width: 100%;
+  margin-left: var(--p-ml, 0);
+  margin-right: var(--p-mr, auto);
+  padding: 6px 14px;
+  border: 1px solid color-mix(in srgb, currentColor 24%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 7%, transparent);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.35;
+  text-transform: uppercase;
 }
 
 /* ---------------- Image ---------------- */
@@ -111,21 +234,38 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   aspect-ratio: 4 / 3;
-  padding: 16px;
+  padding: 20px;
   text-align: center;
-  background: color-mix(in srgb, currentColor 7%, transparent);
-  border: 1.5px dashed color-mix(in srgb, currentColor 35%, transparent);
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, currentColor 11%, transparent), transparent 55%),
+    color-mix(in srgb, currentColor 5%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.vs-image__icon {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 4px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.55;
 }
 
 .vs-image__placeholder span {
+  max-width: 34ch;
   font-weight: 600;
 }
 
 .vs-image__placeholder small {
   font-size: 12px;
-  opacity: 0.7;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
 }
 
 /* ---------------- Button ---------------- */
@@ -139,6 +279,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   border: 2px solid var(--b-bg, #16181d);
   border-radius: var(--b-radius, 8px);
   background: var(--b-bg, #16181d);
@@ -148,11 +289,18 @@
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: filter 0.15s ease, transform 0.15s ease;
+  transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .vs-button:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--b-bg, #16181d) 70%, transparent);
+}
+
+.vs-button:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .vs-button:focus-visible {
@@ -165,9 +313,56 @@
   color: var(--b-bg, currentColor);
 }
 
+.vs-button--outline:hover {
+  filter: none;
+  background: color-mix(in srgb, var(--b-bg, currentColor) 12%, transparent);
+}
+
+.vs-button__icon {
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+
+.vs-button:hover .vs-button__icon {
+  transform: translateX(3px);
+}
+
 .vs-button--sm { padding: 8px 16px; font-size: 14px; }
 .vs-button--md { padding: 12px 24px; font-size: 16px; }
 .vs-button--lg { padding: 16px 32px; font-size: 18px; }
+
+/* ---------------- Scroll fade-in (real site only) ----------------
+ * Each item fades up as it scrolls into view, using CSS scroll-driven animations.
+ * Browsers without support simply show everything. Uses `translate` (not
+ * `transform`) so it never fights the hover lift above.
+ */
+@keyframes vs-reveal {
+  from {
+    opacity: 0;
+    translate: 0 20px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .vs-section--live > .vs-section__inner > * {
+      animation: vs-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
 
 /* ---------------- Phones ----------------
  * A "-m" value is the mobile override. If it is not set, we fall back to the
@@ -188,6 +383,10 @@
     padding: var(--c-pad-m, var(--c-pad, 0));
   }
 
+  .vs-container--surface {
+    padding: max(var(--c-pad-m, var(--c-pad, 0px)), 20px);
+  }
+
   .vs-heading {
     font-size: var(--h-size-m, calc(var(--h-size, 40px) * 0.75));
     text-align: var(--h-align-m, var(--h-align, left));
@@ -196,6 +395,12 @@
   .vs-paragraph {
     font-size: var(--p-size-m, var(--p-size, 17px));
     text-align: var(--p-align-m, var(--p-align, left));
+  }
+
+  .vs-paragraph--lead,
+  .vs-paragraph--badge {
+    margin-left: var(--p-ml-m, var(--p-ml, 0));
+    margin-right: var(--p-mr-m, var(--p-mr, auto));
   }
 
   .vs-image__media {
@@ -212,5 +417,21 @@
 
   .vs-button--full-m {
     width: 100%;
+  }
+}
+
+/* ---------------- Reduced motion ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .vs-page *,
+  .vs-page *::before,
+  .vs-page *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .vs-button:hover,
+  .vs-container--live:hover,
+  .vs-button:hover .vs-button__icon {
+    transform: none;
   }
 }

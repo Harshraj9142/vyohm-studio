@@ -43,6 +43,8 @@ export type SectionData = {
   paddingY: number;
   maxWidth: number;
   gap: number;
+  /** Background treatment on top of bgColor (optional; older pages don't have it). */
+  bgStyle?: "solid" | "gradient" | "spotlight";
   mobile: { paddingY?: number | null; gap?: number | null };
 };
 
@@ -54,6 +56,8 @@ export type ContainerData = {
   valign: "start" | "center" | "end";
   bgColor: string;
   radius: number;
+  /** Card look: "card" (soft shadow), "glow" (top glow), "outline" (hairline + corner marks). */
+  surface?: "none" | "card" | "glow" | "outline";
   mobile: {
     columns?: "" | "1" | "2"; // "" = stack (default on phones)
     gap?: number | null;
@@ -76,6 +80,8 @@ export type ParagraphData = {
   fontSize: number;
   color: string;
   align: Align;
+  /** "lead" = muted intro text, "eyebrow" = small caps label, "badge" = pill label. */
+  variant?: "body" | "lead" | "eyebrow" | "badge";
   mobile: { fontSize?: number | null; align?: Align | "" };
 };
 
@@ -107,6 +113,7 @@ export type ButtonData = {
   size: "sm" | "md" | "lg";
   radius: number;
   align: Align;
+  icon?: "none" | "arrow";
   mobile: { fullWidth?: "" | "yes"; align?: Align | "" };
 };
 
@@ -141,6 +148,7 @@ export const DEFAULT_PROPS = {
     paddingY: 80,
     gap: 24,
     maxWidth: 1120,
+    bgStyle: "solid",
     mobile: {},
   } satisfies SectionData,
   Container: {
@@ -151,6 +159,7 @@ export const DEFAULT_PROPS = {
     padding: 0,
     bgColor: "",
     radius: 0,
+    surface: "none",
     mobile: {},
   } satisfies ContainerData,
   Heading: {
@@ -167,6 +176,7 @@ export const DEFAULT_PROPS = {
     fontSize: 17,
     color: "",
     align: "left",
+    variant: "body",
     mobile: {},
   } satisfies ParagraphData,
   Image: {
@@ -189,6 +199,7 @@ export const DEFAULT_PROPS = {
     size: "md",
     radius: 8,
     align: "left",
+    icon: "none",
     mobile: {},
   } satisfies ButtonData,
 };
@@ -217,6 +228,28 @@ export function editableProps(type: ElementType): string[] {
 export function isElementType(value: unknown): value is ElementType {
   return typeof value === "string" && value in DEFAULT_PROPS;
 }
+
+/** Allowed values for "choice" settings (shown to the AI in the edit prompt). */
+export const CHOICES = {
+  Section: { bgStyle: ["solid", "gradient", "spotlight"] },
+  Container: {
+    columns: ["1", "2"],
+    ratio: ["1:1", "2:1", "1:2"],
+    valign: ["start", "center", "end"],
+    surface: ["none", "card", "glow", "outline"],
+    "mobile.columns": ["", "2"],
+  },
+  Heading: { level: ["h1", "h2", "h3"], fontWeight: ["400", "500", "600", "700", "800"], align: ["left", "center", "right"] },
+  Paragraph: { variant: ["body", "lead", "eyebrow", "badge"], align: ["left", "center", "right"] },
+  Image: { fit: ["cover", "contain"], align: ["left", "center", "right"] },
+  Button: {
+    variant: ["solid", "outline"],
+    size: ["sm", "md", "lg"],
+    icon: ["none", "arrow"],
+    align: ["left", "center", "right"],
+    "mobile.fullWidth": ["", "yes"],
+  },
+} as const;
 
 /** Which element types each slot accepts. Used by the editor and by AI validation. */
 export const NESTING = {

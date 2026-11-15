@@ -22,6 +22,9 @@ mkdir -p "$(dirname "$LOG")"
   echo "=== layout-and-inline ==="
   "${RUN[@]}" --script tests/browser/scenarios/layout-and-inline.js
   echo
+  echo "=== design-options ==="
+  "${RUN[@]}" --script tests/browser/scenarios/design-options.js
+  echo
   echo "=== mobile-override ==="
   "${RUN[@]}" --script tests/browser/scenarios/mobile-override.js
   echo

@@ -33,6 +33,9 @@ export const ParagraphGen = z.object({
   fontSize: z.number().describe("px, 14-21. Small labels/eyebrows may use 12-14."),
   color,
   align,
+  variant: z
+    .enum(["body", "lead", "eyebrow", "badge"])
+    .describe('"lead" = muted intro under a heading; "eyebrow" = small caps label; "badge" = pill label above a heading.'),
 });
 
 export const ImageGen = z.object({
@@ -57,6 +60,7 @@ export const ButtonGen = z.object({
   size: z.enum(["sm", "md", "lg"]),
   radius: z.number().describe("Corner radius px, 0-32."),
   align,
+  icon: z.enum(["none", "arrow"]).describe('"arrow" adds a → icon; use on primary call-to-action buttons.'),
 });
 
 export const ContentElementGen = z.union([HeadingGen, ParagraphGen, ImageGen, ButtonGen]);
@@ -70,6 +74,9 @@ export const ContainerGen = z.object({
   padding: z.number().describe("Inner padding px, 0-64. Use with bgColor to make a card."),
   bgColor: color,
   radius: z.number().describe("Corner radius px, 0-32."),
+  surface: z
+    .enum(["none", "card", "glow", "outline"])
+    .describe('Card look for product/service items: "card" soft shadow, "glow" top light (great on dark), "outline" hairline with corner marks (minimal/editorial). "none" for plain layout rows.'),
   left: z.array(ContentElementGen).describe("Elements in the first column."),
   right: z.array(ContentElementGen).describe("Elements in the second column (empty if columns is 1)."),
 });
@@ -82,6 +89,9 @@ export const SectionGen = z.object({
   textColor: color,
   paddingY: z.number().describe("Vertical padding px, 56-140."),
   gap: z.number().describe("px between the section's direct children, 16-64."),
+  bgStyle: z
+    .enum(["solid", "gradient", "spotlight"])
+    .describe('"spotlight" = glow at the top (hero on dark themes), "gradient" = soft wash, "solid" = plain.'),
   children: z.array(z.union([ContainerGen, HeadingGen, ParagraphGen, ImageGen, ButtonGen])),
 });
 

@@ -15,5 +15,11 @@
     sections: [...document.querySelectorAll("section")].map((s) => s.id),
     columnsInFirstContainer: getComputedStyle(document.querySelector(".vs-container")).gridTemplateColumns.split(" ").length,
     horizontalOverflow: document.documentElement.scrollWidth > innerWidth,
+    designOptions: {
+      liveSections: document.querySelectorAll(".vs-section--live").length, // scroll fade-in enabled
+      surfaces: [...document.querySelectorAll(".vs-container--surface")].map((c) => [...c.classList].find((x) => /--(card|glow|outline)$/.test(x))),
+      paragraphStyles: [...document.querySelectorAll("[class*='vs-paragraph--']")].length,
+      arrowButtons: document.querySelectorAll(".vs-button__icon").length,
+    },
   };
 })();

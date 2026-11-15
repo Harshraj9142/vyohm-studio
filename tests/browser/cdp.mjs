@@ -12,6 +12,8 @@
  *   --wait      ms to wait after loading before running the scenario (default 7000)
  *   --profile   Chrome profile folder; reuse it between runs to test persistence (default: fresh temp profile)
  *   --fixture   JSON file exposed to the scenario as window.__fixture
+ *   --full      capture the whole page, not just the viewport (pass any value, e.g. --full 1)
+ *   --reduced-motion  emulate prefers-reduced-motion: reduce (pass any value)
  *
  * A scenario may return { __files: { "name.zip": base64 } } to save files into --out.
  * Requires Google Chrome. Editor scenarios need a build with test hooks (see docs/TESTING.md).
@@ -99,6 +101,9 @@ const send = (method, params = {}) =>
 await send("Runtime.enable");
 await send("Page.enable");
 await send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
+if (args["reduced-motion"]) {
+  await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
+}
 await send("Page.navigate", { url: args.url });
 await sleep(Number(args.wait ?? 7000));
 
@@ -135,7 +140,13 @@ if (args.script) {
   await sleep(1000);
 }
 
-const shot = await send("Page.captureScreenshot", { format: "png" });
+let shotParams = { format: "png" };
+if (args.full) {
+  const metrics = await send("Page.getLayoutMetrics");
+  const size = metrics.result.cssContentSize ?? metrics.result.contentSize;
+  shotParams = { format: "png", captureBeyondViewport: true, clip: { x: 0, y: 0, width, height: Math.ceil(size.height), scale: 1 } };
+}
+const shot = await send("Page.captureScreenshot", shotParams);
 const shotPath = join(out, `${name}-${width}.png`);
 writeFileSync(shotPath, Buffer.from(shot.result.data, "base64"));
 console.log("[screenshot]", shotPath);
