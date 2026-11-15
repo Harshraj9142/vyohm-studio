@@ -172,3 +172,26 @@ Builder: http://localhost:3211/ (build with NEXT_PUBLIC_TEST_HOOKS=1), headless 
 [screenshot] tests/browser/output/upload-persist-1440.png
 
 === after-reload (part 2: same browser profile = browser reopened) ===
+{
+  "allPassed": true,
+  "checks": {
+    "Headline restored": {
+      "expected": "Saved headline",
+      "actual": "Saved headline",
+      "pass": true
+    },
+    "Image reference saved (not a blob: URL)": {
+      "expected": "asset:…",
+      "actual": "asset:74d5cd9659ff4139",
+      "pass": true
+    },
+    "Uploaded image visible after reload": {
+      "expected": true,
+      "actual": true,
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/after-reload-1440.png
+
+=== demo-sequence (one real Claude edit) ===
