@@ -1,0 +1,134 @@
+Vyohm Studio browser test run — 2026-11-15 11:19 IST
+Builder: production build with NEXT_PUBLIC_TEST_HOOKS=1 on http://localhost:3211, headless Chrome (tests/browser/cdp.mjs)
+
+=== mobile-override ===
+{
+  "allPassed": true,
+  "checks": {
+    "Mobile preview width": {
+      "expected": 390,
+      "actual": 390,
+      "pass": true
+    },
+    "Columns stack on phones": {
+      "expected": "1 column",
+      "actual": "1 column",
+      "pass": true
+    },
+    "No horizontal overflow": {
+      "expected": false,
+      "actual": false,
+      "pass": true
+    },
+    "Default phone heading (75% of 64px)": {
+      "expected": "48px",
+      "actual": "48px",
+      "pass": true
+    },
+    "Mobile override applied": {
+      "expected": "30px on phone, desktop 64",
+      "actual": "30px on phone, desktop 64",
+      "pass": true
+    },
+    "Undo / redo of mobile override": {
+      "expected": "null / 30",
+      "actual": "null / 30",
+      "pass": true
+    },
+    "Desktop unchanged": {
+      "expected": "64px",
+      "actual": "64px",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/mobile-override-1440.png
+
+=== ai-failures ===
+[scenario error] TypeError: Cannot read properties of undefined (reading 'click')
+    at <anonymous>:25:85
+[screenshot] tests/browser/output/ai-failures-1440.png
+
+=== upload-persist (part 1) ===
+{
+  "headline": "Saved headline",
+  "imageSrc": "asset:7969f18836f94cb0",
+  "saveStatus": "Saved 11:20"
+}
+[screenshot] tests/browser/output/upload-persist-1440.png
+
+=== after-reload (part 2, same browser profile = reopened browser) ===
+{
+  "allPassed": true,
+  "checks": {
+    "Headline restored": {
+      "expected": "Saved headline",
+      "actual": "Saved headline",
+      "pass": true
+    },
+    "Image reference saved (not a blob: URL)": {
+      "expected": "asset:…",
+      "actual": "asset:7969f18836f94cb0",
+      "pass": true
+    },
+    "Uploaded image visible after reload": {
+      "expected": true,
+      "actual": true,
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/after-reload-1440.png
+
+=== demo-sequence (real Claude edit) ===
+{
+  "allPassed": true,
+  "checks": {
+    "AI status": {
+      "expected": "ok",
+      "actual": "ed-ai-status--ok (3s): Changed the background of the \"Explore the collections\" button to blue.Use Undo (top right) to revert.",
+      "pass": true
+    },
+    "Only change on the page": {
+      "expected": "exactly 1 change: the button's bgColor",
+      "actual": [
+        "page.root.props.content[0].props.content[0].props.left[3].props.bgColor: \"#c9a44c\" -> \"#2563eb\""
+      ],
+      "pass": true
+    },
+    "Headline kept": {
+      "expected": "Wear the story, not the trend",
+      "actual": "Wear the story, not the trend",
+      "pass": true
+    },
+    "Uploaded image kept": {
+      "expected": "asset:…",
+      "actual": "asset:6679ccce8f7e43c3",
+      "pass": true
+    },
+    "Moved button still in hero": {
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    "Section order kept": {
+      "expected": [
+        "",
+        "contact",
+        "collections"
+      ],
+      "actual": [
+        "",
+        "contact",
+        "collections"
+      ],
+      "pass": true
+    },
+    "Undo / redo": {
+      "expected": "#c9a44c / blue",
+      "actual": "#c9a44c / #2563eb",
+      "pass": true
+    }
+  }
+}
+[screenshot] tests/browser/output/demo-sequence-1440.png

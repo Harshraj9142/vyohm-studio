@@ -1,0 +1,516 @@
+{
+ "root": {
+  "props": {
+   "title": "Loom & Line \u2014 Premium Clothing",
+   "description": "Loom & Line crafts premium clothing collections with considered materials, refined tailoring and timeless black-and-gold elegance.",
+   "headingFont": "serif",
+   "bodyFont": "sans",
+   "background": "#0d0d0d",
+   "textColor": "#f5f0e6",
+   "content": [
+    {
+     "type": "Section",
+     "props": {
+      "anchor": "hero",
+      "bgColor": "#0d0d0d",
+      "textColor": "#f5f0e6",
+      "paddingY": 120,
+      "gap": 32,
+      "maxWidth": 1120,
+      "mobile": {},
+      "content": [
+       {
+        "type": "Container",
+        "props": {
+         "columns": "2",
+         "ratio": "1:1",
+         "valign": "center",
+         "gap": 64,
+         "padding": 0,
+         "bgColor": "",
+         "radius": 0,
+         "mobile": {},
+         "left": [
+          {
+           "type": "Paragraph",
+           "props": {
+            "text": "PREMIUM CLOTHING",
+            "fontSize": 13,
+            "color": "#c9a227",
+            "align": "left",
+            "mobile": {},
+            "id": "Paragraph-718ac4e4902c"
+           }
+          },
+          {
+           "type": "Heading",
+           "props": {
+            "text": "Crafted to be worn, made to be remembered",
+            "level": "h1",
+            "fontSize": 64,
+            "fontWeight": "600",
+            "color": "#f5f0e6",
+            "align": "left",
+            "mobile": {},
+            "id": "Heading-ccd14e3edbee"
+           }
+          },
+          {
+           "type": "Paragraph",
+           "props": {
+            "text": "Loom & Line brings together considered fabrics and precise tailoring in pieces designed to outlast the season.",
+            "fontSize": 19,
+            "color": "#d9d2c3",
+            "align": "left",
+            "mobile": {},
+            "id": "Paragraph-152b0ea96094"
+           }
+          },
+          {
+           "type": "Button",
+           "props": {
+            "label": "Explore the collections",
+            "href": "#collections",
+            "newTab": false,
+            "variant": "solid",
+            "bgColor": "#c9a227",
+            "textColor": "#0d0d0d",
+            "size": "lg",
+            "radius": 2,
+            "align": "left",
+            "mobile": {},
+            "id": "Button-7369316172c5"
+           }
+          }
+         ],
+         "right": [
+          {
+           "type": "Image",
+           "props": {
+            "src": "placeholder:Model in a tailored black coat with gold-toned details, studio lighting",
+            "alt": "Model wearing a tailored black Loom & Line coat against a dark backdrop",
+            "width": 100,
+            "height": 520,
+            "fit": "cover",
+            "radius": 4,
+            "align": "center",
+            "mobile": {},
+            "id": "Image-501694c6d44d"
+           }
+          }
+         ],
+         "id": "Container-ff4e469ff6b2"
+        }
+       }
+      ],
+      "id": "Section-efbf2d7fb624"
+     }
+    },
+    {
+     "type": "Section",
+     "props": {
+      "anchor": "collections",
+      "bgColor": "#151515",
+      "textColor": "#f5f0e6",
+      "paddingY": 110,
+      "gap": 56,
+      "maxWidth": 1120,
+      "mobile": {},
+      "content": [
+       {
+        "type": "Heading",
+        "props": {
+         "text": "Three collections, one standard",
+         "level": "h2",
+         "fontSize": 42,
+         "fontWeight": "600",
+         "color": "#c9a227",
+         "align": "center",
+         "mobile": {},
+         "id": "Heading-120108845a5b"
+        }
+       },
+       {
+        "type": "Paragraph",
+        "props": {
+         "text": "Each collection is built around a distinct moment in your wardrobe, finished with the same attention to detail.",
+         "fontSize": 18,
+         "color": "#d9d2c3",
+         "align": "center",
+         "mobile": {},
+         "id": "Paragraph-7876107b3162"
+        }
+       },
+       {
+        "type": "Container",
+        "props": {
+         "columns": "2",
+         "ratio": "1:1",
+         "valign": "center",
+         "gap": 56,
+         "padding": 0,
+         "bgColor": "",
+         "radius": 0,
+         "mobile": {},
+         "left": [
+          {
+           "type": "Image",
+           "props": {
+            "src": "placeholder:Tailored blazer and trousers in deep black wool",
+            "alt": "Black tailored blazer and trousers from The Tailored collection",
+            "width": 100,
+            "height": 380,
+            "fit": "cover",
+            "radius": 4,
+            "align": "center",
+            "mobile": {},
+            "id": "Image-4bde0fcd4d80"
+           }
+          }
+         ],
+         "right": [
+          {
+           "type": "Heading",
+           "props": {
+            "text": "The Tailored Collection",
+            "level": "h3",
+            "fontSize": 28,
+            "fontWeight": "600",
+            "color": "#c9a227",
+            "align": "left",
+            "mobile": {},
+            "id": "Heading-77774671d3b4"
+           }
+          },
+          {
+           "type": "Paragraph",
+           "props": {
+            "text": "Structured blazers, sharp trousers and coats cut for confidence. Clean lines that move from boardroom to evening with ease.",
+            "fontSize": 17,
+            "color": "#f5f0e6",
+            "align": "left",
+            "mobile": {},
+            "id": "Paragraph-94f31dd22e3d"
+           }
+          },
+          {
+           "type": "Button",
+           "props": {
+            "label": "Enquire about Tailored",
+            "href": "#contact",
+            "newTab": false,
+            "variant": "outline",
+            "bgColor": "#c9a227",
+            "textColor": "#c9a227",
+            "size": "md",
+            "radius": 2,
+            "align": "left",
+            "mobile": {},
+            "id": "Button-10b973443299"
+           }
+          }
+         ],
+         "id": "Container-5f810c439b7f"
+        }
+       },
+       {
+        "type": "Container",
+        "props": {
+         "columns": "2",
+         "ratio": "1:1",
+         "valign": "center",
+         "gap": 56,
+         "padding": 0,
+         "bgColor": "",
+         "radius": 0,
+         "mobile": {},
+         "left": [
+          {
+           "type": "Heading",
+           "props": {
+            "text": "The Essentials Collection",
+            "level": "h3",
+            "fontSize": 28,
+            "fontWeight": "600",
+            "color": "#c9a227",
+            "align": "left",
+            "mobile": {},
+            "id": "Heading-d089599c1499"
+           }
+          },
+          {
+           "type": "Paragraph",
+           "props": {
+            "text": "Elevated knitwear, shirts and everyday layers in refined fabrics. The quiet foundation of a considered wardrobe.",
+            "fontSize": 17,
+            "color": "#f5f0e6",
+            "align": "left",
+            "mobile": {},
+            "id": "Paragraph-8565d6eb8537"
+           }
+          },
+          {
+           "type": "Button",
+           "props": {
+            "label": "Enquire about Essentials",
+            "href": "#contact",
+            "newTab": false,
+            "variant": "outline",
+            "bgColor": "#c9a227",
+            "textColor": "#c9a227",
+            "size": "md",
+            "radius": 2,
+            "align": "left",
+            "mobile": {},
+            "id": "Button-e960ca30e134"
+           }
+          }
+         ],
+         "right": [
+          {
+           "type": "Image",
+           "props": {
+            "src": "placeholder:Folded knitwear and crisp shirts in neutral tones",
+            "alt": "Stack of knitwear and shirts from The Essentials collection",
+            "width": 100,
+            "height": 380,
+            "fit": "cover",
+            "radius": 4,
+            "align": "center",
+            "mobile": {},
+            "id": "Image-483d87db5eb2"
+           }
+          }
+         ],
+         "id": "Container-9142a158fbac"
+        }
+       },
+       {
+        "type": "Container",
+        "props": {
+         "columns": "2",
+         "ratio": "1:1",
+         "valign": "center",
+         "gap": 56,
+         "padding": 0,
+         "bgColor": "",
+         "radius": 0,
+         "mobile": {},
+         "left": [
+          {
+           "type": "Image",
+           "props": {
+            "src": "placeholder:Evening dress in black silk with gold accents",
+            "alt": "Black silk evening piece with gold accents from The Evening collection",
+            "width": 100,
+            "height": 380,
+            "fit": "cover",
+            "radius": 4,
+            "align": "center",
+            "mobile": {},
+            "id": "Image-8aebd9c73a1d"
+           }
+          }
+         ],
+         "right": [
+          {
+           "type": "Heading",
+           "props": {
+            "text": "The Evening Collection",
+            "level": "h3",
+            "fontSize": 28,
+            "fontWeight": "600",
+            "color": "#c9a227",
+            "align": "left",
+            "mobile": {},
+            "id": "Heading-62881725f056"
+           }
+          },
+          {
+           "type": "Paragraph",
+           "props": {
+            "text": "Fluid silhouettes, rich textures and subtle gold detailing for the occasions that deserve something special.",
+            "fontSize": 17,
+            "color": "#f5f0e6",
+            "align": "left",
+            "mobile": {},
+            "id": "Paragraph-955551fa5742"
+           }
+          },
+          {
+           "type": "Button",
+           "props": {
+            "label": "Enquire about Evening",
+            "href": "#contact",
+            "newTab": false,
+            "variant": "outline",
+            "bgColor": "#c9a227",
+            "textColor": "#c9a227",
+            "size": "md",
+            "radius": 2,
+            "align": "left",
+            "mobile": {},
+            "id": "Button-1ff320f1106f"
+           }
+          }
+         ],
+         "id": "Container-551a3ca943cf"
+        }
+       }
+      ],
+      "id": "Section-02e4e7ddd76a"
+     }
+    },
+    {
+     "type": "Section",
+     "props": {
+      "anchor": "story",
+      "bgColor": "#0d0d0d",
+      "textColor": "#f5f0e6",
+      "paddingY": 110,
+      "gap": 32,
+      "maxWidth": 1120,
+      "mobile": {},
+      "content": [
+       {
+        "type": "Container",
+        "props": {
+         "columns": "2",
+         "ratio": "1:1",
+         "valign": "center",
+         "gap": 64,
+         "padding": 0,
+         "bgColor": "",
+         "radius": 0,
+         "mobile": {},
+         "left": [
+          {
+           "type": "Paragraph",
+           "props": {
+            "text": "OUR STORY",
+            "fontSize": 13,
+            "color": "#c9a227",
+            "align": "left",
+            "mobile": {},
+            "id": "Paragraph-bdb784641a00"
+           }
+          },
+          {
+           "type": "Heading",
+           "props": {
+            "text": "Where the loom meets the line",
+            "level": "h2",
+            "fontSize": 40,
+            "fontWeight": "600",
+            "color": "#f5f0e6",
+            "align": "left",
+            "mobile": {},
+            "id": "Heading-ee0006000c95"
+           }
+          },
+          {
+           "type": "Paragraph",
+           "props": {
+            "text": "Our name reflects what we care about most: the fabric and the cut. Every Loom & Line piece begins with material chosen for its feel and longevity, then shaped with patient, precise tailoring.",
+            "fontSize": 18,
+            "color": "#d9d2c3",
+            "align": "left",
+            "mobile": {},
+            "id": "Paragraph-92219c7b77a7"
+           }
+          },
+          {
+           "type": "Paragraph",
+           "props": {
+            "text": "The result is clothing that feels personal, wears beautifully and stays with you for years.",
+            "fontSize": 18,
+            "color": "#d9d2c3",
+            "align": "left",
+            "mobile": {},
+            "id": "Paragraph-3a2a031b1922"
+           }
+          }
+         ],
+         "right": [
+          {
+           "type": "Image",
+           "props": {
+            "src": "placeholder:Close-up of fabric on a loom with gold thread",
+            "alt": "Close-up of fine fabric being woven, with gold thread detail",
+            "width": 100,
+            "height": 440,
+            "fit": "cover",
+            "radius": 4,
+            "align": "center",
+            "mobile": {},
+            "id": "Image-bd5b7914b520"
+           }
+          }
+         ],
+         "id": "Container-7f86152f54ce"
+        }
+       }
+      ],
+      "id": "Section-8cd335704488"
+     }
+    },
+    {
+     "type": "Section",
+     "props": {
+      "anchor": "contact",
+      "bgColor": "#151515",
+      "textColor": "#f5f0e6",
+      "paddingY": 120,
+      "gap": 24,
+      "maxWidth": 1120,
+      "mobile": {},
+      "content": [
+       {
+        "type": "Heading",
+        "props": {
+         "text": "Let's talk about your wardrobe",
+         "level": "h2",
+         "fontSize": 42,
+         "fontWeight": "600",
+         "color": "#c9a227",
+         "align": "center",
+         "mobile": {},
+         "id": "Heading-0283ea175c2b"
+        }
+       },
+       {
+        "type": "Paragraph",
+        "props": {
+         "text": "Questions about a collection, sizing or a special request? Get in touch and the Loom & Line team will be glad to help.",
+         "fontSize": 18,
+         "color": "#d9d2c3",
+         "align": "center",
+         "mobile": {},
+         "id": "Paragraph-d6d546de8c58"
+        }
+       },
+       {
+        "type": "Button",
+        "props": {
+         "label": "Contact us",
+         "href": "mailto:hello@example.com",
+         "newTab": false,
+         "variant": "solid",
+         "bgColor": "#c9a227",
+         "textColor": "#0d0d0d",
+         "size": "lg",
+         "radius": 2,
+         "align": "center",
+         "mobile": {},
+         "id": "Button-57e57231daf6"
+        }
+       }
+      ],
+      "id": "Section-9b77da05bccb"
+     }
+    }
+   ]
+  }
+ },
+ "content": []
+}
