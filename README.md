@@ -2,7 +2,19 @@
 
 An AI website builder: describe a business, Claude generates a landing page, you edit it visually or with AI instructions, and you download a standalone Next.js project.
 
+| Page | What it is |
+|---|---|
+| `/` | Vyohm Studio landing page: features, how it works, **Get started** |
+| `/start` | *Create your landing page* chat: describe the business → build animation → live preview of the real page → **Open in editor** |
+| `/editor` | The visual editor: click-to-edit, AI edits, mobile overrides, undo, autosave, export |
+
 Built for the Vyohm AI FDE intern challenge (6-hour build).
+
+![Vyohm Studio landing page](docs/screenshots/landing-hero.png)
+
+| Get started chat | Building animation | Your real page, previewed |
+|---|---|---|
+| ![Chat](docs/screenshots/start-chat.png) | ![Building](docs/screenshots/start-building.png) | ![Ready](docs/screenshots/start-ready.png) |
 
 ![Vyohm Studio editor with a generated page](docs/screenshots/editor.png)
 
@@ -23,7 +35,7 @@ Built for the Vyohm AI FDE intern challenge (6-hour build).
 ```bash
 npm ci
 cp .env.example .env.local      # then put your key in ANTHROPIC_API_KEY
-npm run dev                     # http://localhost:3000
+npm run dev                     # http://localhost:3000 → Get started
 ```
 
 | Variable | Required | Default | Purpose |
@@ -36,7 +48,7 @@ Other scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run verify
 
 ## Demo walkthrough
 
-1. **Generate.** The **AI** tab is open on the left. Describe the business (or click *Use example*) and press **Generate page**. This takes about 30–45 s, with a progress bar, a timer and a Cancel button.
+1. **Generate.** On the landing page, click **Get started**. In the chat, describe the business (or pick an example and a style chip) and press **Enter**. A build animation shows the steps while Claude works (about 25–45 s, with Cancel). Then a live, auto-scrolling preview of the real page appears; click **Open in editor**. (Inside the editor, the **AI** tab can also generate a new page.)
 2. **Edit text.** Click a heading and type directly on the canvas, or use the settings panel on the right (font size, weight, colour, alignment).
 3. **Replace an image.** Select an image and click **Upload image** / **Replace image**. Size, fit, radius and alt text are in the same panel.
 4. **Change the layout.** Drag elements between container columns and sections. Reorder sections by dragging, or in the **Outline** tab. The action bar on each selected element has duplicate and delete. Add new elements from the **Blocks** tab.
@@ -66,6 +78,7 @@ Status means: **Working** = verified by an automated test run (see [docs/TESTING
 | Desktop/mobile preview; mobile override without changing desktop; stacking; no overflow | Working | `mobile-override`, [exported-site.log](evidence/exported-site.log) |
 | Undo/redo of content, style, layout and AI edits | Working | `demo-sequence`, `ai-failures` #3, `mobile-override` |
 | Save and reload restores page and uploaded images | Working | `upload-persist` + `after-reload` (same browser profile) |
+| Product landing page and guided *Get started* chat with build animation and live preview | Working | `landing` (desktop + phone), `start-flow` (chat → animation → preview → editor), one real chat run (25 s); reduced-motion fallback checked |
 | **Next.js export**: independent, portable assets, clean `npm ci` / `build` / `start` | Working | [export-verify.log](evidence/export-verify.log), [exported-site.log](evidence/exported-site.log), [website.zip](evidence/website.zip) |
 | Design system: card surfaces, label styles, section backgrounds, arrow buttons, scroll fade-in (see [Design system](#design-system)) | Working | `design-options` (settings panel → preview, undo, no live effects in editor); generated pages use the options ([exported-site.log](evidence/exported-site.log)) |
 | Basic accessibility | Partial | Alt-text field, heading levels, focus outlines, keyboard-reachable controls and labelled inputs. No full audit and no automatic contrast check (see [limitations](#limitations)). |
@@ -76,7 +89,7 @@ Status means: **Working** = verified by an automated test run (see [docs/TESTING
 flowchart LR
   subgraph Browser
     U([User]) --> ED["Puck editor<br/>components/editor"]
-    U --> AI["AI tab<br/>generate / edit"]
+    U --> AI["/start chat + AI tab<br/>generate / edit"]
     ED <--> PD[("Page data<br/>JSON tree, stable ids")]
     AI -- "validate, conflict check,<br/>apply as one undo step" --> PD
     PD -- "autosave" --> IDB[("IndexedDB<br/>page + image files")]
@@ -170,6 +183,7 @@ Other choices:
 - **One fixed export template with a committed lockfile.** Dependencies don't vary per page, so the lockfile is generated and tested once.
 - **CSS variables for responsive styles.** Per-element overrides with no generated stylesheet. The prefixes are per type, so values don't leak into children.
 - **Model `claude-opus-5-5`**, with `medium` effort for generation (quality, ~30–45 s) and `low` for edits (~3 s). Both can be changed through env vars.
+- **Landing page and chat as CSS Modules with system fonts.** Puck copies the host page's styles into its preview iframe, so global CSS here would change how sites look in the editor. CSS Modules keep the marketing styles scoped. System font stacks (instead of Google Fonts) keep the builder building without internet. The chat's build animation is a visual timeline, because generation is one AI call: steps advance on a timer, the last step waits for the real answer, then the rest finish quickly. The preview uses the same renderer as the export, so what you see is what you'll get.
 - **Design references from 21st.dev, written as our own CSS.** 21st.dev components are Tailwind + shadcn and sometimes need JavaScript (e.g. a spotlight that follows the pointer). Copying them would add Tailwind to every export and break the "3 dependencies" property, so I took the visual ideas (surfaces, glows, corner marks, pill labels, CTA band) and rebuilt them as four optional settings in plain CSS. I dropped the pointer-following spotlight because it needs client-side JavaScript.
 
 ## Debugging examples
@@ -178,7 +192,9 @@ Other choices:
 
 **2. "The compiled grammar is too large."** My first edit schema embedded every element's full schema inside the `insert` operation. The structured-output API rejected it with a 400. The fix was for `insert` to carry the new element as a JSON string, which [convert.ts](lib/ai/convert.ts) (`parseInsertedElement`) parses and the converters clean. Invalid elements go back to Claude once as an error. This was verified by a direct API call (one operation in 3.4 s) and the browser tests.
 
-**3. A flaky test that wasn't flaky.** The `ai-failures` scenario failed only inside my test loop. I replaced crashes with recorded diagnostics, which showed the fake response had no page fixture. The cause was zsh not word-splitting `$extra`, so `--fixture <file>` reached the runner as a single argument. I moved the suite into a bash script ([run-all.sh](tests/browser/run-all.sh)); all checks now pass (38 in the latest run).
+**3. A flaky test that wasn't flaky.** The `ai-failures` scenario failed only inside my test loop. I replaced crashes with recorded diagnostics, which showed the fake response had no page fixture. The cause was zsh not word-splitting `$extra`, so `--fixture <file>` reached the runner as a single argument. I moved the suite into a bash script ([run-all.sh](tests/browser/run-all.sh)); all checks now pass (58 in the latest run).
+
+**4. Animations that disappeared for accessibility users.** A full-page screenshot with *reduced motion* showed the landing page's hero demo and terminal as empty boxes. My reduced-motion rule made animations finish instantly, and these looping animations end on a faded-out frame. The fix was to switch animations off (`animation: none`) for those users, so every element shows in its natural, visible state. I checked it by re-taking the reduced-motion screenshot ([landing-full.jpg](docs/screenshots/landing-full.jpg)).
 
 ## Limitations
 
@@ -202,7 +218,9 @@ Other choices:
 
 ```text
 app/
-  page.tsx                  editor page
+  page.tsx                  landing page (/)
+  start/page.tsx            "Create your landing page" chat (/start)
+  editor/page.tsx           the editor (/editor)
   api/generate/route.ts     POST: brief -> validated page
   api/revise/route.ts       POST: instruction + page + scope -> operations
   api/export-template/      GET: allowlisted template + shared component sources
@@ -213,6 +231,8 @@ components/
     site.css                responsive styles (CSS variables, 767px breakpoint)
     render.tsx              standalone renderer used by the export
   editor/                   Puck config, custom fields, AI tab, export button, autosave
+  marketing/                landing page + brand theme (CSS Modules, so nothing leaks into the editor)
+  start/                    chat, build animation, live page preview
 lib/
   ai/                       Claude client, prompts, schemas, convert, generate, revise
   revise/apply.ts           applies AI operations safely (scope, nesting, conflicts)

@@ -13,7 +13,8 @@ NEXT_PUBLIC_TEST_HOOKS=1 npm run build
 npx next start -p 3211            # keep running in another terminal
 
 # 2. All browser scenarios -> evidence/browser-tests.log
-npm run test:browser              # = bash tests/browser/run-all.sh
+#    (landing "/", chat "/start", editor "/editor"; pass another base URL as the first argument)
+npm run test:browser              # = bash tests/browser/run-all.sh [http://localhost:3211]
 
 # 3. Check any exported ZIP the way the evaluator does
 npm run verify-export -- evidence/website.zip
@@ -29,7 +30,7 @@ npm run verify-export -- evidence/website.zip
 
 | Run | Result | Log |
 |---|---|---|
-| Browser scenarios (8 scenarios, 38 checks) | **38 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
+| Browser scenarios (11 runs, 58 checks) | **58 passed, 0 failed** | [browser-tests.log](../evidence/browser-tests.log) |
 | Full flow: generate → manual edits → mobile override → AI edit → export | Completed | [full-flow.log](../evidence/full-flow.log) |
 | Export verification: fresh folder, `npm ci` + `npm run build` | **PASS** (`npm ci` 5 s, build 5 s) | [export-verify.log](../evidence/export-verify.log) |
 | Exported site served with `npm run start`, checked at 1280 px and 390 px | Matches the editor; no overflow | [exported-site.log](../evidence/exported-site.log) |
@@ -66,6 +67,20 @@ Server-side error handling, observed by starting the builder with a broken confi
 | Invalid key | Clear message | HTTP 500: *"The Claude API key was rejected. Check ANTHROPIC_API_KEY…"* |
 | API unreachable (`ANTHROPIC_BASE_URL=http://127.0.0.1:9`) | Clear message | HTTP 503: *"Could not reach the Claude API…"* |
 | Prompt `"hi"` or a non-JSON body | Validation message | HTTP 400: *"Please describe your business in at least one sentence."* |
+
+## Landing page and *Get started* chat
+
+[landing.js](../tests/browser/scenarios/landing.js) (run at 1440 px and 390 px) and [start-flow.js](../tests/browser/scenarios/start-flow.js) (fake AI answer after 6 s):
+
+| Input | Expected | Actual (observed) |
+|---|---|---|
+| Open `/` at 1440 px and 390 px | Headline, 6 features, 3 steps, CTAs to `/start` and `/editor`, no sideways scroll | All present at both widths; no overflow |
+| `/start`: brief "short" | Send disabled | Disabled |
+| Pick *Bakery* + *Warm & friendly*, send | Brief shown with the style; build animation progresses | Brief ends "Style: Warm & friendly."; status visible, steps ticking |
+| Answer arrives | Remaining steps finish; real page previewed | Preview h1 = the generated page's h1; "Your page is ready" + *Open in editor* |
+| Click *Open in editor* | Page saved, editor opens with it | `/editor` shows the same h1 |
+| **Real run** (Claude): florist in Jaipur, *Warm & friendly* | Full flow with a real answer | 25 s; all 6 steps completed; "Petal & Pine — Boutique Florist in Jaipur · 4 sections"; preview uses badges, cards and an arrow button ([screenshot](screenshots/start-ready.png)) |
+| Landing page with reduced motion | Everything visible, nothing animated | First attempt: hero demo and terminal were empty (looping animations ended on a faded-out frame). Fixed by `animation: none`; re-checked ([landing-full.jpg](screenshots/landing-full.jpg)) |
 
 ## Design system
 

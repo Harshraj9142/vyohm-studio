@@ -7,7 +7,7 @@
 | Where | Tool / model | Used for |
 |---|---|---|
 | Building the project | **Claude Code** (VS Code extension) running **Claude Opus 5.5** (`claude-opus-5-5`) | Planning the architecture, writing almost all of the code, the browser tests and these docs, running builds and tests, debugging |
-| Design references | **21st.dev MCP server** (component catalog), called by Claude Code | Searching for landing-page design patterns; reading the code of 2 components (the free tier's daily limit) |
+| Design references | **21st.dev MCP server** (component catalog), called by Claude Code | Searching for design patterns; reading the code of 2 components (the free tier's daily limit) for the generated-site design system; preview images of an AI prompt composer, AI loading states and a marketing hero as references for the landing page and the *Get started* chat |
 | Inside the product | **Claude API**, `claude-opus-5-5` via `@anthropic-ai/sdk` 1.8.0, structured outputs | Generating pages (`/api/generate`) and AI edits (`/api/revise`) |
 | Verification | TypeScript, ESLint, `next build`, headless Google Chrome (own CDP runner), `scripts/verify-export.sh` | Checking the AI-written code and the AI-generated pages |
 
